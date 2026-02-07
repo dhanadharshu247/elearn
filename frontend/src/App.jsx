@@ -10,9 +10,20 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import VerifyOtpPage from './pages/auth/VerifyOtpPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 
-// Dashboards
-import InstructorDashboard from './pages/InstructorDashboard';
-import LearnerDashboard from './pages/LearnerDashboard';
+// Layouts
+import InstructorLayout from './layouts/InstructorLayout';
+import LearnerLayout from './layouts/LearnerLayout';
+
+// Instructor Pages
+import Dashboard from './pages/instructor/Dashboard';
+import Courses from './pages/instructor/Courses';
+import Learners from './pages/instructor/Learners';
+import Profile from './pages/instructor/Profile';
+
+// Learner Pages
+import LearnerDashboard from './pages/learner/Dashboard';
+import MyCourses from './pages/learner/MyCourses';
+import LearnerProfile from './pages/learner/Profile';
 
 function App() {
   return (
@@ -26,14 +37,28 @@ function App() {
           <Route path="/verify-otp" element={<VerifyOtpPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-          {/* Protected Routes - Instructor */}
-          <Route element={<PrivateRoute allowedRoles={['instructor']} />}>
-            <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+          {/* Protected Routes - Instructor (Public for UI Development) */}
+          <Route path="/instructor" element={<InstructorLayout />}>
+            <Route index element={<Navigate to="/instructor/dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="courses" element={<Courses />} />
+            <Route path="learners" element={<Learners />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
 
-          {/* Protected Routes - Learner */}
-          <Route element={<PrivateRoute allowedRoles={['learner']} />}>
-            <Route path="/learner/dashboard" element={<LearnerDashboard />} />
+          {/* Protected Routes - Authenticated Example (kept for reference) */}
+          <Route element={<PrivateRoute allowedRoles={['instructor']} />}>
+            {/* Real protected routes would go here */}
+          </Route>
+
+          {/* Protected Routes - Learner (Public for UI Development) */}
+          <Route path="/learner" element={<LearnerLayout />}>
+            <Route index element={<Navigate to="/learner/dashboard" replace />} />
+            <Route path="dashboard" element={<LearnerDashboard />} />
+            <Route path="my-courses" element={<MyCourses />} />
+            <Route path="profile" element={<LearnerProfile />} />
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/learner/dashboard" replace />} />
           </Route>
 
           {/* Default Redirect */}
