@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const api = axios.create({
-    baseURL: 'http://localhost:8000', // Adjust this to match your FastAPI backend URL
+    baseURL: 'http://127.0.0.1:8005', // Use explicit 127.0.0.1 for reliability in Windows environments
     headers: {
         'Content-Type': 'application/json',
     },
@@ -12,6 +12,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
+        console.log('Axios Interceptor Token:', token); // DEBUG
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

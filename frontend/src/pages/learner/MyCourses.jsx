@@ -1,16 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../api/axios';
 import { Search, Filter, Play, Award } from 'lucide-react';
 import Button from '../../components/ui/Button';
 
 const MyCourses = () => {
-    // Mock Data
-    const courses = [
-        { id: 1, title: "Advanced React Patterns", instructor: "Sarah Drasner", progress: 65, total: 24, completed: 15, status: "In Progress", image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-        { id: 2, title: "UI/UX Principles", instructor: "Gary Simon", progress: 30, total: 12, completed: 4, status: "In Progress", image: "https://images.unsplash.com/photo-1586717791821-3f44a5638d48?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-        { id: 3, title: "Node.js Microservices", instructor: "Fernando Doglio", progress: 0, total: 20, completed: 0, status: "Not Started", image: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-        { id: 4, title: "Figma Mastery", instructor: "Mizko", progress: 10, total: 15, completed: 1, status: "In Progress", image: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-        { id: 5, title: "Web Accessibility (a11y)", instructor: "Marcy Sutton", progress: 100, total: 8, completed: 8, status: "Completed", image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-    ];
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const response = await api.get('/courses/my-courses');
+                // Backend returns full course objects. 
+                // We might need to map them to the UI structure or adjust UI to match backend.
+                // Backend course: { _id, title, instructor: ID, thumbnail, enrolledStudents: [], content: [] }
+                // UI expects: { id, title, instructor: string, progress: number, total: number, completed: number, status: string, image: string }
+
+                // For now, let's map what we can. 
+                // Note: Instructor name might be an ID if not populated. The /my-courses route in backend currently does NOT populate instructor name.
+                // We might need to update backend to populate it, or fetch it here.
+                // Let's assume for this step we display what we have.
+                const mappedCourses = response.data.map(c => ({
+                    id: c._id,
+                    title: c.title,
+                    instructor: c.instructor?.name || 'Instructor',
+                    progress: 0,
+                    total: c.modules ? c.modules.length : 0,
+                    completed: 0,
+                    status: 'In Progress',
+                    image: c.thumbnail || 'https://via.placeholder.com/300'
+                }));
+                setCourses(mappedCourses);
+            } catch (err) {
+                console.error('Failed to fetch my courses:', err);
+                setError('Failed to load courses');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCourses();
+    }, []);
+
+    if (loading) return <div className="p-8 text-center">Loading your courses...</div>;
+    if (error) return <div className="p-8 text-red-500">{error}</div>;
 
     return (
         <div className="space-y-8 font-sans">
@@ -66,8 +100,8 @@ const MyCourses = () => {
 
                                 <Button
                                     className={`w-full py-2 text-sm rounded-lg ${course.status === 'Completed'
-                                            ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                                            : 'bg-white border border-indigo-600 text-indigo-600 hover:bg-indigo-50'
+                                        ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                        : 'bg-white border border-indigo-600 text-indigo-600 hover:bg-indigo-50'
                                         }`}
                                 >
                                     {course.status === 'Completed' ? 'Review Course' : 'Continue Learning'}

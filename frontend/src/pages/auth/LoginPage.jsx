@@ -162,6 +162,23 @@ const LoginPage = () => {
                             <Button type="submit" isLoading={isLoading} className="w-full text-base py-3.5 shadow-indigo-200 shadow-lg">
                                 Sign in <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </Button>
+
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => login('instructor@edweb.com', 'password123').then(() => navigate('/instructor/dashboard', { replace: true }))}
+                                    className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors"
+                                >
+                                    Login as Instructor
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => login('miru@gmail.com', 'password123').then(() => navigate('/learner/dashboard', { replace: true }))}
+                                    className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-medium hover:bg-emerald-100 transition-colors"
+                                >
+                                    Login as Learner
+                                </button>
+                            </div>
                         </form>
 
                         <div className="mt-8 pt-6 border-t border-gray-100 text-center">

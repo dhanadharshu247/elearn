@@ -15,15 +15,21 @@ import InstructorLayout from './layouts/InstructorLayout';
 import LearnerLayout from './layouts/LearnerLayout';
 
 // Instructor Pages
-import Dashboard from './pages/instructor/Dashboard';
+import InstructorDashboard from './pages/instructor/InstructorDashboard';
+import AddCourse from './pages/instructor/AddCourse';
 import Courses from './pages/instructor/Courses';
 import Learners from './pages/instructor/Learners';
 import Profile from './pages/instructor/Profile';
 
 // Learner Pages
-import LearnerDashboard from './pages/learner/Dashboard';
+import LearnerDashboard from './pages/learner/LearnerDashboard';
 import MyCourses from './pages/learner/MyCourses';
+import Achievements from './pages/learner/Achievements';
 import LearnerProfile from './pages/learner/Profile';
+
+// Common Pages
+import CoursePage from './pages/CoursePage';
+import QuizPage from './pages/QuizPage';
 
 function App() {
   return (
@@ -37,28 +43,29 @@ function App() {
           <Route path="/verify-otp" element={<VerifyOtpPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-          {/* Protected Routes - Instructor (Public for UI Development) */}
-          <Route path="/instructor" element={<InstructorLayout />}>
-            <Route index element={<Navigate to="/instructor/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="courses" element={<Courses />} />
-            <Route path="learners" element={<Learners />} />
-            <Route path="profile" element={<Profile />} />
-          </Route>
-
-          {/* Protected Routes - Authenticated Example (kept for reference) */}
+          {/* Protected Routes - Instructor */}
           <Route element={<PrivateRoute allowedRoles={['instructor']} />}>
-            {/* Real protected routes would go here */}
+            <Route path="/instructor" element={<InstructorLayout />}>
+              <Route index element={<Navigate to="/instructor/dashboard" replace />} />
+              <Route path="dashboard" element={<InstructorDashboard />} />
+              <Route path="add-course" element={<AddCourse />} />
+              <Route path="courses" element={<Courses />} />
+              <Route path="learners" element={<Learners />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
           </Route>
 
-          {/* Protected Routes - Learner (Public for UI Development) */}
-          <Route path="/learner" element={<LearnerLayout />}>
-            <Route index element={<Navigate to="/learner/dashboard" replace />} />
-            <Route path="dashboard" element={<LearnerDashboard />} />
-            <Route path="my-courses" element={<MyCourses />} />
-            <Route path="profile" element={<LearnerProfile />} />
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/learner/dashboard" replace />} />
+          {/* Protected Routes - Learner */}
+          <Route element={<PrivateRoute allowedRoles={['learner']} />}>
+            <Route path="/learner" element={<LearnerLayout />}>
+              <Route index element={<Navigate to="/learner/dashboard" replace />} />
+              <Route path="dashboard" element={<LearnerDashboard />} />
+              <Route path="my-courses" element={<MyCourses />} />
+              <Route path="achievements" element={<Achievements />} />
+              <Route path="profile" element={<LearnerProfile />} />
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/learner/dashboard" replace />} />
+            </Route>
           </Route>
 
           {/* Default Redirect */}

@@ -41,6 +41,13 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await api.post('/auth/login', { username: email, password });
             const { access_token } = response.data;
+            console.log('Login Response:', response.data); // DEBUG
+            console.log('Access Token:', access_token); // DEBUG
+
+            if (!access_token) {
+                console.error('No access token received!');
+                return { success: false, error: 'No access token received' };
+            }
 
             const decoded = jwtDecode(access_token);
             localStorage.setItem('token', access_token);

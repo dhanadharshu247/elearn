@@ -1,0 +1,98 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "Dr. Jane Smith",
+            "email": "instructor@edweb.com",
+            "password": "$2b$12$ofFzl.pl3Do/Yn0i7qsMb.CSbhhvlg0wL94RNkQK8Wmr1VCp1YwT.",
+            "role": "instructor",
+            "created_at": "2026-02-11T16:03:48.680588"
+        },
+        {
+            "id": 2,
+            "name": "miru",
+            "email": "miru@gmail.com",
+            "password": "$2b$12$W3ZLVlnV78ec8pgN.RlGSuIdf6XKhBpTGvp.iaZ71ftjWb9.iwBS.",
+            "role": "learner",
+            "created_at": "2026-02-11T16:06:23.357652"
+        },
+        {
+            "id": 3,
+            "name": "babu",
+            "email": "babu@gmail.com",
+            "password": "$2b$12$lNMtMBtAf6am.UhOV3wvNOepDG6dVgIwZwXY.0JVS/Rftf8j7j1ga",
+            "role": "instructor",
+            "created_at": "2026-02-11T16:16:31.830267"
+        }
+    ],
+    "courses": [
+        {
+            "id": 1,
+            "title": "Introduction to FastAPI",
+            "description": "Learn the basics of building high-performance APIs with Python.",
+            "instructor_id": 1,
+            "price": 49.99,
+            "status": "Published",
+            "thumbnail": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=800&q=80",
+            "created_at": "2026-02-11T16:03:48.680783"
+        },
+        {
+            "id": 2,
+            "title": "Advanced React Patterns",
+            "description": "Master compound components, render props, and hooks for scalable UI.",
+            "instructor_id": 1,
+            "price": 79.99,
+            "status": "Published",
+            "thumbnail": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=800&q=80",
+            "created_at": "2026-02-11T16:03:48.680800"
+        },
+        {
+            "id": 3,
+            "title": "Data Science with Python",
+            "description": "A comprehensive guide to data analysis and machine learning.",
+            "instructor_id": 1,
+            "price": 0.0,
+            "status": "Published",
+            "thumbnail": "https://images.unsplash.com/photo-1551288049-bbda48658a7e?auto=format&fit=crop&w=800&q=80",
+            "created_at": "2026-02-11T16:03:48.680806"
+        },
+        {
+            "title": "python",
+            "description": "learn python for develpment",
+            "thumbnail": "https://th.bing.com/th/id/OIP.mDCVVjH6J15-grhjTJ8gRAHaDF?w=334&h=145&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3",
+            "price": 1.0,
+            "status": "Published",
+            "modules": [
+                {
+                    "title": "Module 1",
+                    "contentLink": "https://www.bing.com/ck/a?!&&p=3aa5411a80865c426b201b55c49fe98a54c69cbeddb16092228bbb386c4939cdJmltdHM9MTc3MDc2ODAwMA&ptn=3&ver=2&hsh=4&fclid=031b1aa2-db51-654a-3519-0c7ada9464e8&psq=tutorialspoint+python&u=a1aHR0cHM6Ly93d3cudHV0b3JpYWxzcG9pbnQuY29tL3B5dGhvbi9pbmRleC5odG0",
+                    "quiz": [
+                        {
+                            "questionText": "Which of the following is NOT a valid Python data type?  ",
+                            "options": [
+                                {
+                                    "text": "list"
+                                },
+                                {
+                                    "text": "tuple"
+                                },
+                                {
+                                    "text": "array"
+                                },
+                                {
+                                    "text": "dictionery"
+                                }
+                            ],
+                            "correctOptionIndex": 0
+                        }
+                    ]
+                }
+            ],
+            "id": 4,
+            "instructor_id": 1,
+            "enrolledStudents": [],
+            "created_at": "2026-02-11T16:24:03.670708"
+        }
+    ],
+    "enrolments": []
+}

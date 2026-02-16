@@ -8,7 +8,7 @@ import { AlertCircle, User, Mail, GraduationCap, Building2 } from 'lucide-react'
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({
-        full_name: '',
+        name: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -38,7 +38,7 @@ const SignupPage = () => {
         const result = await register(dataToSend);
 
         if (result.success) {
-            navigate('/verify-otp', { state: { email: formData.email } });
+            navigate('/login'); // Redirect to login after signup
         } else {
             setError(result.error);
         }
@@ -81,9 +81,9 @@ const SignupPage = () => {
 
                         <Input
                             label="Full Name"
-                            name="full_name"
+                            name="name"
                             icon={User}
-                            value={formData.full_name}
+                            value={formData.name}
                             onChange={handleChange}
                             placeholder="John Doe"
                             required
@@ -127,8 +127,8 @@ const SignupPage = () => {
                                     type="button"
                                     onClick={() => setFormData({ ...formData, role: 'learner' })}
                                     className={`flex items-center justify-center px-4 py-3 border rounded-xl text-sm font-medium transition-all duration-200 ${formData.role === 'learner'
-                                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-500'
-                                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-500'
+                                        : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
                                         }`}
                                 >
                                     <GraduationCap className={`mr-2 h-5 w-5 ${formData.role === 'learner' ? 'text-indigo-600' : 'text-gray-400'}`} />
@@ -138,8 +138,8 @@ const SignupPage = () => {
                                     type="button"
                                     onClick={() => setFormData({ ...formData, role: 'instructor' })}
                                     className={`flex items-center justify-center px-4 py-3 border rounded-xl text-sm font-medium transition-all duration-200 ${formData.role === 'instructor'
-                                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-500'
-                                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-500'
+                                        : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
                                         }`}
                                 >
                                     <Building2 className={`mr-2 h-5 w-5 ${formData.role === 'instructor' ? 'text-indigo-600' : 'text-gray-400'}`} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Clock, Award, ArrowRight } from 'lucide-react';
+import { Play, Clock, Award, ArrowRight, Plus } from 'lucide-react';
 import Button from '../../components/ui/Button';
 
 const Dashboard = () => {
@@ -111,22 +111,17 @@ const Dashboard = () => {
                     ))}
 
                     {/* Empty State / Add New Placeholder */}
-                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-5 flex flex-col items-center justify-center text-center hover:border-slate-300 hover:bg-slate-50 transition-all cursor-pointer">
+                    <a href="/learner/my-courses" className="border-2 border-dashed border-slate-200 rounded-xl p-5 flex flex-col items-center justify-center text-center hover:border-slate-300 hover:bg-slate-50 transition-all cursor-pointer">
                         <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2">
                             <Plus className="w-5 h-5" />
                         </div>
                         <p className="text-sm font-semibold text-slate-600">Browse Catalog</p>
                         <p className="text-xs text-slate-400">Find new skills to master</p>
-                    </div>
+                    </a>
                 </div>
             </section>
         </div>
     );
 };
-
-// Helper icon
-const Plus = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M5 12h14" /><path d="M12 5v14" /></svg>
-);
 
 export default Dashboard;
