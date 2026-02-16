@@ -1,6 +1,9 @@
 import models, database, auth, schemas, random
 from datetime import timedelta, datetime
 from typing import List, Dict, Any
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -245,68 +248,79 @@ def update_course_status(course_id: int, status_update: dict, current_user: dict
     db.commit()
     return {"message": "Status updated", "status": course.status}
 
+import traceback
+
 @app.get("/courses/my-learners", response_model=List[dict])
 def get_my_learners(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    if current_user["role"] != "instructor":
-        raise HTTPException(status_code=403, detail="Only instructors can access learner reports")
-    
-    instructor_id = current_user["id"]
-    
-    # Courses owned by this instructor
-    my_courses = db.query(models.Course).filter(models.Course.instructor_id == instructor_id).all()
-    my_course_ids = [c.id for c in my_courses]
-    
-    # Find all enrollments for these courses
-    relevant_enrolments = db.query(models.Enrolment).filter(models.Enrolment.course_id.in_(my_course_ids)).all()
-    
-    # Group by student and calculate progress
-    student_map = {}
-    for e in relevant_enrolments:
-        student = e.user
-        course = e.course
+    try:
+        if current_user["role"] != "instructor":
+            raise HTTPException(status_code=403, detail="Only instructors can access learner reports")
         
-        # Calculate progress for this specific course/student pair
-        total_modules = len(course.modules)
-        course_progress = 0
-        if total_modules > 0:
-            completed_modules = db.query(models.QuizResult.module_id).filter(
-                models.QuizResult.user_id == student.id,
-                models.QuizResult.module_id.in_([m.id for m in course.modules])
-            ).distinct().count()
-            course_progress = int((completed_modules / total_modules) * 100)
-
-        if student.id not in student_map:
-            student_map[student.id] = {
-                "id": student.id,
-                "name": student.name,
-                "email": student.email,
-                "courses": [],
-                "progress_total": 0,
-                "course_count": 0,
-                "badges": [],
-                "status": "Active",
-                "lastActive": "Today",
-                "avatar": student.name[0] if student.name else "U"
-            }
+        instructor_id = current_user["id"]
         
-        student_map[student.id]["courses"].append(course.title)
-        student_map[student.id]["progress_total"] += course_progress
-        student_map[student.id]["course_count"] += 1
-        if course_progress == 100 and "Legend" not in student_map[student.id]["badges"]:
-            student_map[student.id]["badges"].append("Legend")
+        # Courses owned by this instructor
+        my_courses = db.query(models.Course).filter(models.Course.instructor_id == instructor_id).all()
+        my_course_ids = [c.id for c in my_courses]
+        
+        # Find all enrollments for these courses
+        relevant_enrolments = db.query(models.Enrolment).filter(models.Enrolment.course_id.in_(my_course_ids)).all()
+        
+        # Group by student and calculate progress
+        student_map = {}
+        for e in relevant_enrolments:
+            student = e.user
+            course = e.course
+            
+            if not student or not course:
+                continue
+                
+            # Get total modules in this course to calculate progress for this specific course/student pair
+            total_modules = len(course.modules)
+            course_progress = 0
+            if total_modules > 0:
+                completed_modules = db.query(models.QuizResult.module_id).filter(
+                    models.QuizResult.user_id == student.id,
+                    models.QuizResult.module_id.in_([m.id for m in course.modules])
+                ).distinct().count()
+                course_progress = int((completed_modules / total_modules) * 100)
 
-    # Finalize progress (average)
-    result = []
-    for s_id, data in student_map.items():
-        data["progress"] = int(data["progress_total"] / data["course_count"]) if data["course_count"] > 0 else 0
-        if not data["badges"]:
-            data["badges"] = ["Newbie"]
-        # Remove intermediate fields
-        del data["progress_total"]
-        del data["course_count"]
-        result.append(data)
+            # Create student entry if it doesn't exist
+            if student.id not in student_map:
+                student_map[student.id] = {
+                    "id": student.id,
+                    "name": student.name or "User",
+                    "email": student.email,
+                    "courses": [],
+                    "progress_total": 0,
+                    "course_count": 0,
+                    "badges": [],
+                    "status": "Active",
+                    "lastActive": student.created_at.strftime("%Y-%m-%d") if student.created_at else "Recently",
+                    "avatar": student.name[0].upper() if (student.name and len(student.name) > 0) else "U"
+                }
+            
+            student_map[student.id]["courses"].append(course.title)
+            student_map[student.id]["progress_total"] += course_progress
+            student_map[student.id]["course_count"] += 1
+            if course_progress == 100 and "Legend" not in student_map[student.id]["badges"]:
+                student_map[student.id]["badges"].append("Legend")
 
-    return result
+        # Finalize progress (average)
+        result = []
+        for s_id, data in student_map.items():
+            data["progress"] = int(data["progress_total"] / data["course_count"]) if data["course_count"] > 0 else 0
+            if not data["badges"]:
+                data["badges"] = ["Newbie"]
+            # Remove intermediate fields
+            del data["progress_total"]
+            del data["course_count"]
+            result.append(data)
+        
+        return result
+    except Exception as e:
+        print("ERROR in get_my_learners:")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/courses/{course_id}")
 def get_course(course_id: int, db: Session = Depends(database.get_db)):

@@ -5,7 +5,7 @@ from datetime import datetime
 from database import Base
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "app_users"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
@@ -29,7 +29,7 @@ class Course(Base):
     thumbnail = Column(String, nullable=True)
     price = Column(Float, default=0.0)
     status = Column(String, default="Published")
-    instructor_id = Column(Integer, ForeignKey("users.id"))
+    instructor_id = Column(Integer, ForeignKey("app_users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
 
     instructor = relationship("User", back_populates="courses")
@@ -68,11 +68,11 @@ class QuestionOption(Base):
 
     question = relationship("Question", back_populates="options")
 
-class Enrolment(Base) :
+class Enrolment(Base):
     __tablename__ = "enrolments"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("app_users.id"))
     course_id = Column(Integer, ForeignKey("courses.id"))
     enrolled_at = Column(DateTime, default=datetime.utcnow)
 
@@ -83,7 +83,7 @@ class QuizResult(Base):
     __tablename__ = "quiz_results"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("app_users.id"))
     module_id = Column(Integer, ForeignKey("modules.id"))
     score = Column(Integer)
     total_questions = Column(Integer)

@@ -128,7 +128,7 @@ const InstructorDashboard = () => {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <Link
-                                                to={`/courses/${course._id}`}
+                                                to={`/instructor/courses/${course._id}`}
                                                 className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
                                             >
                                                 Manage

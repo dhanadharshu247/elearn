@@ -96,7 +96,10 @@ const CoursePage = () => {
             {/* Top Navigation / Banner */}
             <div className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
                 <div className="flex items-center gap-4">
-                    <Link to="/learner/dashboard" className="text-slate-400 hover:text-indigo-600 transition">
+                    <Link
+                        to={user?.role === 'instructor' ? '/instructor/dashboard' : '/learner/dashboard'}
+                        className="text-slate-400 hover:text-indigo-600 transition"
+                    >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                     </Link>
                     <h1 className="text-xl font-bold text-slate-900 truncate max-w-md">{course.title}</h1>

@@ -3,6 +3,8 @@ import models, database, auth
 from datetime import datetime
 
 def seed():
+    # Ensure tables are created
+    models.Base.metadata.create_all(bind=database.engine)
     db = next(database.get_db())
     
     # 1. Create Instructor
@@ -23,8 +25,26 @@ def seed():
     else:
         print("Instructor already exists.")
 
+    # 1b. Create Learner
+    learner_email = "miru@gmail.com"
+    learner = db.query(models.User).filter(models.User.email == learner_email).first()
+    if not learner:
+        learner = models.User(
+            name="Miru Learner",
+            email=learner_email,
+            password=auth.get_password_hash("password123"),
+            role="learner"
+        )
+        db.add(learner)
+        db.commit()
+        db.refresh(learner)
+        print(f"Created learner: {learner_email}")
+    else:
+        print("Learner already exists.")
+
     # 2. Create Sample Courses
     if db.query(models.Course).count() == 0:
+        # ... (keep existing course data logic)
         courses_data = [
             {
                 "title": "Introduction to FastAPI",
@@ -106,6 +126,14 @@ def seed():
         
         db.commit()
         print(f"Added {len(courses_data)} sample courses.")
+        
+        # 3. Create initial enrollment
+        first_course = db.query(models.Course).first()
+        if first_course and learner:
+            enrolment = models.Enrolment(user_id=learner.id, course_id=first_course.id)
+            db.add(enrolment)
+            db.commit()
+            print(f"Enrolled {learner.email} in {first_course.title}")
     else:
         print("Courses already exist.")
 

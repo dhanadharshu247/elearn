@@ -80,7 +80,7 @@ const LearnerDashboard = () => {
                                     </div>
 
                                     <Link
-                                        to={`/courses/${course._id}`}
+                                        to={`/learner/courses/${course._id}`}
                                         className="inline-block text-blue-600 font-medium hover:underline text-sm"
                                     >
                                         {course.progress === 100 ? 'Review Course' : 'Continue Learning →'}
@@ -126,7 +126,7 @@ const LearnerDashboard = () => {
                                             {course.price === 0 ? 'Free' : `$${course.price}`}
                                         </span>
                                         <Link
-                                            to={`/courses/${course._id}`}
+                                            to={`/learner/courses/${course._id}`}
                                             className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition text-sm font-medium"
                                         >
                                             View Details

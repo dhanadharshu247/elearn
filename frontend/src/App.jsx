@@ -48,10 +48,11 @@ function App() {
             <Route path="/instructor" element={<InstructorLayout />}>
               <Route index element={<Navigate to="/instructor/dashboard" replace />} />
               <Route path="dashboard" element={<InstructorDashboard />} />
-              <Route path="add-course" element={<AddCourse />} />
               <Route path="courses" element={<Courses />} />
+              <Route path="add-course" element={<AddCourse />} />
               <Route path="learners" element={<Learners />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="courses/:id" element={<CoursePage />} />
             </Route>
           </Route>
 
@@ -63,6 +64,8 @@ function App() {
               <Route path="my-courses" element={<MyCourses />} />
               <Route path="achievements" element={<Achievements />} />
               <Route path="profile" element={<LearnerProfile />} />
+              <Route path="courses/:id" element={<CoursePage />} />
+              <Route path="quiz/:id" element={<QuizPage />} />
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/learner/dashboard" replace />} />
             </Route>
