@@ -1,11 +1,27 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
 from database import Base
 
+# Association tables
+user_badges = Table(
+    "user_badges",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("badge_id", Integer, ForeignKey("badges.id"), primary_key=True),
+    Column("earned_at", DateTime, default=datetime.utcnow)
+)
+
+batch_students = Table(
+    "batch_students",
+    Base.metadata,
+    Column("batch_id", Integer, ForeignKey("batches.id"), primary_key=True),
+    Column("student_id", Integer, ForeignKey("users.id"), primary_key=True)
+)
+
 class User(Base):
-    __tablename__ = "app_users"
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
@@ -19,6 +35,8 @@ class User(Base):
     courses = relationship("Course", back_populates="instructor")
     enrolments = relationship("Enrolment", back_populates="user")
     quiz_results = relationship("QuizResult", back_populates="user")
+    badges = relationship("Badge", secondary=user_badges, back_populates="users")
+    notifications = relationship("Notification", back_populates="user")
 
 class Course(Base):
     __tablename__ = "courses"
@@ -29,19 +47,20 @@ class Course(Base):
     thumbnail = Column(String, nullable=True)
     price = Column(Float, default=0.0)
     status = Column(String, default="Published")
-    instructor_id = Column(Integer, ForeignKey("app_users.id"))
+    instructor_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
 
     instructor = relationship("User", back_populates="courses")
     modules = relationship("Module", back_populates="course")
     enrolments = relationship("Enrolment", back_populates="course")
+    batches = relationship("Batch", back_populates="course")
 
 class Module(Base):
     __tablename__ = "modules"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
-    contentLink = Column(String)
+    contentLink = Column(String, nullable=True)
     course_id = Column(Integer, ForeignKey("courses.id"))
 
     course = relationship("Course", back_populates="modules")
@@ -72,7 +91,7 @@ class Enrolment(Base):
     __tablename__ = "enrolments"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("app_users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
     course_id = Column(Integer, ForeignKey("courses.id"))
     enrolled_at = Column(DateTime, default=datetime.utcnow)
 
@@ -83,7 +102,7 @@ class QuizResult(Base):
     __tablename__ = "quiz_results"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("app_users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
     module_id = Column(Integer, ForeignKey("modules.id"))
     score = Column(Integer)
     total_questions = Column(Integer)
@@ -91,3 +110,49 @@ class QuizResult(Base):
 
     user = relationship("User", back_populates="quiz_results")
     module = relationship("Module", back_populates="results")
+
+class Badge(Base):
+    __tablename__ = "badges"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    description = Column(String)
+    icon = Column(String)
+    
+    users = relationship("User", secondary=user_badges, back_populates="badges")
+
+class Batch(Base):
+    __tablename__ = "batches"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    course_id = Column(Integer, ForeignKey("courses.id"))
+    instructor_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    course = relationship("Course", back_populates="batches")
+    instructor = relationship("User")
+    students = relationship("User", secondary=batch_students)
+
+class Notification(Base):
+    __tablename__ = "notifications"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String)
+    message = Column(String)
+    type = Column(String) 
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="notifications")
+
+class Message(Base):
+    __tablename__ = "messages"
+    id = Column(Integer, primary_key=True, index=True)
+    sender_id = Column(Integer, ForeignKey("users.id"))
+    receiver_id = Column(Integer, ForeignKey("users.id"))
+    content = Column(String)
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    sender = relationship("User", foreign_keys=[sender_id])
+    receiver = relationship("User", foreign_keys=[receiver_id])
+

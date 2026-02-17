@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
-import { User, Mail, Shield, Smartphone } from 'lucide-react';
+import { User, Mail, Shield, Smartphone, Award } from 'lucide-react';
+import api from '../../api/axios';
+import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
-        name: 'Learner User',
-        email: 'learner@edweb.com',
+        name: user?.name || 'Learner User',
+        email: user?.email || 'learner@edweb.com',
     });
+    const [badges, setBadges] = useState([]);
+
+    useEffect(() => {
+        const fetchBadges = async () => {
+            try {
+                const response = await api.get('/badges/my-badges');
+                setBadges(response.data);
+            } catch (err) {
+                console.error('Failed to fetch badges:', err);
+            }
+        };
+        fetchBadges();
+    }, []);
 
     return (
         <div className="max-w-3xl mx-auto space-y-8 font-sans">
@@ -61,6 +77,31 @@ const Profile = () => {
                         </div>
                     </form>
                 </div>
+            </div>
+
+            {/* Badges Section */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 md:p-8">
+                <div className="flex items-center gap-2 mb-6">
+                    <Award className="w-6 h-6 text-indigo-600" />
+                    <h2 className="text-xl font-bold text-slate-900">Achievements</h2>
+                </div>
+                {badges.length === 0 ? (
+                    <div className="text-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        <p className="text-slate-500 italic">No badges earned yet. Complete courses to unlock them!</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {badges.map((b) => (
+                            <div key={b.id} className="flex flex-col items-center p-4 bg-indigo-50 rounded-2xl border border-indigo-100 hover:scale-105 transition-transform cursor-default">
+                                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
+                                    <Award className="w-6 h-6 text-indigo-600" />
+                                </div>
+                                <span className="text-sm font-bold text-slate-800 text-center">{b.name}</span>
+                                <span className="text-[10px] text-slate-500 mt-1">{new Date(b.awarded_at).toLocaleDateString()}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Security Section (Mock) */}

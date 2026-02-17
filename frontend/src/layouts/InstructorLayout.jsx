@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
     LayoutDashboard,
     BookOpen,
@@ -9,24 +10,22 @@ import {
     Menu,
     Search,
     GraduationCap,
-    Bell
+    Bell,
+    MessageSquare,
+    Layers
 } from 'lucide-react';
 
 const InstructorLayout = () => {
+    const { user, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Mock User Data
-    const user = {
-        name: 'Instructor Doe',
-        email: 'instructor@edweb.com',
-        avatar: 'ID'
-    };
-
     const navItems = [
         { path: '/instructor/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { path: '/instructor/courses', icon: BookOpen, label: 'My Courses' },
+        { path: '/instructor/batches', icon: Layers, label: 'Batches' },
+        { path: '/instructor/messages', icon: MessageSquare, label: 'Messages' },
         { path: '/instructor/learners', icon: Users, label: 'Learners' },
         { path: '/instructor/profile', icon: User, label: 'Profile' },
     ];
@@ -37,6 +36,7 @@ const InstructorLayout = () => {
     }
 
     const handleLogout = () => {
+        logout();
         navigate('/login');
     };
 
@@ -127,18 +127,21 @@ const InstructorLayout = () => {
                                 className="pl-9 pr-4 py-1.5 text-sm border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 w-64 bg-slate-50"
                             />
                         </div>
-                        <button className="p-2 text-slate-400 hover:text-slate-600 relative">
+                        <button
+                            onClick={() => navigate('/notifications')}
+                            className="p-2 text-slate-400 hover:text-slate-600 relative"
+                        >
                             <Bell className="w-5 h-5" />
                             <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
                         </button>
                         <div className="w-px h-6 bg-slate-200 mx-1"></div>
                         <div className="flex items-center gap-3">
                             <div className="text-right hidden md:block">
-                                <p className="text-sm font-medium text-slate-900">{user.name}</p>
-                                <p className="text-xs text-slate-500">Instructor</p>
+                                <p className="text-sm font-medium text-slate-900">{user?.name || user?.sub || 'Instructor'}</p>
+                                <p className="text-xs text-slate-500">Instructor Account</p>
                             </div>
-                            <div className="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold border border-white shadow-sm">
-                                {user.avatar}
+                            <div className="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold border border-white shadow-sm text-sm uppercase">
+                                {(user?.name || user?.sub || 'U').charAt(0)}
                             </div>
                         </div>
                     </div>

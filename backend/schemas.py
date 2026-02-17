@@ -14,7 +14,8 @@ class Question(BaseModel):
 
 class Module(BaseModel):
     title: str
-    contentLink: str
+    contentLink: Optional[str] = None
+    documentPath: Optional[str] = None 
     quiz: List[Question] = []
 
 class UserBase(BaseModel):
@@ -100,3 +101,63 @@ class VerifyOtpRequest(BaseModel):
 class ResetPasswordRequest(BaseModel):
     token: str  # Frontend calls it 'token' but it's likely the OTP or a session identifier
     new_password: str
+
+# Badge Schemas
+class Badge(BaseModel):
+    id: int
+    name: str
+    description: str
+    icon: str
+
+    model_config = {
+        "from_attributes": True
+    }
+
+# Notification Schemas
+class Notification(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    message: str
+    type: str
+    is_read: bool
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
+
+# Message Schemas
+class MessageBase(BaseModel):
+    content: str
+    receiver_id: int
+
+class MessageCreate(MessageBase):
+    pass
+
+class Message(MessageBase):
+    id: int
+    sender_id: int
+    is_read: bool
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
+
+# Batch Schemas
+class BatchBase(BaseModel):
+    name: str
+    course_id: int
+
+class BatchCreate(BatchBase):
+    pass
+
+class Batch(BatchBase):
+    id: int
+    instructor_id: int
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }

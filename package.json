@@ -1,0 +1,10 @@
+{
+    "name": "edweb-root",
+    "version": "1.0.0",
+    "description": "EdWeb - Role-Based Learning Platform",
+    "scripts": {
+        "dev": "run_project.bat"
+    },
+    "author": "",
+    "license": "ISC"
+}

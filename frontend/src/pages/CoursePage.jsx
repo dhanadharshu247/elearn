@@ -216,6 +216,7 @@ const CoursePage = () => {
                                 </div>
                             </div>
 
+
                             {/* Quiz Section */}
                             {activeModule?.quiz && activeModule.quiz.length > 0 && (
                                 <div className="space-y-8">

@@ -1,30 +1,49 @@
-# edweb
+# EdWeb - Role-Based Learning Platform
 
-Education platform (learner + instructor).
+A comprehensive education platform featuring separate dashboards for Learners and Instructors.
 
-## Run the prototype
+## Tech Stack
+- **Backend**: Python (FastAPI, SQLAlchemy, SQLite)
+- **Frontend**: React (Vite, TailwindCSS)
 
-**Backend (API)**  
-Uses MongoDB. Set `MONGO_URI` and `JWT_SECRET` in `backend/.env`, then:
+## Quick Start (Easiest Way)
 
+To start both the **Backend (FastAPI)** and **Frontend (React)** simultaneously:
+
+### Option A: Windows Script (Recommended)
+Double-click `run_project.bat` in the root folder, or run:
 ```bash
-cd backend
-npm install
+run_project.bat
+```
+
+### Option B: NPM Command
+If you have Node.js installed, run this in the root folder:
+```bash
 npm run dev
 ```
 
-API runs at **http://localhost:8000**.
+---
 
-**Frontend**
+## Technical Details & Manual Setup
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+**Backend (FastAPI)**
+1. Navigate to the backend folder: `cd backend`
+2. Activate Virtual Environment: `.venv\Scripts\activate`
+3. Install dependencies: `pip install -r requirements.txt`
+4. Seed the database (if needed): `python seed.py`
+5. Run server: `python main.py`
 
-App runs at **http://localhost:5173**. From there you can use:
+**Frontend (React)**
+1. Navigate to frontend folder: `cd frontend`
+2. Install dependencies: `npm install`
+3. Run development server: `npm run dev`
 
-- **Login / Signup** — `/login`, `/signup`
-- **Learner** — `/learner/dashboard`, `/learner/my-courses`, `/learner/profile`
-- **Instructor** — `/instructor/dashboard`, `/instructor/courses`, `/instructor/learners`, `/instructor/profile`
+## Demo Accounts
+- **Instructor**: `instructor@edweb.com` / `password123`
+- **Learner**: `miru@gmail.com` / `password123`
+
+## Features
+- **Role-Based Access**: Separate protected routes for instructors and learners.
+- **Learner Reports**: Instructors can monitor student progress and achievements.
+- **Integrated Quizzes**: Module-based knowledge checks for learners.
+- **Course Management**: Instructor tools to publish and manage content.

@@ -64,8 +64,8 @@ const CourseCard = ({ title, description, students, duration, rating, status, im
                             onStatusToggle();
                         }}
                         className={`px-3 py-1 rounded-lg border transition-all ${status === 'Published'
-                                ? 'bg-amber-50 border-amber-200 text-amber-600 hover:bg-amber-100'
-                                : 'bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100'
+                            ? 'bg-amber-50 border-amber-200 text-amber-600 hover:bg-amber-100'
+                            : 'bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100'
                             }`}
                     >
                         {status === 'Published' ? 'Set to Draft' : 'Publish'}
@@ -83,6 +83,8 @@ const Courses = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [activeTab, setActiveTab] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
 
     const handleStatusUpdate = async (courseId, newStatus) => {
@@ -101,7 +103,12 @@ const Courses = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await api.get('/courses/my-courses');
+                const response = await api.get('/courses/my-courses', {
+                    params: {
+                        status: activeTab,
+                        q: searchQuery
+                    }
+                });
                 // Transform data if necessary to match CourseCard props
                 const formattedCourses = response.data.map(course => ({
                     id: course._id,
@@ -123,7 +130,7 @@ const Courses = () => {
         };
 
         fetchCourses();
-    }, []);
+    }, [activeTab, searchQuery]);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div className="text-red-500">{error}</div>;
@@ -148,19 +155,33 @@ const Courses = () => {
                 </Button>
             </div>
 
-            {/* Filter Tabs (Mock) */}
-            <div className="flex gap-2 overflow-x-auto pb-2">
-                {['All Courses', 'Published', 'Drafts', 'Archived'].map((tab, i) => (
-                    <button
-                        key={tab}
-                        className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${i === 0
-                            ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                            : 'bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-50 border border-slate-200'
-                            }`}
-                    >
-                        {tab}
-                    </button>
-                ))}
+            {/* Search and Filters */}
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+                <div className="flex gap-2 overflow-x-auto pb-2 flex-grow">
+                    {['All', 'Published', 'Draft', 'Archived'].map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab
+                                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                                : 'bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-50 border border-slate-200'
+                                }`}
+                        >
+                            {tab === 'All' ? 'All Courses' : tab}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                        type="text"
+                        placeholder="Search courses..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 pr-4 py-2 w-full text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white shadow-sm"
+                    />
+                </div>
             </div>
 
             {/* Course Grid */}

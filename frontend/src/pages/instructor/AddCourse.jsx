@@ -13,6 +13,7 @@ const AddCourse = () => {
             {
                 title: 'Module 1',
                 contentLink: '',
+                documents: [],
                 quiz: []
             }
         ]
@@ -36,7 +37,7 @@ const AddCourse = () => {
             ...prev,
             modules: [
                 ...prev.modules,
-                { title: `Module ${prev.modules.length + 1}`, contentLink: '', quiz: [] }
+                { title: `Module ${prev.modules.length + 1}`, contentLink: '', documents: [], quiz: [] }
             ]
         }));
     };
@@ -196,6 +197,7 @@ const AddCourse = () => {
                                         placeholder="YouTube Video Link or Article URL"
                                     />
                                 </div>
+
 
                                 {/* Quiz Builder for Module */}
                                 <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200">

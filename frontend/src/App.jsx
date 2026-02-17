@@ -20,6 +20,8 @@ import AddCourse from './pages/instructor/AddCourse';
 import Courses from './pages/instructor/Courses';
 import Learners from './pages/instructor/Learners';
 import Profile from './pages/instructor/Profile';
+import Batches from './pages/instructor/Batches';
+import Messages from './pages/instructor/Messages';
 
 // Learner Pages
 import LearnerDashboard from './pages/learner/LearnerDashboard';
@@ -30,6 +32,7 @@ import LearnerProfile from './pages/learner/Profile';
 // Common Pages
 import CoursePage from './pages/CoursePage';
 import QuizPage from './pages/QuizPage';
+import Notifications from './pages/Notifications';
 
 function App() {
   return (
@@ -52,6 +55,8 @@ function App() {
               <Route path="add-course" element={<AddCourse />} />
               <Route path="learners" element={<Learners />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="batches" element={<Batches />} />
+              <Route path="messages" element={<Messages />} />
               <Route path="courses/:id" element={<CoursePage />} />
             </Route>
           </Route>
@@ -64,11 +69,16 @@ function App() {
               <Route path="my-courses" element={<MyCourses />} />
               <Route path="achievements" element={<Achievements />} />
               <Route path="profile" element={<LearnerProfile />} />
+              <Route path="messages" element={<Messages />} />
               <Route path="courses/:id" element={<CoursePage />} />
               <Route path="quiz/:id" element={<QuizPage />} />
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/learner/dashboard" replace />} />
             </Route>
+          </Route>
+
+          <Route element={<PrivateRoute allowedRoles={['instructor', 'learner']} />}>
+            <Route path="/notifications" element={<Notifications />} />
           </Route>
 
           {/* Default Redirect */}

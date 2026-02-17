@@ -1,9 +1,12 @@
 import models, database, auth, schemas, random
 from datetime import timedelta, datetime
-from typing import List, Dict, Any
-from fastapi import FastAPI, Depends, HTTPException, status
+from typing import List, Dict, Any, Optional
+from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os, shutil
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -18,6 +21,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Ensure upload directory exists
+UPLOAD_DIR = "uploads/documents"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# Mount static files
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
 def read_root():
@@ -119,9 +129,19 @@ def reset_password(request: schemas.ResetPasswordRequest, db: Session = Depends(
     return {"message": "Password reset successfully"}
 
 @app.get("/courses", response_model=List[dict])
-def get_all_courses(db: Session = Depends(database.get_db)):
+def get_all_courses(q: Optional[str] = None, db: Session = Depends(database.get_db)):
     # Only return published courses for the general explore feed
-    courses = db.query(models.Course).filter(models.Course.status == "Published").all()
+    query = db.query(models.Course).filter(models.Course.status == "Published")
+    
+    if q:
+        query = query.filter(
+            or_(
+                models.Course.title.ilike(f"%{q}%"),
+                models.Course.description.ilike(f"%{q}%")
+            )
+        )
+    
+    courses = query.all()
     
     result = []
     for c in courses:
@@ -145,15 +165,33 @@ def get_all_courses(db: Session = Depends(database.get_db)):
     return result
 
 @app.get("/courses/my-courses", response_model=List[dict])
-def get_my_courses(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+def get_my_courses(
+    status: Optional[str] = None, 
+    q: Optional[str] = None,
+    current_user: dict = Depends(auth.get_current_user), 
+    db: Session = Depends(database.get_db)
+):
     user_id = current_user["id"]
     if current_user["role"] == "instructor":
-        courses = db.query(models.Course).filter(models.Course.instructor_id == user_id).all()
+        query = db.query(models.Course).filter(models.Course.instructor_id == user_id)
     else:
         # Get courses the user is enrolled in
         enrolments = db.query(models.Enrolment).filter(models.Enrolment.user_id == user_id).all()
         course_ids = [e.course_id for e in enrolments]
-        courses = db.query(models.Course).filter(models.Course.id.in_(course_ids)).all()
+        query = db.query(models.Course).filter(models.Course.id.in_(course_ids))
+    
+    if status and status != 'All':
+        query = query.filter(models.Course.status == status)
+    
+    if q:
+        query = query.filter(
+            or_(
+                models.Course.title.ilike(f"%{q}%"),
+                models.Course.description.ilike(f"%{q}%")
+            )
+        )
+
+    courses = query.all()
     
     result = []
     for c in courses:
@@ -246,6 +284,20 @@ def update_course_status(course_id: int, status_update: dict, current_user: dict
     
     course.status = status_update.get("status", "Draft")
     db.commit()
+
+    # If status is Published, notify all learners
+    if course.status == "Published":
+        learners = db.query(models.User).filter(models.User.role == "learner").all()
+        for learner in learners:
+            notification = models.Notification(
+                user_id=learner.id,
+                title="New Course Launched!",
+                message=f"Instructor {current_user['name']} has launched a new course: {course.title}",
+                type="course_launch"
+            )
+            db.add(notification)
+        db.commit()
+
     return {"message": "Status updated", "status": course.status}
 
 import traceback
@@ -299,21 +351,24 @@ def get_my_learners(current_user: dict = Depends(auth.get_current_user), db: Ses
                     "avatar": student.name[0].upper() if (student.name and len(student.name) > 0) else "U"
                 }
             
-            student_map[student.id]["courses"].append(course.title)
-            student_map[student.id]["progress_total"] += course_progress
-            student_map[student.id]["course_count"] += 1
-            if course_progress == 100 and "Legend" not in student_map[student.id]["badges"]:
-                student_map[student.id]["badges"].append("Legend")
+            student_data = student_map[student.id]
+            student_data["courses"].append(course.title)
+            student_data["progress_total"] += course_progress
+            student_data["course_count"] += 1
+            if course_progress == 100 and "Legend" not in student_data["badges"]:
+                student_data["badges"].append("Legend")
 
         # Finalize progress (average)
         result = []
         for s_id, data in student_map.items():
-            data["progress"] = int(data["progress_total"] / data["course_count"]) if data["course_count"] > 0 else 0
+            progress_total = data.get("progress_total", 0)
+            course_count = data.get("course_count", 0)
+            data["progress"] = int(progress_total / course_count) if course_count > 0 else 0
             if not data["badges"]:
                 data["badges"] = ["Newbie"]
             # Remove intermediate fields
-            del data["progress_total"]
-            del data["course_count"]
+            data.pop("progress_total", None)
+            data.pop("course_count", None)
             result.append(data)
         
         return result
@@ -348,6 +403,7 @@ def get_course(course_id: int, db: Session = Depends(database.get_db)):
                 "id": m.id,
                 "title": m.title,
                 "contentLink": m.contentLink,
+                "documentPath": m.documentPath, # Restore documentPath if needed, though it might be empty
                 "quiz": [
                     {
                         "id": q.id,
@@ -404,7 +460,118 @@ def submit_quiz_result(module_id: int, result: schemas.QuizResultCreate, current
     db.add(new_result)
     db.commit()
     db.refresh(new_result)
+
+    # Check for course completion and award badge
+    course = module.course
+    total_modules = len(course.modules)
+    completed_modules = db.query(models.QuizResult.module_id).filter(
+        models.QuizResult.user_id == current_user["id"],
+        models.QuizResult.module_id.in_([m.id for m in course.modules])
+    ).distinct().count()
+
+    if completed_modules == total_modules:
+        # Create or fetch a badge for this course
+        badge_name = f"{course.title} Graduate"
+        badge = db.query(models.Badge).filter(models.Badge.name == badge_name).first()
+        if not badge:
+            badge = models.Badge(
+                name=badge_name,
+                description=f"Completed all modules in {course.title}",
+                icon="Award"
+            )
+            db.add(badge)
+            db.commit()
+            db.refresh(badge)
+        
+        # Award badge to user if they don't have it
+        user = db.query(models.User).filter(models.User.id == current_user["id"]).first()
+        if badge not in user.badges:
+            user.badges.append(badge)
+            db.commit()
+            
+            # Send notification
+            notification = models.Notification(
+                user_id=user.id,
+                title="Badge Earned!",
+                message=f"Congratulations! You've earned the '{badge_name}' badge.",
+                type="success"
+            )
+            db.add(notification)
+            db.commit()
+
     return new_result
+
+# --- New Feature Endpoints ---
+
+# Notifications
+@app.get("/notifications", response_model=List[schemas.Notification])
+def get_notifications(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    return db.query(models.Notification).filter(models.Notification.user_id == current_user["id"]).order_by(models.Notification.created_at.desc()).all()
+
+@app.put("/notifications/{notif_id}/read")
+def mark_notification_read(notif_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    notif = db.query(models.Notification).filter(
+        models.Notification.id == notif_id,
+        models.Notification.user_id == current_user["id"]
+    ).first()
+    if notif:
+        notif.is_read = True
+        db.commit()
+    return {"message": "Notification marked as read"}
+
+# Messaging
+@app.post("/messages", response_model=schemas.Message)
+def send_message(msg: schemas.MessageCreate, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    new_msg = models.Message(
+        sender_id=current_user["id"],
+        receiver_id=msg.receiver_id,
+        content=msg.content
+    )
+    db.add(new_msg)
+    db.commit()
+    db.refresh(new_msg)
+    return new_msg
+
+@app.get("/messages", response_model=List[schemas.Message])
+def get_my_messages(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    return db.query(models.Message).filter(
+        or_(
+            models.Message.sender_id == current_user["id"],
+            models.Message.receiver_id == current_user["id"]
+        )
+    ).order_by(models.Message.created_at.desc()).all()
+
+# Batches
+@app.post("/batches", response_model=schemas.Batch)
+def create_batch(batch: schemas.BatchCreate, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user["role"] != "instructor":
+        raise HTTPException(status_code=403, detail="Only instructors can create batches")
+    
+    new_batch = models.Batch(
+        name=batch.name,
+        course_id=batch.course_id,
+        instructor_id=current_user["id"]
+    )
+    db.add(new_batch)
+    db.commit()
+    db.refresh(new_batch)
+    return new_batch
+
+@app.get("/batches", response_model=List[schemas.Batch])
+def get_batches(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user["role"] == "instructor":
+        return db.query(models.Batch).filter(models.Batch.instructor_id == current_user["id"]).all()
+    else:
+        # Learners can see batches they are in
+        user = db.query(models.User).filter(models.User.id == current_user["id"]).first()
+        # This relationship needs to be handled via secondary table batch_students
+        return db.query(models.Batch).join(models.Batch.students).filter(models.User.id == current_user["id"]).all()
+
+# Badges
+@app.get("/badges/my", response_model=List[schemas.Badge])
+def get_my_badges(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    user = db.query(models.User).filter(models.User.id == current_user["id"]).first()
+    return user.badges
 
 if __name__ == "__main__":
     import uvicorn
