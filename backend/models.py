@@ -51,9 +51,9 @@ class Course(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     instructor = relationship("User", back_populates="courses")
-    modules = relationship("Module", back_populates="course")
-    enrolments = relationship("Enrolment", back_populates="course")
-    batches = relationship("Batch", back_populates="course")
+    modules = relationship("Module", back_populates="course", cascade="all, delete-orphan")
+    enrolments = relationship("Enrolment", back_populates="course", cascade="all, delete-orphan")
+    batches = relationship("Batch", back_populates="course", cascade="all, delete-orphan")
 
 class Module(Base):
     __tablename__ = "modules"
@@ -64,8 +64,8 @@ class Module(Base):
     course_id = Column(Integer, ForeignKey("courses.id"))
 
     course = relationship("Course", back_populates="modules")
-    quiz = relationship("Question", back_populates="module")
-    results = relationship("QuizResult", back_populates="module")
+    quiz = relationship("Question", back_populates="module", cascade="all, delete-orphan")
+    results = relationship("QuizResult", back_populates="module", cascade="all, delete-orphan")
 
 class Question(Base):
     __tablename__ = "questions"
@@ -76,7 +76,7 @@ class Question(Base):
     module_id = Column(Integer, ForeignKey("modules.id"))
 
     module = relationship("Module", back_populates="quiz")
-    options = relationship("QuestionOption", back_populates="question")
+    options = relationship("QuestionOption", back_populates="question", cascade="all, delete-orphan")
 
 class QuestionOption(Base):
     __tablename__ = "question_options"

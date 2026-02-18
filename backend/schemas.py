@@ -48,6 +48,21 @@ class CourseBase(BaseModel):
 class CourseCreate(CourseBase):
     modules: List[Module] = []
 
+class QuestionUpdate(BaseModel):
+    id: Optional[int] = None
+    questionText: str
+    options: List[QuestionOption]
+    correctOptionIndex: int
+
+class ModuleUpdate(BaseModel):
+    id: Optional[int] = None
+    title: str
+    contentLink: Optional[str] = None
+    quiz: List[QuestionUpdate] = []
+
+class CourseUpdate(CourseBase):
+    modules: List[ModuleUpdate] = []
+
 class CourseResponse(CourseBase):
     id: int
     instructor_id: int

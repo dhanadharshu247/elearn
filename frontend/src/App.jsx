@@ -17,6 +17,7 @@ import LearnerLayout from './layouts/LearnerLayout';
 // Instructor Pages
 import InstructorDashboard from './pages/instructor/InstructorDashboard';
 import AddCourse from './pages/instructor/AddCourse';
+import EditCourse from './pages/instructor/EditCourse';
 import Courses from './pages/instructor/Courses';
 import Learners from './pages/instructor/Learners';
 import Profile from './pages/instructor/Profile';
@@ -52,8 +53,9 @@ function App() {
             <Route path="/instructor" element={<InstructorLayout />}>
               <Route index element={<Navigate to="/instructor/dashboard" replace />} />
               <Route path="dashboard" element={<InstructorDashboard />} />
-              <Route path="courses" element={<Courses />} />
               <Route path="add-course" element={<AddCourse />} />
+              <Route path="edit-course/:id" element={<EditCourse />} />
+              <Route path="courses" element={<Courses />} />
               <Route path="learners" element={<Learners />} />
               <Route path="profile" element={<Profile />} />
               <Route path="batches" element={<Batches />} />

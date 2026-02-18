@@ -331,6 +331,96 @@ def update_course_status(course_id: int, status_update: dict, current_user: dict
 
     return {"message": "Status updated", "status": course.status}
 
+@app.put("/courses/{course_id}", response_model=dict)
+def update_course(course_id: int, course_update: schemas.CourseUpdate, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user["role"] != "instructor":
+        raise HTTPException(status_code=403, detail="Only instructors can update courses")
+    
+    db_course = db.query(models.Course).filter(models.Course.id == course_id).first()
+    if not db_course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    if db_course.instructor_id != current_user["id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Update Course Metadata
+    db_course.title = course_update.title
+    db_course.description = course_update.description
+    db_course.thumbnail = course_update.thumbnail
+    db_course.price = course_update.price
+    db_course.status = course_update.status
+    
+    # Handle Modules
+    incoming_module_ids = [m.id for m in course_update.modules if m.id is not None]
+    
+    # Delete modules not in update
+    db.query(models.Module).filter(
+        models.Module.course_id == course_id,
+        ~models.Module.id.in_(incoming_module_ids)
+    ).delete(synchronize_session=False)
+    
+    for mod_data in course_update.modules:
+        if mod_data.id:
+            db_module = db.query(models.Module).filter(models.Module.id == mod_data.id).first()
+            if db_module:
+                db_module.title = mod_data.title
+                db_module.contentLink = mod_data.contentLink
+        else:
+            db_module = models.Module(
+                title=mod_data.title,
+                contentLink=mod_data.contentLink,
+                course_id=course_id
+            )
+            db.add(db_module)
+            db.flush()
+            
+        # Handle Quiz for this module
+        incoming_q_ids = [q.id for q in mod_data.quiz if q.id is not None]
+        db.query(models.Question).filter(
+            models.Question.module_id == db_module.id,
+            ~models.Question.id.in_(incoming_q_ids)
+        ).delete(synchronize_session=False)
+        
+        for q_data in mod_data.quiz:
+            if q_data.id:
+                db_q = db.query(models.Question).filter(models.Question.id == q_data.id).first()
+                if db_q:
+                    db_q.questionText = q_data.questionText
+                    db_q.correctOptionIndex = q_data.correctOptionIndex
+            else:
+                db_q = models.Question(
+                    questionText=q_data.questionText,
+                    correctOptionIndex=q_data.correctOptionIndex,
+                    module_id=db_module.id
+                )
+                db.add(db_q)
+                db.flush()
+            
+            # Recreate options for simplicity
+            db.query(models.QuestionOption).filter(models.QuestionOption.question_id == db_q.id).delete()
+            for opt_data in q_data.options:
+                db.add(models.QuestionOption(text=opt_data.text, question_id=db_q.id))
+
+    db.commit()
+    return {"message": "Course updated successfully"}
+
+@app.delete("/courses/{course_id}")
+def delete_course(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user["role"] != "instructor":
+        raise HTTPException(status_code=403, detail="Only instructors can delete courses")
+        
+    db_course = db.query(models.Course).filter(models.Course.id == course_id).first()
+    if not db_course:
+        raise HTTPException(status_code=404, detail="Course not found")
+        
+    if db_course.instructor_id != current_user["id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Deletion is handled by cascades in models.py
+    db.delete(db_course)
+    db.commit()
+    return {"message": "Course deleted successfully"}
+
 import traceback
 
 @app.get("/courses/my-learners", response_model=List[dict])
