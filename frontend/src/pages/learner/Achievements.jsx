@@ -6,36 +6,41 @@ const Achievements = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const [batches, setBatches] = useState([]);
+
     useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchData = async () => {
             try {
-                // We don't have a direct "me" endpoint that returns badges in all setups, 
-                // but usually /auth/me or just getting the stored user info works. 
-                // Let's assume we fetch fresh profile data or use a specific endpoint. 
-                // Since we don't have a dedicated "get my badges" endpoint, we'll fetch user profile.
-                // Assuming we might need to add this endpoint or reuse existing.
-                // For now, let's use a hypothetical /auth/profile or similar if it exists, 
-                // OR just use local storage if we updated it on login? No, badges update dynamicallly.
-                // Let's create a quick endpoint or use what we have. 
-                // Actually, let's use /auth/me if we implemented it, otherwise let's assume we can hit /users/:myId if we are authorized.
-                // Safest bet: Just mock for now or add endpoint. 
-                // I will assume we can get it from an endpoint I'll ensure exists: GET /auth/me
-                const response = await api.get('/auth/me');
-                setUser(response.data);
+                const [userRes, batchesRes] = await Promise.all([
+                    api.get('/auth/me'),
+                    api.get('/batches')
+                ]);
+                setUser(userRes.data);
+                setBatches(batchesRes.data);
             } catch (error) {
-                console.error('Profile fetch error:', error);
+                console.error('Data fetch error:', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchProfile();
+        fetchData();
     }, []);
 
     if (loading) return <div className="p-8">Loading achievements...</div>;
 
     const badges = user?.badges || [];
 
-    // Define all possible badges to show locked state
+    // Helper to get batch styling
+    const getBatchStyle = (name) => {
+        switch (name) {
+            case 'Diamond': return 'bg-cyan-100 text-cyan-700 border-cyan-200';
+            case 'Gold': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+            case 'Silver': return 'bg-slate-100 text-slate-700 border-slate-200';
+            case 'Bronze': return 'bg-orange-100 text-orange-700 border-orange-200';
+            default: return 'bg-gray-100 text-gray-700 border-gray-200';
+        }
+    };
+
     const allBadges = [
         { id: 'Newbie', label: 'Newbie', icon: Star, desc: 'Scored <= 50% on a quiz', color: 'text-blue-500 bg-blue-100' },
         { id: 'Intermediate', label: 'Intermediate', icon: Shield, desc: 'Scored > 50% & < 80%', color: 'text-purple-500 bg-purple-100' },
@@ -54,6 +59,27 @@ const Achievements = () => {
                 </div>
             </div>
 
+            {/* Batches Section */}
+            <div>
+                <h2 className="text-xl font-bold text-slate-800 mb-4">My Batches</h2>
+                {batches.length === 0 ? (
+                    <p className="text-slate-500 italic">No batches assigned yet. Complete a course to earn a batch!</p>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {batches.map((batch) => (
+                            <div key={batch.id} className={`p-4 rounded-xl border-2 flex items-center justify-between ${getBatchStyle(batch.name)}`}>
+                                <div>
+                                    <h3 className="font-bold text-lg">{batch.name} Batch</h3>
+                                    <p className="text-sm opacity-80">Course ID: {batch.course_id}</p>
+                                </div>
+                                <Award className="w-8 h-8 opacity-80" />
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <h2 className="text-xl font-bold text-slate-800 mb-4 pt-4">Badges</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {allBadges.map((badge) => {
                     const isUnlocked = badges.includes(badge.id);

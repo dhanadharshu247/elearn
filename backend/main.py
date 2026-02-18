@@ -1,7 +1,8 @@
 import models, database, auth, schemas, random
 from datetime import timedelta, datetime
 from typing import List, Dict, Any, Optional
-from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile
+from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os, shutil
@@ -21,6 +22,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Global Exception Handler
+@app.middleware("http")
+async def catch_exceptions_middleware(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as e:
+        import traceback
+        with open("backend_errors_global.log", "a") as f:
+            f.write(f"\nUnhandled Error: {request.method} {request.url}\n")
+            f.write(traceback.format_exc())
+            print(traceback.format_exc()) # Print to console too
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error", "error": str(e)}
+        )
+
 
 # Ensure upload directory exists
 UPLOAD_DIR = "uploads/documents"
@@ -269,6 +287,19 @@ def create_course(course: schemas.CourseCreate, current_user: dict = Depends(aut
                 )
                 db.add(new_opt)
     
+    # Notify all learners about the new course
+    learners = db.query(models.User).filter(models.User.role == "learner").all()
+    for learner in learners:
+        notif = models.Notification(
+            user_id=learner.id,
+            title="New Course Available",
+            message=f"A new course '{new_course.title}' has been published. Check it out!",
+            type="course_launch",
+            is_read=False,
+            created_at=datetime.utcnow()
+        )
+        db.add(notif)
+
     db.commit()
     return {**schemas.CourseResponse.from_orm(new_course).dict(), "_id": new_course.id}
 
@@ -379,42 +410,48 @@ def get_my_learners(current_user: dict = Depends(auth.get_current_user), db: Ses
 
 @app.get("/courses/{course_id}")
 def get_course(course_id: int, db: Session = Depends(database.get_db)):
-    course = db.query(models.Course).filter(models.Course.id == course_id).first()
-    if not course:
-        raise HTTPException(status_code=404, detail="Course not found")
-    
-    return {
-        "id": course.id,
-        "_id": course.id,
-        "title": course.title,
-        "description": course.description,
-        "thumbnail": course.thumbnail,
-        "price": course.price,
-        "status": course.status,
-        "instructor_id": course.instructor_id,
-        "enrolledStudents": [e.user_id for e in course.enrolments],
-        "instructor": {
-            "id": course.instructor.id,
-            "name": course.instructor.name,
-            "email": course.instructor.email
-        },
-        "modules": [
-            {
-                "id": m.id,
-                "title": m.title,
-                "contentLink": m.contentLink,
-                "documentPath": m.documentPath, # Restore documentPath if needed, though it might be empty
-                "quiz": [
+    try:
+        course = db.query(models.Course).filter(models.Course.id == course_id).first()
+        if not course:
+            raise HTTPException(status_code=404, detail="Course not found")
+        
+        return {
+            "id": course.id,
+            "_id": course.id,
+            "title": course.title,
+            "description": course.description,
+            "thumbnail": course.thumbnail,
+            "price": course.price,
+            "status": course.status,
+            "instructor_id": course.instructor_id,
+            "enrolledStudents": [e.user_id for e in course.enrolments],
+            "instructor": {
+                "id": course.instructor.id if course.instructor else None,
+                "name": course.instructor.name if course.instructor else "Unknown",
+                "email": course.instructor.email if course.instructor else ""
+            },
+                "modules": [
                     {
-                        "id": q.id,
-                        "questionText": q.questionText,
-                        "correctOptionIndex": q.correctOptionIndex,
-                        "options": [{"text": o.text} for o in q.options]
-                    } for q in m.quiz
+                        "id": m.id,
+                        "title": m.title,
+                        "contentLink": m.contentLink,
+                        "quiz": [
+                            {
+                                "id": q.id,
+                                "questionText": q.questionText,
+                                "correctOptionIndex": q.correctOptionIndex,
+                                "options": [{"text": o.text} for o in q.options]
+                            } for q in m.quiz
+                        ]
+                    } for m in course.modules
                 ]
-            } for m in course.modules
-        ]
-    }
+        }
+    except Exception as e:
+        import traceback
+        with open("backend_errors.log", "a") as f:
+            f.write(f"\nError in get_course({course_id}):\n")
+            f.write(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/courses/{course_id}/enroll")
 def enroll_in_course(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -499,6 +536,66 @@ def submit_quiz_result(module_id: int, result: schemas.QuizResultCreate, current
             db.add(notification)
             db.commit()
 
+        # --- Batch Assignment Logic ---
+        # Calculate average score
+        quiz_results = db.query(models.QuizResult).filter(
+            models.QuizResult.user_id == current_user["id"],
+            models.QuizResult.module_id.in_([m.id for m in course.modules])
+        ).all()
+        
+        total_score_percentage = 0
+        count = 0
+        for qr in quiz_results:
+            if qr.total_questions > 0:
+                total_score_percentage += (qr.score / qr.total_questions) * 100
+                count += 1
+        
+        avg_score = total_score_percentage / count if count > 0 else 0
+        
+        # Determine Batch Name
+        batch_name = "Bronze"
+        if avg_score >= 90:
+            batch_name = "Diamond"
+        elif avg_score >= 80:
+            batch_name = "Gold"
+        elif avg_score >= 70:
+            batch_name = "Silver"
+        
+        # Get or Create Batch
+        # We need to find a batch for this course with this name.
+        # Ideally, batches are unique by (course_id, name).
+        batch = db.query(models.Batch).filter(
+            models.Batch.course_id == course.id,
+            models.Batch.name == batch_name
+        ).first()
+        
+        if not batch:
+            batch = models.Batch(
+                name=batch_name,
+                course_id=course.id,
+                instructor_id=course.instructor_id
+            )
+            db.add(batch)
+            db.commit()
+            db.refresh(batch)
+        
+        # Assign User to Batch
+        # We need to fetch the user object again to be sure attached to session if needed, 
+        # but we already have 'user' from above.
+        if user not in batch.students:
+            batch.students.append(user)
+            db.commit()
+            
+            # Notify User about Batch
+            batch_notif = models.Notification(
+                user_id=user.id,
+                title="Batch Assigned!",
+                message=f"You've been assigned to the '{batch_name}' batch based on your performance ({int(avg_score)}%).",
+                type="info"
+            )
+            db.add(batch_notif)
+            db.commit()
+
     return new_result
 
 # --- New Feature Endpoints ---
@@ -568,12 +665,9 @@ def get_batches(current_user: dict = Depends(auth.get_current_user), db: Session
         return db.query(models.Batch).join(models.Batch.students).filter(models.User.id == current_user["id"]).all()
 
 # Badges
-@app.get("/badges/my", response_model=List[schemas.Badge])
-def get_my_badges(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    user = db.query(models.User).filter(models.User.id == current_user["id"]).first()
-    return user.badges
+
 
 if __name__ == "__main__":
     import uvicorn
     print("Starting SQLAlchemy-based server on http://127.0.0.1:8005")
-    uvicorn.run(app, host="127.0.0.1", port=8005)
+    uvicorn.run("main:app", host="127.0.0.1", port=8005, reload=True)

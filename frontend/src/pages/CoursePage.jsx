@@ -20,8 +20,8 @@ const CoursePage = () => {
                 const response = await api.get(`/courses/${id}`);
                 setCourse(response.data);
             } catch (err) {
-                setError('Failed to load course details');
                 console.error(err);
+                setError(err.response?.data?.detail || err.message || 'Failed to load course details');
             } finally {
                 setLoading(false);
             }
@@ -228,7 +228,9 @@ const CoursePage = () => {
                                     <div className="space-y-6">
                                         {activeModule.quiz.map((q, qIndex) => (
                                             <div key={qIndex} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
-                                                <h3 className="text-lg font-bold text-slate-800 mb-6">{qIndex + 1}. {q.questionText}</h3>
+                                                <div className="flex justify-between items-start mb-6">
+                                                    <h3 className="text-lg font-bold text-slate-800">{qIndex + 1}. {q.questionText}</h3>
+                                                </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     {q.options.map((opt, oIndex) => (
                                                         <button

@@ -28,6 +28,7 @@ import LearnerDashboard from './pages/learner/LearnerDashboard';
 import MyCourses from './pages/learner/MyCourses';
 import Achievements from './pages/learner/Achievements';
 import LearnerProfile from './pages/learner/Profile';
+import LearnerMessages from './pages/learner/Messages';
 
 // Common Pages
 import CoursePage from './pages/CoursePage';
@@ -69,7 +70,8 @@ function App() {
               <Route path="my-courses" element={<MyCourses />} />
               <Route path="achievements" element={<Achievements />} />
               <Route path="profile" element={<LearnerProfile />} />
-              <Route path="messages" element={<Messages />} />
+              <Route path="messages" element={<LearnerMessages />} />
+
               <Route path="courses/:id" element={<CoursePage />} />
               <Route path="quiz/:id" element={<QuizPage />} />
               {/* Fallback */}
@@ -88,7 +90,7 @@ function App() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </AuthProvider>
-    </Router>
+    </Router >
   );
 }
 

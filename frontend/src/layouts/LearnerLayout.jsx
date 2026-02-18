@@ -9,7 +9,8 @@ import {
     Menu,
     Bell,
     Search,
-    ChevronRight
+    ChevronRight,
+    MessageSquare
 } from 'lucide-react';
 
 const LearnerLayout = () => {
@@ -28,6 +29,7 @@ const LearnerLayout = () => {
         { path: '/learner/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/learner/my-courses', label: 'My Courses', icon: BookOpen },
         { path: '/learner/achievements', label: 'Achievements', icon: Award },
+        { path: '/learner/messages', label: 'Messages', icon: MessageSquare },
         { path: '/learner/profile', label: 'Profile', icon: User },
     ];
 
@@ -124,13 +126,14 @@ const LearnerLayout = () => {
                             <input
                                 type="text"
                                 placeholder="Search courses..."
-                                className="pl-9 pr-4 py-1.5 text-sm border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 w-64 bg-slate-50"
+                                id="global-search"
+                                className="pl-9 pr-8 py-1.5 text-sm border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 w-64 bg-slate-50"
                             />
                         </div>
-                        <button className="p-2 text-slate-400 hover:text-slate-600 relative">
+                        <NavLink to="/notifications" className="p-2 text-slate-400 hover:text-slate-600 relative">
                             <Bell className="w-5 h-5" />
                             <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-                        </button>
+                        </NavLink>
                         <div className="w-px h-6 bg-slate-200 mx-1"></div>
                         <div className="flex items-center gap-3">
                             <div className="text-right hidden md:block">

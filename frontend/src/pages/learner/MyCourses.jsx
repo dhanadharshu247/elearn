@@ -26,7 +26,8 @@ const MyCourses = () => {
                 setCourses(mappedCourses);
             } catch (err) {
                 console.error('Failed to fetch my courses:', err);
-                setError('Failed to load courses');
+                const url = err.config ? `${err.config.baseURL || ''}${err.config.url}` : 'unknown URL';
+                setError(`${err.response?.data?.detail || err.message} (Target: ${url})`);
             } finally {
                 setLoading(false);
             }
@@ -100,8 +101,8 @@ const MyCourses = () => {
                                     <Link
                                         to={`/learner/courses/${course.id}`}
                                         className={`block w-full text-center py-3 rounded-xl font-bold transition-all ${course.status === 'Completed'
-                                                ? 'bg-slate-900 text-white hover:bg-slate-800'
-                                                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100'
+                                            ? 'bg-slate-900 text-white hover:bg-slate-800'
+                                            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100'
                                             }`}
                                     >
                                         {course.status === 'Completed' ? 'Review Course' : 'Continue Learning →'}

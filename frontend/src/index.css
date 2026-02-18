@@ -8,6 +8,36 @@
     body {
         @apply font-sans antialiased text-gray-900 bg-slate-50;
     }
+
+    body.high-contrast {
+        @apply bg-black text-yellow-300;
+    }
+
+    body.high-contrast * {
+        border-color: #ffff00 !important;
+    }
+
+    body.high-contrast .bg-white {
+        @apply bg-gray-900 text-yellow-300;
+    }
+
+    body.high-contrast .text-slate-900,
+    body.high-contrast .text-slate-800,
+    body.high-contrast .text-slate-700,
+    body.high-contrast .text-slate-600,
+    body.high-contrast .text-slate-500 {
+        @apply text-yellow-300;
+    }
+
+    body.high-contrast .bg-slate-50,
+    body.high-contrast .bg-slate-100,
+    body.high-contrast .bg-indigo-50 {
+        @apply bg-black border border-yellow-300;
+    }
+
+    body.high-contrast button {
+        @apply border-2 border-yellow-300 bg-gray-900 text-yellow-300 hover:bg-yellow-900;
+    }
 }
 
 @layer utilities {
