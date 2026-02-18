@@ -665,6 +665,14 @@ def get_batches(current_user: dict = Depends(auth.get_current_user), db: Session
         return db.query(models.Batch).join(models.Batch.students).filter(models.User.id == current_user["id"]).all()
 
 # Badges
+@app.get("/users/me/badges", response_model=List[schemas.Badge])
+def get_my_badges(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    user = db.query(models.User).filter(models.User.id == current_user["id"]).first()
+    return user.badges
+
+@app.get("/badges/all", response_model=List[schemas.Badge])
+def get_all_badges(db: Session = Depends(database.get_db)):
+    return db.query(models.Badge).all()
 
 
 if __name__ == "__main__":

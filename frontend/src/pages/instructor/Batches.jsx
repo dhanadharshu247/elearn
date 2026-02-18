@@ -101,12 +101,12 @@ const Batches = () => {
                         <h2 className="text-2xl font-bold mb-6">Create New Batch</h2>
                         <form onSubmit={handleCreateBatch} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Batch Name</label>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Batch Name (e.g. Morning, Evening)</label>
                                 <input
                                     type="text"
                                     value={newBatch.name}
                                     onChange={(e) => setNewBatch({ ...newBatch, name: e.target.value })}
-                                    placeholder="e.g. Summer 2024 - Morning"
+                                    placeholder="e.g. Morning Batch / Evening Batch"
                                     className="w-full p-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500/10"
                                     required
                                 />
