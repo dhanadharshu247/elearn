@@ -16,6 +16,14 @@ const EditCourse = () => {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [generatingIndex, setGeneratingIndex] = useState(null);
+    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+    const [aiModalData, setAiModalData] = useState({
+        topic: '',
+        count: 10,
+        type: 'mcq',
+        index: null
+    });
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -108,6 +116,51 @@ const EditCourse = () => {
         const updatedModules = [...courseData.modules];
         updatedModules[mIndex].quiz.splice(qIndex, 1);
         setCourseData(prev => ({ ...prev, modules: updatedModules }));
+    };
+
+    const handleAIGenerate = async () => {
+        const { index, topic, type, count } = aiModalData;
+        setGeneratingIndex(index);
+        setIsAIModalOpen(false);
+        setError(null);
+        try {
+            const response = await api.post('/api/ai/generate-questions', {
+                topic: topic,
+                questionType: type,
+                count: parseInt(count) || 10
+            });
+
+            const newQuestions = response.data.questions;
+            if (newQuestions && newQuestions.length > 0) {
+                const updatedModules = [...courseData.modules];
+                // Map to ensure structure matches
+                const formattedQuestions = newQuestions.map(q => ({
+                    questionText: q.questionText,
+                    questionType: q.questionType || type,
+                    options: q.options || [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
+                    correctOptionIndex: q.correctOptionIndex !== undefined ? q.correctOptionIndex : 0,
+                    correctAnswerText: q.correctAnswerText || ''
+                }));
+
+                updatedModules[index].quiz = [...updatedModules[index].quiz, ...formattedQuestions];
+                setCourseData(prev => ({ ...prev, modules: updatedModules }));
+            }
+        } catch (err) {
+            console.error('AI Generation failed:', err);
+            setError('Failed to generate questions. Please try again.');
+        } finally {
+            setGeneratingIndex(null);
+        }
+    };
+
+    const openAIModal = (index, title, type) => {
+        setAiModalData({
+            index,
+            topic: title,
+            count: 10,
+            type
+        });
+        setIsAIModalOpen(true);
     };
 
     const handleSubmit = async (e) => {
@@ -275,13 +328,31 @@ const EditCourse = () => {
                                                 </div>
                                                 <h3 className="font-bold text-slate-800">Module Quiz ({module.quiz.length})</h3>
                                             </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => addQuestion(mIndex)}
-                                                className="text-xs font-bold text-indigo-600 bg-white border border-indigo-200 px-4 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors shadow-sm"
-                                            >
-                                                + Add Question
-                                            </button>
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    disabled={generatingIndex !== null}
+                                                    onClick={() => openAIModal(mIndex, module.title, 'mcq')}
+                                                    className="text-[10px] font-bold text-indigo-600 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1"
+                                                >
+                                                    {generatingIndex === mIndex ? '...' : '✨ AI MCQ'}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    disabled={generatingIndex !== null}
+                                                    onClick={() => openAIModal(mIndex, module.title, 'descriptive')}
+                                                    className="text-[10px] font-bold text-violet-600 bg-white border border-violet-200 px-3 py-1.5 rounded-lg hover:bg-violet-50 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1"
+                                                >
+                                                    {generatingIndex === mIndex ? '...' : '✨ AI Desc'}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => addQuestion(mIndex)}
+                                                    className="text-xs font-bold text-slate-600 bg-white border border-slate-200 px-4 py-1.5 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
+                                                >
+                                                    + Add Question
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div className="space-y-6">
@@ -402,6 +473,57 @@ const EditCourse = () => {
                     </div>
                 </div>
             </form>
+
+            {/* AI Generation Modal */}
+            {isAIModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <h3 className="text-xl font-bold text-slate-900 mb-1">Generate AI Questions</h3>
+                            <p className="text-sm text-slate-500 mb-6">Customize your {aiModalData.type.toUpperCase()} generation</p>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1.5">Topic</label>
+                                    <input
+                                        type="text"
+                                        value={aiModalData.topic}
+                                        onChange={(e) => setAiModalData(prev => ({ ...prev, topic: e.target.value }))}
+                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                                        placeholder="Enter topic..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1.5">Number of Questions</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="20"
+                                        value={aiModalData.count}
+                                        onChange={(e) => setAiModalData(prev => ({ ...prev, count: e.target.value }))}
+                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 mt-8">
+                                <button
+                                    onClick={() => setIsAIModalOpen(false)}
+                                    className="flex-1 px-4 py-2.5 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleAIGenerate}
+                                    className="flex-1 px-4 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-100"
+                                >
+                                    Generate
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

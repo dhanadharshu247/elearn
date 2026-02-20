@@ -72,6 +72,14 @@ async def chat_endpoint(request: ChatRequest):
     
     return {"response": response_text}
 
+@app.post("/api/ai/generate-questions")
+async def ai_generate_questions(request: schemas.AIGenerateRequest, current_user: dict = Depends(auth.get_current_user)):
+    if current_user["role"] != "instructor":
+        raise HTTPException(status_code=403, detail="Only instructors can generate questions")
+    
+    questions = rag.generate_questions(request.topic, request.questionType, request.count)
+    return {"questions": questions}
+
 
 # Global Exception Handler
 @app.middleware("http")

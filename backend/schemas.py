@@ -19,6 +19,11 @@ class Question(BaseModel):
         "from_attributes": True
     }
 
+class AIGenerateRequest(BaseModel):
+    topic: str
+    questionType: str = "mcq"
+    count: Optional[int] = 10
+
 class QuizResponse(BaseModel):
     title: str
     questions: List[Question]

@@ -125,3 +125,75 @@ Explain clearly and simply.
 
     except Exception as e:
         return f"AI Error: {e}"
+
+def generate_questions(topic, question_type, count=10):
+    try:
+        if question_type == "mcq":
+            prompt = f"""
+Generate {count} multiple choice questions about '{topic}'. 
+Return ONLY a valid JSON list of objects. Do not include any other text or explanation.
+Each object MUST follow this structure exactly:
+{{
+    "questionText": "The question string",
+    "questionType": "mcq",
+    "options": [
+        {{"text": "Option 1"}},
+        {{"text": "Option 2"}},
+        {{"text": "Option 3"}},
+        {{"text": "Option 4"}}
+    ],
+    "correctOptionIndex": 0
+}}
+"""
+        else: # descriptive
+            prompt = f"""
+Generate {count} descriptive questions about '{topic}'. 
+Return ONLY a valid JSON list of objects. Do not include any other text or explanation.
+Each object MUST follow this structure exactly:
+{{
+    "questionText": "The descriptive question string",
+    "questionType": "descriptive",
+    "correctAnswerText": "A sample correct answer or key points"
+}}
+"""
+
+        log_debug(f"Generating {count} {question_type} questions for topic: {topic}")
+
+        response = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "llama-3.1-8b-instant",
+                "messages": [
+                    {"role": "system", "content": "You are a helpful educational assistant that generates structured quiz questions in JSON format."},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.7,
+                "response_format": { "type": "json_object" }
+            },
+            timeout=60
+        )
+
+        data = response.json()
+        if "choices" in data:
+            content = data["choices"][0]["message"]["content"]
+            import json
+            parsed = json.loads(content)
+            
+            if isinstance(parsed, dict):
+                for key in ["questions", "quiz", "data"]:
+                    if key in parsed and isinstance(parsed[key], list):
+                        return parsed[key]
+                if "questionText" in parsed: 
+                    return [parsed]
+            
+            return parsed
+
+        return []
+
+    except Exception as e:
+        log_debug(f"Generation Error: {e}")
+        return []

@@ -10,3 +10,21 @@
 2026-02-20 19:08:25.282818: Key used: gsk_tg...pooM
 2026-02-20 19:08:26.294284: Groq Response Status: 200
 2026-02-20 19:08:26.295194: Groq Response Data: {'id': 'chatcmpl-09754ac7-4088-4d16-838a-e600e04be97f', 'object': 'chat.completion', 'created': 1771594709, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': 'It looks like you\'re saying "hi" to start our conversation. I\'m here to help you with any questions or topics you\'d like to discuss.\n\nTo get started, can you please tell me a bit more about what\'s on your mind? Are you working on a specific assignment, studying for a test, or just need help with something in general?'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.326729973, 'prompt_tokens': 59, 'prompt_time': 0.010048456, 'completion_tokens': 73, 'completion_time': 0.113527218, 'total_tokens': 132, 'total_time': 0.123575674}, 'usage_breakdown': None, 'system_fingerprint': 'fp_ff2b098aaf', 'x_groq': {'id': 'req_01khxmbycqep38kkcam93d2c94', 'seed': 462357544}, 'service_tier': 'on_demand'}
+2026-02-20 20:45:47.965654: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-20 20:45:47.967193: Key used: gsk_tg...pooM
+2026-02-20 20:45:49.132568: Groq Response Status: 200
+2026-02-20 20:45:49.133582: Groq Response Data: {'id': 'chatcmpl-7c9944c0-25db-4f02-ab41-ffa4a272e1f9', 'object': 'chat.completion', 'created': 1771600563, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': "Hi there. I'm happy to help. Since you asked me to explain things clearly and simply, I'll make sure to break it down in a way that's easy to understand.\n\nIs there something specific you'd like me to explain, or would you like to start with a topic in mind?"}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.068573485, 'prompt_tokens': 59, 'prompt_time': 0.004899145, 'completion_tokens': 61, 'completion_time': 0.113018036, 'total_tokens': 120, 'total_time': 0.117917181}, 'usage_breakdown': None, 'system_fingerprint': 'fp_f757f4b0bf', 'x_groq': {'id': 'req_01khxsyjndfytv33dnqmgnpf8x', 'seed': 349745985}, 'service_tier': 'on_demand'}
+2026-02-20 21:26:20.386379: Generating 3 mcq questions for topic: React Hooks
+2026-02-20 21:26:21.206619: Generating 2 descriptive questions for topic: Async Programming
+2026-02-20 21:27:06.911700: Generating 10 mcq questions for topic: Module 1
+2026-02-20 21:27:15.716503: Generating 10 descriptive questions for topic: Module 1
+2026-02-20 21:27:24.966590: Generating 10 descriptive questions for topic: Module 1
+2026-02-20 21:33:11.418442: Generating 5 mcq questions for topic: Machine learning
+2026-02-20 21:33:46.721032: Generating 5 mcq questions for topic: Machine learning
+2026-02-20 21:33:59.786486: Generating 3 descriptive questions for topic: Machine learning
+2026-02-20 21:35:06.113219: Generating 5 mcq questions for topic: machine learning
+2026-02-20 21:36:06.297903: Generation Error: HTTPSConnectionPool(host='api.groq.com', port=443): Read timed out. (read timeout=60)
+2026-02-20 21:36:53.763414: Generating 5 mcq questions for topic: machine learning
+2026-02-20 21:37:13.202815: Generating 2 mcq questions for topic: machine learning
+2026-02-20 21:38:29.703071: Generating 1 mcq questions for topic: Machine learning
+2026-02-20 21:38:43.788857: Generating 2 descriptive questions for topic: Machine learning
