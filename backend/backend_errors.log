@@ -1,0 +1,6 @@
+
+Error in get_course(7):
+Traceback (most recent call last):
+  File "C:\Users\HP\OneDrive\Desktop\edweb\backend\main.py", line 517, in get_course
+    raise HTTPException(status_code=403, detail="This course is currently not available (Draft/Archived)")
+fastapi.exceptions.HTTPException: 403: This course is currently not available (Draft/Archived)

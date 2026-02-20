@@ -196,7 +196,12 @@ def get_my_courses(
         # Get courses the user is enrolled in
         enrolments = db.query(models.Enrolment).filter(models.Enrolment.user_id == user_id).all()
         course_ids = [e.course_id for e in enrolments]
-        query = db.query(models.Course).filter(models.Course.id.in_(course_ids))
+        
+        # Learners should ONLY see 'Published' courses in their learning list
+        query = db.query(models.Course).filter(
+            models.Course.id.in_(course_ids),
+            models.Course.status == "Published"
+        )
     
     if status and status != 'All':
         query = query.filter(models.Course.status == status)
@@ -499,11 +504,17 @@ def get_my_learners(current_user: dict = Depends(auth.get_current_user), db: Ses
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/courses/{course_id}")
-def get_course(course_id: int, db: Session = Depends(database.get_db)):
+def get_course(course_id: int, current_user_opt: Optional[dict] = Depends(auth.get_current_user_optional), db: Session = Depends(database.get_db)):
     try:
         course = db.query(models.Course).filter(models.Course.id == course_id).first()
         if not course:
             raise HTTPException(status_code=404, detail="Course not found")
+        
+        # Security: If not published and user is not the instructor, deny access
+        if course.status != "Published":
+            is_instructor = current_user_opt and current_user_opt.get("role") == "instructor" and course.instructor_id == current_user_opt.get("id")
+            if not is_instructor:
+                raise HTTPException(status_code=403, detail="This course is currently not available (Draft/Archived)")
         
         return {
             "id": course.id,

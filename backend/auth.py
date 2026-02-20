@@ -63,3 +63,21 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         "name": user.name,
         "role": user.role
     }
+
+def get_current_user_optional(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)) -> Optional[dict]:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            return None
+        user = db.query(models.User).filter(models.User.email == email).first()
+        if user is None:
+            return None
+        return {
+            "id": user.id,
+            "email": user.email,
+            "name": user.name,
+            "role": user.role
+        }
+    except Exception:
+        return None
