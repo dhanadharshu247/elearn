@@ -164,6 +164,8 @@ class Message(MessageBase):
 class BatchBase(BaseModel):
     name: str
     course_id: int
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
 
 class BatchCreate(BatchBase):
     pass
@@ -171,6 +173,10 @@ class BatchCreate(BatchBase):
 class Batch(BatchBase):
     id: int
     instructor_id: int
+    course_title: Optional[str] = None
+    students: List[UserResponse] = []
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
     created_at: datetime
 
     model_config = {

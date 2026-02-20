@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
-import { Search, Filter, MoreVertical, Mail, CheckCircle, Clock } from 'lucide-react';
+import { Search, Filter, MoreVertical, Mail, CheckCircle, Clock, X, Calendar } from 'lucide-react';
 
 const Learners = () => {
+    const navigate = useNavigate();
     const [learners, setLearners] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showFilters, setShowFilters] = useState(false);
+    const [dateFilters, setDateFilters] = useState({
+        startDate: '',
+        endDate: ''
+    });
 
     useEffect(() => {
         const fetchLearners = async () => {
@@ -28,10 +35,27 @@ const Learners = () => {
         fetchLearners();
     }, []);
 
-    const filteredLearners = learners.filter(learner =>
-        learner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        learner.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredLearners = learners.filter(learner => {
+        const matchesSearch = learner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            learner.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+        let matchesDate = true;
+        if (dateFilters.startDate || dateFilters.endDate) {
+            const activeDate = new Date(learner.lastActive);
+            if (dateFilters.startDate) {
+                const start = new Date(dateFilters.startDate);
+                if (activeDate < start) matchesDate = false;
+            }
+            if (dateFilters.endDate) {
+                const end = new Date(dateFilters.endDate);
+                // Set to end of day
+                end.setHours(23, 59, 59, 999);
+                if (activeDate > end) matchesDate = false;
+            }
+        }
+
+        return matchesSearch && matchesDate;
+    });
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -59,14 +83,55 @@ const Learners = () => {
                 </div>
 
                 <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-slate-600 font-medium shadow-sm hover:shadow-md hover:border-indigo-200 transition-all">
+                    <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className={`flex items-center gap-2 px-5 py-3 border rounded-xl font-medium shadow-sm transition-all ${showFilters ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-slate-200 text-slate-600 hover:shadow-md hover:border-indigo-200'}`}
+                    >
                         <Filter className="w-4 h-4" /> Filter
                     </button>
-                    <button className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition-all hover:-translate-y-0.5">
+                    <button
+                        onClick={() => navigate('/instructor/messages')}
+                        className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition-all hover:-translate-y-0.5"
+                    >
                         <Mail className="w-4 h-4" /> Message All
                     </button>
                 </div>
             </div>
+
+            {/* Filter Bar */}
+            {showFilters && (
+                <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm animate-fade-in flex flex-col md:flex-row items-end gap-6">
+                    <div className="space-y-2 w-full md:w-auto">
+                        <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-indigo-500" /> Start Date
+                        </label>
+                        <input
+                            type="date"
+                            value={dateFilters.startDate}
+                            onChange={(e) => setDateFilters({ ...dateFilters, startDate: e.target.value })}
+                            className="w-full md:w-auto px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-100 focus:bg-white transition-all text-slate-700"
+                        />
+                    </div>
+                    <div className="space-y-2 w-full md:w-auto">
+                        <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-indigo-500" /> End Date
+                        </label>
+                        <input
+                            type="date"
+                            value={dateFilters.endDate}
+                            onChange={(e) => setDateFilters({ ...dateFilters, endDate: e.target.value })}
+                            className="w-full md:w-auto px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-100 focus:bg-white transition-all text-slate-700"
+                        />
+                    </div>
+                    <button
+                        onClick={() => setDateFilters({ startDate: '', endDate: '' })}
+                        className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                        title="Clear Dates"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+            )}
 
             {/* Main Content Card */}
             <div className="bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-white/60 overflow-hidden animate-fade-in-up">
