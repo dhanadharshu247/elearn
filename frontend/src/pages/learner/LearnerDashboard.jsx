@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
+import Chatbot from '../../components/Chatbot';
 
 const LearnerDashboard = () => {
     const [myCourses, setMyCourses] = useState([]);
@@ -43,7 +44,7 @@ const LearnerDashboard = () => {
     );
 
     return (
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto p-6 relative">
             <h1 className="text-3xl font-bold mb-8 text-gray-800">Learner Dashboard</h1>
 
             {/* Enrolled Courses */}
@@ -138,6 +139,8 @@ const LearnerDashboard = () => {
                     </div>
                 )}
             </section>
+
+            <Chatbot />
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "http://127.0.0.1:8005"
+BASE_URL = "http://127.0.0.1:8000"
 COURSE_ID = 2
 ORIGIN = "http://127.0.0.1:5173"
 

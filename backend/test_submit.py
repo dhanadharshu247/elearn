@@ -1,7 +1,7 @@
 import requests
 import time
 
-BASE_URL = "http://127.0.0.1:8005"
+BASE_URL = "http://127.0.0.1:8000"
 
 def test():
     # 1. Login or Register

@@ -5,8 +5,8 @@ echo Starting EdWeb Project...
 echo ==========================================
 
 :: 0. Cleanup old processes (if any are running)
-echo [CLEANUP] Stopping any existing servers on ports 8005 and 5173...
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8005 ^| findstr LISTENING') do taskkill /f /pid %%a >nul 2>&1
+echo [CLEANUP] Stopping any existing servers on ports 8000 and 5173...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8000 ^| findstr LISTENING') do taskkill /f /pid %%a >nul 2>&1
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5173 ^| findstr LISTENING') do taskkill /f /pid %%a >nul 2>&1
 echo [CLEANUP] Done.
 
@@ -43,7 +43,7 @@ if not exist "backend\edweb.db" (
 )
 
 :: 3. Start Backend in a new window
-echo [BACKEND] Starting FastAPI on http://127.0.0.1:8005...
+echo [BACKEND] Starting FastAPI on http://127.0.0.1:8000...
 start "EdWeb Backend" cmd /k "cd backend && .venv\Scripts\activate && python main.py"
 
 :: 4. Start Frontend in a new window

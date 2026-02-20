@@ -8,6 +8,8 @@ from fastapi.staticfiles import StaticFiles
 import os, shutil
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from pydantic import BaseModel  # Import BaseModel
+import rag  # Import the RAG engine
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -22,6 +24,50 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- RAG Integration ---
+@app.on_event("startup")
+def startup_event():
+    # Index content on startup
+    db = database.SessionLocal()
+    try:
+        courses = db.query(models.Course).filter(models.Course.status == "Published").all()
+        # Transform to list of dicts for RAG
+        courses_data = []
+        for c in courses:
+            c_dict = {
+                "id": c.id,
+                "title": c.title,
+                "description": c.description,
+                "modules": [{"id": m.id, "title": m.title, "contentLink": m.contentLink} for m in c.modules]
+            }
+            courses_data.append(c_dict)
+        
+        # Build Index
+        rag.index_content(courses_data)
+        print("RAG Index built successfully.")
+    except Exception as e:
+        print(f"Failed to build RAG index: {e}")
+    finally:
+        db.close()
+
+class ChatRequest(BaseModel):
+    message: str
+    history: Optional[List[dict]] = []
+
+
+@app.post("/api/chat")
+async def chat_endpoint(request: ChatRequest):
+    user_query = request.message
+    
+    # 1. Retrieve Context
+    context_chunks = rag.retrieve(user_query)
+    
+    # 2. Generate Response
+    response_text = rag.generate_response(user_query, context_chunks)
+    
+    return {"response": response_text}
+
 
 # Global Exception Handler
 @app.middleware("http")
@@ -778,5 +824,5 @@ def get_all_badges(db: Session = Depends(database.get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-    print("Starting SQLAlchemy-based server on http://127.0.0.1:8005")
-    uvicorn.run("main:app", host="127.0.0.1", port=8005, reload=True)
+    print("Starting SQLAlchemy-based server on http://127.0.0.1:8000")
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

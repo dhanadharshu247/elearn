@@ -37,10 +37,10 @@ def check_database():
 
 def check_ports():
     print("[4/4] Checking Ports...")
-    if check_port(8005):
-        print("  ⚠️ Port 8005 (Backend) is already in use. Ensure no other server is running.")
+    if check_port(8000):
+        print("  ⚠️ Port 8000 (Backend) is already in use. Ensure no other server is running.")
     else:
-        print("  ✅ Port 8005 is available.")
+        print("  ✅ Port 8000 is available.")
     
     if check_port(5173):
         print("  ⚠️ Port 5173 (Frontend) is already in use.")

@@ -1,7 +1,7 @@
 import requests
 
 def test_login():
-    url = "http://127.0.0.1:8005/auth/login"
+    url = "http://127.0.0.1:8000/auth/login"
     data = {
         "username": "instructor@edweb.com",
         "password": "password123"

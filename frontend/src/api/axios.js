@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:8005', // Use explicit 127.0.0.1 for reliability in Windows environments
+    baseURL: 'http://127.0.0.1:8000', // Use explicit 127.0.0.1 for reliability in Windows environments
     headers: {
         'Content-Type': 'application/json',
     },
