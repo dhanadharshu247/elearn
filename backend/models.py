@@ -72,7 +72,9 @@ class Question(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     questionText = Column(String)
-    correctOptionIndex = Column(Integer)
+    questionType = Column(String, default="mcq") # 'mcq' or 'descriptive'
+    correctOptionIndex = Column(Integer, nullable=True) # For MCQ
+    correctAnswerText = Column(String, nullable=True) # For Descriptive
     module_id = Column(Integer, ForeignKey("modules.id"))
 
     module = relationship("Module", back_populates="quiz")

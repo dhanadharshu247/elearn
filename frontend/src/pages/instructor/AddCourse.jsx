@@ -52,8 +52,10 @@ const AddCourse = () => {
         const updatedModules = [...courseData.modules];
         updatedModules[moduleIndex].quiz.push({
             questionText: '',
+            questionType: 'mcq',
             options: [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
-            correctOptionIndex: 0
+            correctOptionIndex: 0,
+            correctAnswerText: ''
         });
         setCourseData(prev => ({ ...prev, modules: updatedModules }));
     };
@@ -202,7 +204,7 @@ const AddCourse = () => {
                                 {/* Quiz Builder for Module */}
                                 <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
                                     <div className="flex justify-between items-center mb-4">
-                                        <h3 className="font-bold text-slate-700">Module Test (MCQs)</h3>
+                                        <h3 className="font-bold text-slate-700">Module Test (MCQs & Descriptive)</h3>
                                         <button
                                             type="button"
                                             onClick={() => addQuestion(mIndex)}
@@ -223,33 +225,61 @@ const AddCourse = () => {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12" />
                                                 </svg>
                                             </button>
-                                            <input
-                                                type="text"
-                                                value={q.questionText}
-                                                onChange={(e) => updateQuestion(mIndex, qIndex, 'questionText', e.target.value)}
-                                                className="w-full px-3 py-2 border-b border-slate-100 focus:outline-none mb-3 font-medium"
-                                                placeholder="Enter question text..."
-                                            />
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                {q.options.map((opt, oIndex) => (
-                                                    <div key={oIndex} className="flex items-center space-x-2">
-                                                        <input
-                                                            type="radio"
-                                                            name={`correct-${mIndex}-${qIndex}`}
-                                                            checked={q.correctOptionIndex === oIndex}
-                                                            onChange={() => updateQuestion(mIndex, qIndex, 'correctOptionIndex', oIndex)}
-                                                            className="text-indigo-600 focus:ring-indigo-500"
-                                                        />
-                                                        <input
-                                                            type="text"
-                                                            value={opt.text}
-                                                            onChange={(e) => updateOption(mIndex, qIndex, oIndex, e.target.value)}
-                                                            className="flex-1 text-sm px-2 py-1 border-none focus:ring-b-2 focus:ring-indigo-100"
-                                                            placeholder={`Option ${oIndex + 1}`}
-                                                        />
-                                                    </div>
-                                                ))}
+                                            <div className="flex gap-4 mb-3">
+                                                <div className="flex-1">
+                                                    <input
+                                                        type="text"
+                                                        value={q.questionText}
+                                                        onChange={(e) => updateQuestion(mIndex, qIndex, 'questionText', e.target.value)}
+                                                        className="w-full px-3 py-2 border-b border-slate-100 focus:outline-none font-medium"
+                                                        placeholder="Enter question text..."
+                                                    />
+                                                </div>
+                                                <div className="w-40">
+                                                    <select
+                                                        value={q.questionType}
+                                                        onChange={(e) => updateQuestion(mIndex, qIndex, 'questionType', e.target.value)}
+                                                        className="w-full p-2 text-sm border-none bg-slate-50 rounded-lg focus:ring-2 focus:ring-indigo-500/10"
+                                                    >
+                                                        <option value="mcq">MCQ</option>
+                                                        <option value="descriptive">Descriptive</option>
+                                                    </select>
+                                                </div>
                                             </div>
+
+                                            {q.questionType === 'mcq' ? (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    {q.options.map((opt, oIndex) => (
+                                                        <div key={oIndex} className="flex items-center space-x-2">
+                                                            <input
+                                                                type="radio"
+                                                                name={`correct-${mIndex}-${qIndex}`}
+                                                                checked={q.correctOptionIndex === oIndex}
+                                                                onChange={() => updateQuestion(mIndex, qIndex, 'correctOptionIndex', oIndex)}
+                                                                className="text-indigo-600 focus:ring-indigo-500"
+                                                            />
+                                                            <input
+                                                                type="text"
+                                                                value={opt.text}
+                                                                onChange={(e) => updateOption(mIndex, qIndex, oIndex, e.target.value)}
+                                                                className="flex-1 text-sm px-2 py-1 border-none focus:ring-b-2 focus:ring-indigo-100"
+                                                                placeholder={`Option ${oIndex + 1}`}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="mt-2 text-sm">
+                                                    <label className="block font-bold text-slate-500 mb-1">Model Answer (Optional)</label>
+                                                    <textarea
+                                                        value={q.correctAnswerText || ''}
+                                                        onChange={(e) => updateQuestion(mIndex, qIndex, 'correctAnswerText', e.target.value)}
+                                                        className="w-full p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500/10"
+                                                        rows="2"
+                                                        placeholder="Enter the correct answer or key points..."
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

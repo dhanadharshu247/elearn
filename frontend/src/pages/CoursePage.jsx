@@ -54,13 +54,18 @@ const CoursePage = () => {
     const submitQuiz = async () => {
         const currentModule = course.modules[activeModuleIndex];
         let correctCount = 0;
+        let mcqCount = 0;
         currentModule.quiz.forEach((q, idx) => {
-            if (quizAnswers[idx] === q.correctOptionIndex) {
-                correctCount++;
+            if (q.questionType === 'mcq') {
+                mcqCount++;
+                if (quizAnswers[idx] === q.correctOptionIndex) {
+                    correctCount++;
+                }
             }
         });
 
-        const score = parseInt(((correctCount / currentModule.quiz.length) * 100).toFixed(0));
+        const totalScorable = mcqCount || 1;
+        const score = parseInt(((correctCount / totalScorable) * 100).toFixed(0));
 
         try {
             await api.post(`/modules/${currentModule.id}/quiz/submit`, {
@@ -231,25 +236,37 @@ const CoursePage = () => {
                                                 <div className="flex justify-between items-start mb-6">
                                                     <h3 className="text-lg font-bold text-slate-800">{qIndex + 1}. {q.questionText}</h3>
                                                 </div>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {q.options.map((opt, oIndex) => (
-                                                        <button
-                                                            key={oIndex}
-                                                            onClick={() => handleAnswerChange(qIndex, oIndex)}
-                                                            className={`p-4 rounded-2xl text-left transition-all border-2 font-medium ${quizAnswers[qIndex] === oIndex
-                                                                ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                                                                : 'hover:bg-slate-50 border-slate-100 text-slate-600'
-                                                                }`}
-                                                        >
-                                                            <div className="flex items-center gap-3">
-                                                                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 ${quizAnswers[qIndex] === oIndex ? 'bg-indigo-500 text-white border-indigo-500' : 'border-slate-200'}`}>
-                                                                    {String.fromCharCode(65 + oIndex)}
-                                                                </span>
-                                                                {opt.text}
-                                                            </div>
-                                                        </button>
-                                                    ))}
-                                                </div>
+                                                {q.questionType === 'mcq' ? (
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        {q.options.map((opt, oIndex) => (
+                                                            <button
+                                                                key={oIndex}
+                                                                onClick={() => handleAnswerChange(qIndex, oIndex)}
+                                                                className={`p-4 rounded-2xl text-left transition-all border-2 font-medium ${quizAnswers[qIndex] === oIndex
+                                                                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
+                                                                    : 'hover:bg-slate-50 border-slate-100 text-slate-600'
+                                                                    }`}
+                                                            >
+                                                                <div className="flex items-center gap-3">
+                                                                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 ${quizAnswers[qIndex] === oIndex ? 'bg-indigo-500 text-white border-indigo-500' : 'border-slate-200'}`}>
+                                                                        {String.fromCharCode(65 + oIndex)}
+                                                                    </span>
+                                                                    {opt.text}
+                                                                </div>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-4">
+                                                        <textarea
+                                                            value={quizAnswers[qIndex] || ''}
+                                                            onChange={(e) => handleAnswerChange(qIndex, e.target.value)}
+                                                            className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 focus:bg-white transition-all outline-none italic text-slate-600"
+                                                            rows="4"
+                                                            placeholder="Type your answer here..."
+                                                        />
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
 

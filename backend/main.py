@@ -10,6 +10,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from pydantic import BaseModel  # Import BaseModel
 import rag  # Import the RAG engine
+from dotenv import load_dotenv
+
+# Load environment variables at the very beginning
+load_dotenv(override=True)
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)

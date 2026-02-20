@@ -38,10 +38,10 @@ const QuizPage = () => {
         fetchQuiz();
     }, [id]);
 
-    const handleOptionSelect = (qIndex, oIndex) => {
+    const handleAnswerChange = (qIndex, value) => {
         setSelectedAnswers(prev => ({
             ...prev,
-            [qIndex]: oIndex
+            [qIndex]: value
         }));
     };
 
@@ -49,8 +49,8 @@ const QuizPage = () => {
         if (!quiz) return;
         setSubmitting(true);
 
-        // Prepare answers array
-        const answersArray = quiz.questions.map((_, index) => selectedAnswers[index] ?? -1);
+        // Prepare answers array (can be mixed index and text)
+        const answersArray = quiz.questions.map((_, index) => selectedAnswers[index] ?? (quiz.questions[index].questionType === 'mcq' ? -1 : ""));
 
         try {
             const res = await api.post(`/quizzes/${id}/submit`, { answers: answersArray });
@@ -105,30 +105,40 @@ const QuizPage = () => {
                             <span className="text-gray-400 mr-2">#{qIndex + 1}</span>
                             {q.questionText}
                         </h3>
-                        <div className="space-y-2">
-                            {q.options.map((opt, oIndex) => (
-                                <label
-                                    key={oIndex}
-                                    className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${selectedAnswers[qIndex] === oIndex
+                        {q.questionType === 'mcq' ? (
+                            <div className="space-y-2">
+                                {q.options.map((opt, oIndex) => (
+                                    <label
+                                        key={oIndex}
+                                        className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${selectedAnswers[qIndex] === oIndex
                                             ? 'bg-blue-50 border-blue-500 ring-1 ring-blue-500'
                                             : 'hover:bg-gray-50 border-gray-200'
-                                        }`}
-                                >
-                                    <input
-                                        type="radio"
-                                        name={`question-${qIndex}`}
-                                        className="hidden"
-                                        checked={selectedAnswers[qIndex] === oIndex}
-                                        onChange={() => handleOptionSelect(qIndex, oIndex)}
-                                    />
-                                    <div className={`w-4 h-4 rounded-full border mr-3 flex items-center justify-center ${selectedAnswers[qIndex] === oIndex ? 'border-blue-600' : 'border-gray-400'
-                                        }`}>
-                                        {selectedAnswers[qIndex] === oIndex && <div className="w-2 h-2 rounded-full bg-blue-600" />}
-                                    </div>
-                                    <span className="text-gray-700">{opt.text}</span>
-                                </label>
-                            ))}
-                        </div>
+                                            }`}
+                                    >
+                                        <input
+                                            type="radio"
+                                            name={`question-${qIndex}`}
+                                            className="hidden"
+                                            checked={selectedAnswers[qIndex] === oIndex}
+                                            onChange={() => handleAnswerChange(qIndex, oIndex)}
+                                        />
+                                        <div className={`w-4 h-4 rounded-full border mr-3 flex items-center justify-center ${selectedAnswers[qIndex] === oIndex ? 'border-blue-600' : 'border-gray-400'
+                                            }`}>
+                                            {selectedAnswers[qIndex] === oIndex && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                                        </div>
+                                        <span className="text-gray-700">{opt.text}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        ) : (
+                            <textarea
+                                value={selectedAnswers[qIndex] || ''}
+                                onChange={(e) => handleAnswerChange(qIndex, e.target.value)}
+                                className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-blue-500 focus:bg-white transition-all outline-none italic text-gray-600"
+                                rows="4"
+                                placeholder="Type your descriptive answer here..."
+                            />
+                        )}
                     </div>
                 ))}
             </div>

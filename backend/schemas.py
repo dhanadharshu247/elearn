@@ -8,9 +8,20 @@ class QuestionOption(BaseModel):
     text: str
 
 class Question(BaseModel):
+    id: Optional[int] = None
     questionText: str
-    options: List[QuestionOption]
-    correctOptionIndex: int
+    questionType: Optional[str] = "mcq"
+    options: List[QuestionOption] = []
+    correctOptionIndex: Optional[int] = None
+    correctAnswerText: Optional[str] = None
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class QuizResponse(BaseModel):
+    title: str
+    questions: List[Question]
 
 class Module(BaseModel):
     title: str
@@ -51,8 +62,10 @@ class CourseCreate(CourseBase):
 class QuestionUpdate(BaseModel):
     id: Optional[int] = None
     questionText: str
-    options: List[QuestionOption]
-    correctOptionIndex: int
+    questionType: Optional[str] = "mcq"
+    options: List[QuestionOption] = []
+    correctOptionIndex: Optional[int] = None
+    correctAnswerText: Optional[str] = None
 
 class ModuleUpdate(BaseModel):
     id: Optional[int] = None

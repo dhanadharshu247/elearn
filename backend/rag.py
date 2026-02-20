@@ -2,13 +2,27 @@ import os
 import math
 import logging
 import requests
+from datetime import datetime
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 logger = logging.getLogger(__name__)
 
-# Put your OpenRouter key in .env instead of hardcoding
+print(f"--- RAG.PY INITIALIZED ---")
+print(f"Working Directory: {os.getcwd()}")
+print(f"File Path: {__file__}")
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+if GROQ_API_KEY:
+    GROQ_API_KEY = GROQ_API_KEY.strip().strip('"').strip("'")
+    print(f"GROQ_API_KEY loaded: {GROQ_API_KEY[:6]}...{GROQ_API_KEY[-4:]} (Length: {len(GROQ_API_KEY)})")
+else:
+    print("WARNING: GROQ_API_KEY NOT FOUND in environment!")
+
+def log_debug(msg):
+    with open("rag_debug.log", "a") as f:
+        f.write(f"{datetime.now()}: {msg}\n")
 
 # In-memory vector store
 VECTOR_STORE = []
@@ -80,6 +94,9 @@ Student Question:
 Explain clearly and simply.
 """
 
+        log_debug(f"Requesting Groq with model: llama-3.1-8b-instant")
+        log_debug(f"Key used: {GROQ_API_KEY[:6]}...{GROQ_API_KEY[-4:]}")
+
         response = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={
@@ -96,7 +113,9 @@ Explain clearly and simply.
             timeout=60
         )
 
+        log_debug(f"Groq Response Status: {response.status_code}")
         data = response.json()
+        log_debug(f"Groq Response Data: {data}")
         print("GROQ:", data)
 
         if "choices" in data:
