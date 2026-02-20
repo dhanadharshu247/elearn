@@ -126,6 +126,8 @@ class Batch(Base):
     name = Column(String)
     course_id = Column(Integer, ForeignKey("courses.id"))
     instructor_id = Column(Integer, ForeignKey("users.id"))
+    start_time = Column(DateTime, nullable=True)
+    end_time = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     course = relationship("Course", back_populates="batches")

@@ -562,6 +562,28 @@ def get_course(course_id: int, current_user_opt: Optional[dict] = Depends(auth.g
             if not is_instructor:
                 raise HTTPException(status_code=403, detail="This course is currently not available (Draft/Archived)")
         
+        # Batch Timing Check for Learners
+        if current_user_opt and current_user_opt.get("role") == "learner":
+            user_id = current_user_opt.get("id")
+            # Find if user is in any batch for this specific course
+            batch = db.query(models.Batch).join(models.Batch.students).filter(
+                models.Batch.course_id == course_id,
+                models.User.id == user_id
+            ).first()
+            
+            if batch and (batch.start_time or batch.end_time):
+                now = datetime.utcnow()
+                if batch.start_time and now < batch.start_time:
+                    raise HTTPException(
+                        status_code=403, 
+                        detail=f"Your batch access starts at {batch.start_time.strftime('%Y-%m-%d %H:%M:%S')} UTC"
+                    )
+                if batch.end_time and now > batch.end_time:
+                    raise HTTPException(
+                        status_code=403, 
+                        detail=f"Your batch access ended at {batch.end_time.strftime('%Y-%m-%d %H:%M:%S')} UTC"
+                    )
+        
         return {
             "id": course.id,
             "_id": course.id,
@@ -794,22 +816,69 @@ def create_batch(batch: schemas.BatchCreate, current_user: dict = Depends(auth.g
     new_batch = models.Batch(
         name=batch.name,
         course_id=batch.course_id,
-        instructor_id=current_user["id"]
+        instructor_id=current_user["id"],
+        start_time=batch.start_time,
+        end_time=batch.end_time
     )
     db.add(new_batch)
     db.commit()
     db.refresh(new_batch)
     return new_batch
 
+@app.post("/batches/{batch_id}/students")
+def assign_students_to_batch(batch_id: int, student_ids: List[int], current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user["role"] != "instructor":
+        raise HTTPException(status_code=403, detail="Only instructors can assign students to batches")
+    
+    batch = db.query(models.Batch).filter(models.Batch.id == batch_id).first()
+    if not batch:
+        raise HTTPException(status_code=404, detail="Batch not found")
+    
+    if batch.instructor_id != current_user["id"]:
+        raise HTTPException(status_code=403, detail="Not authorized to manage this batch")
+    
+    # Clear existing students and re-assign? Or add new ones? 
+    # Usually manual assignment replaces or adds. Let's do a set-based replacement for simplicity if the list is provided.
+    students = db.query(models.User).filter(models.User.id.in_(student_ids), models.User.role == "learner").all()
+    
+    # Check if students are enrolled in the course
+    enrolled_student_ids = [e.user_id for e in batch.course.enrolments]
+    valid_students = [s for s in students if s.id in enrolled_student_ids]
+    
+    if len(valid_students) != len(student_ids):
+        # Some students are not enrolled or don't exist
+        print(f"Warning: Some student IDs were skipped for assignment to batch {batch_id}")
+
+    batch.students = valid_students
+    db.commit()
+
+    # Create notifications for assigned students
+    for student in valid_students:
+        notif = models.Notification(
+            user_id=student.id,
+            title="Batch Assigned",
+            message=f"You have been assigned to the '{batch.name}' batch for course '{batch.course.title}'.",
+            type="info"
+        )
+        db.add(notif)
+    
+    db.commit()
+    return {"message": f"Successfully assigned {len(valid_students)} students to batch."}
+
 @app.get("/batches", response_model=List[schemas.Batch])
 def get_batches(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if current_user["role"] == "instructor":
-        return db.query(models.Batch).filter(models.Batch.instructor_id == current_user["id"]).all()
+        batches = db.query(models.Batch).filter(models.Batch.instructor_id == current_user["id"]).all()
     else:
         # Learners can see batches they are in
-        user = db.query(models.User).filter(models.User.id == current_user["id"]).first()
-        # This relationship needs to be handled via secondary table batch_students
-        return db.query(models.Batch).join(models.Batch.students).filter(models.User.id == current_user["id"]).all()
+        batches = db.query(models.Batch).join(models.Batch.students).filter(models.User.id == current_user["id"]).all()
+    
+    # Manually populate course_title if needed, though SQLAlchemy relationship might handle it if schema is right
+    # To be explicit and avoid lazy loading issues in response model:
+    for b in batches:
+        b.course_title = b.course.title if b.course else "Unknown Course"
+    
+    return batches
 
 # Badges
 @app.get("/users/me/badges", response_model=List[schemas.Badge])
