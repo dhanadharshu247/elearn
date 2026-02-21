@@ -5,6 +5,7 @@ import Input from '../../components/ui/Input';
 import PasswordInput from '../../components/ui/PasswordInput';
 import Button from '../../components/ui/Button';
 import { AlertCircle, User, Mail, GraduationCap, Building2 } from 'lucide-react';
+import AccessibilitySettings from '../../components/AccessibilitySettings';
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({
@@ -47,6 +48,10 @@ const SignupPage = () => {
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 relative overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
+            {/* Accessibility Controls */}
+            <div className="absolute top-4 right-4 z-[100]">
+                <AccessibilitySettings />
+            </div>
             {/* Background Decorative Blobs */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-200/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 animate-blob"></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 animate-blob animation-delay-2000"></div>

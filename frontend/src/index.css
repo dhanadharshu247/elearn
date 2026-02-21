@@ -6,7 +6,10 @@
 
 @layer base {
     body {
-        @apply font-sans antialiased text-gray-900 bg-slate-50 transition-colors duration-300;
+        @apply font-sans antialiased text-gray-900 transition-colors duration-300;
+        font-size: 1rem;
+        background-color: var(--tw-bg-opacity, 1) rgba(248, 250, 252, 1);
+        /* bg-slate-50 */
     }
 
     .dark body {
@@ -50,34 +53,136 @@
         @apply border-slate-700;
     }
 
-    body.high-contrast {
-        @apply bg-black text-yellow-300;
+    /* Accessibility Mode: High Contrast */
+    [data-high-contrast="true"],
+    [data-high-contrast="true"] body,
+    [data-high-contrast="true"] #root {
+        background-color: #000000 !important;
+        color: #ffff00 !important;
+        fill: #ffff00 !important;
     }
 
-    body.high-contrast * {
+    [data-high-contrast="true"] * {
         border-color: #ffff00 !important;
+        outline-color: #ffff00 !important;
     }
 
-    body.high-contrast .bg-white {
-        @apply bg-gray-900 text-yellow-300;
+    [data-high-contrast="true"] .bg-white,
+    [data-high-contrast="true"] .bg-slate-50,
+    [data-high-contrast="true"] .bg-slate-100,
+    [data-high-contrast="true"] .bg-indigo-50,
+    [data-high-contrast="true"] header,
+    [data-high-contrast="true"] aside,
+    [data-high-contrast="true"] nav,
+    [data-high-contrast="true"] main,
+    [data-high-contrast="true"] div[class*="bg-"] {
+        background-color: #000000 !important;
+        color: #ffff00 !important;
+        border: 1px solid #ffff00 !important;
     }
 
-    body.high-contrast .text-slate-900,
-    body.high-contrast .text-slate-800,
-    body.high-contrast .text-slate-700,
-    body.high-contrast .text-slate-600,
-    body.high-contrast .text-slate-500 {
-        @apply text-yellow-300;
+    [data-high-contrast="true"] .text-slate-900,
+    [data-high-contrast="true"] .text-slate-800,
+    [data-high-contrast="true"] .text-slate-700,
+    [data-high-contrast="true"] .text-slate-600,
+    [data-high-contrast="true"] .text-slate-500,
+    [data-high-contrast="true"] .text-indigo-600,
+    [data-high-contrast="true"] h1,
+    [data-high-contrast="true"] h2,
+    [data-high-contrast="true"] h3,
+    [data-high-contrast="true"] h4,
+    [data-high-contrast="true"] p,
+    [data-high-contrast="true"] span,
+    [data-high-contrast="true"] label,
+    [data-high-contrast="true"] input,
+    [data-high-contrast="true"] textarea,
+    [data-high-contrast="true"] svg {
+        color: #ffff00 !important;
     }
 
-    body.high-contrast .bg-slate-50,
-    body.high-contrast .bg-slate-100,
-    body.high-contrast .bg-indigo-50 {
-        @apply bg-black border border-yellow-300;
+    [data-high-contrast="true"] button,
+    [data-high-contrast="true"] a {
+        background-color: #1a1a1a !important;
+        color: #ffff00 !important;
+        border: 2px solid #ffff00 !important;
+        text-decoration: underline !important;
     }
 
-    body.high-contrast button {
-        @apply border-2 border-yellow-300 bg-gray-900 text-yellow-300 hover:bg-yellow-900;
+    [data-high-contrast="true"] button:hover,
+    [data-high-contrast="true"] a:hover {
+        background-color: #ffff00 !important;
+        color: #000000 !important;
+    }
+
+    /* Accessibility Mode: Font Size Scaling */
+    html[data-font-size="sm"] {
+        font-size: 14px;
+    }
+
+    html[data-font-size="md"] {
+        font-size: 16px;
+    }
+
+    html[data-font-size="lg"] {
+        font-size: 20px;
+    }
+
+    /* Accessibility Mode: High Contrast */
+    [data-high-contrast="true"] {
+        --bg-primary: #000000;
+        --text-primary: #ffff00;
+        --border-primary: #ffff00;
+        --accent-primary: #00ffff;
+    }
+
+    [data-high-contrast="true"],
+    [data-high-contrast="true"] body,
+    [data-high-contrast="true"] #root {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    [data-high-contrast="true"] * {
+        border-color: var(--border-primary) !important;
+        outline-color: var(--border-primary) !important;
+        background-color: transparent !important;
+        color: inherit !important;
+    }
+
+    [data-high-contrast="true"] .bg-white,
+    [data-high-contrast="true"] .bg-slate-50,
+    [data-high-contrast="true"] .bg-slate-100,
+    [data-high-contrast="true"] .bg-indigo-50,
+    [data-high-contrast="true"] [class*="bg-"] {
+        background-color: var(--bg-primary) !important;
+        border: 1px solid var(--border-primary) !important;
+    }
+
+    [data-high-contrast="true"] button,
+    [data-high-contrast="true"] a,
+    [data-high-contrast="true"] input,
+    [data-high-contrast="true"] textarea,
+    [data-high-contrast="true"] select {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+        border: 2px solid var(--border-primary) !important;
+        text-decoration: underline !important;
+    }
+
+    [data-high-contrast="true"] button:hover,
+    [data-high-contrast="true"] a:hover {
+        background-color: var(--text-primary) !important;
+        color: var(--bg-primary) !important;
+    }
+
+    [data-high-contrast="true"] .text-indigo-600,
+    [data-high-contrast="true"] .text-blue-600 {
+        color: var(--accent-primary) !important;
+    }
+
+    [data-high-contrast="true"] svg {
+        stroke: currentColor !important;
+        fill: none !important;
     }
 }
 

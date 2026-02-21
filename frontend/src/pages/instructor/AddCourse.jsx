@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
+import { Trash2, Trash, AlertTriangle } from 'lucide-react';
 
 const AddCourse = () => {
     const navigate = useNavigate();
@@ -84,6 +85,14 @@ const AddCourse = () => {
         const updatedModules = [...courseData.modules];
         updatedModules[mIndex].quiz.splice(qIndex, 1);
         setCourseData(prev => ({ ...prev, modules: updatedModules }));
+    };
+
+    const removeAllQuestions = (mIndex) => {
+        if (window.confirm('Are you sure you want to delete all questions in this module?')) {
+            const updatedModules = [...courseData.modules];
+            updatedModules[mIndex].quiz = [];
+            setCourseData(prev => ({ ...prev, modules: updatedModules }));
+        }
     };
 
     const handleAIGenerate = async () => {
@@ -274,6 +283,15 @@ const AddCourse = () => {
                                             >
                                                 {generatingIndex === mIndex ? '...' : '✨ AI Desc'}
                                             </button>
+                                            {module.quiz.length > 0 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeAllQuestions(mIndex)}
+                                                    className="text-[10px] font-bold text-red-600 bg-white border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors shadow-sm flex items-center gap-1"
+                                                >
+                                                    <Trash className="w-3 h-3" /> Clear Quiz
+                                                </button>
+                                            )}
                                             <button
                                                 type="button"
                                                 onClick={() => addQuestion(mIndex)}
@@ -289,11 +307,10 @@ const AddCourse = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => removeQuestion(mIndex, qIndex)}
-                                                className="absolute top-2 right-2 text-slate-300 hover:text-red-400"
+                                                className="absolute top-2 right-2 text-slate-400 hover:text-red-500 p-1.5 bg-slate-50 hover:bg-red-50 rounded-lg transition-all"
+                                                title="Remove Question"
                                             >
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12" />
-                                                </svg>
+                                                <Trash2 className="w-4 h-4" />
                                             </button>
                                             <div className="flex gap-4 mb-3">
                                                 <div className="flex-1">
