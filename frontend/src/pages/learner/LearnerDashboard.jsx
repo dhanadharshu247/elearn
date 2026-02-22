@@ -10,33 +10,51 @@ const LearnerDashboard = () => {
     const [error, setError] = useState(null);
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [enrollingId, setEnrollingId] = useState(null);
+
+
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const [myCoursesRes, allCoursesRes] = await Promise.all([
+                api.get('/courses/my-courses'),
+                api.get('/courses')
+            ]);
+            setMyCourses(myCoursesRes.data);
+            setAllCourses(allCoursesRes.data);
+        } catch (err) {
+            setError('Failed to load data');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [myCoursesRes, allCoursesRes] = await Promise.all([
-                    api.get('/courses/my-courses'),
-                    api.get('/courses')
-                ]);
-                setMyCourses(myCoursesRes.data);
-                setAllCourses(allCoursesRes.data);
-            } catch (err) {
-                setError('Failed to load data');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
     }, []);
+
+    const handleEnroll = async (courseId) => {
+        setEnrollingId(courseId);
+        try {
+            await api.post(`/courses/${courseId}/enroll`);
+            // Refresh categories or just move the course locally
+            await fetchData();
+            alert('Successfully enrolled!');
+        } catch (err) {
+            console.error('Enrollment failed:', err);
+            alert(err.response?.data?.detail || 'Failed to enroll in course. Please try again.');
+        } finally {
+            setEnrollingId(null);
+        }
+    };
 
     if (loading) return <div className="p-8 text-center">Loading...</div>;
     if (error) return <div className="p-8 text-red-500">{error}</div>;
 
     // Filter available courses to exclude enrolled ones
-    const enrolledIds = new Set(myCourses.map(c => c._id));
-    const availableCourses = allCourses.filter(c => !enrolledIds.has(c._id));
+    const enrolledIds = new Set(myCourses.map(c => c.id || c._id));
+    const availableCourses = allCourses.filter(c => !enrolledIds.has(c.id || c._id));
 
     const filteredAvailableCourses = availableCourses.filter(c =>
         c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -55,7 +73,7 @@ const LearnerDashboard = () => {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {myCourses.map(course => (
-                            <div key={course._id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <div key={course.id || course._id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
                                 {course.thumbnail && (
                                     <img
                                         src={course.thumbnail}
@@ -81,7 +99,7 @@ const LearnerDashboard = () => {
                                     </div>
 
                                     <Link
-                                        to={`/learner/courses/${course._id}`}
+                                        to={`/learner/courses/${course.id || course._id}`}
                                         className="inline-block text-blue-600 font-medium hover:underline text-sm"
                                     >
                                         {course.progress === 100 ? 'Review Course' : 'Continue Learning →'}
@@ -111,7 +129,7 @@ const LearnerDashboard = () => {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredAvailableCourses.map(course => (
-                            <div key={course._id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <div key={course.id || course._id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
                                 {course.thumbnail && (
                                     <img
                                         src={course.thumbnail}
@@ -126,12 +144,21 @@ const LearnerDashboard = () => {
                                         <span className="font-bold text-gray-900">
                                             {course.price === 0 ? 'Free' : `$${course.price}`}
                                         </span>
-                                        <Link
-                                            to={`/learner/courses/${course._id}`}
-                                            className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition text-sm font-medium"
-                                        >
-                                            View Details
-                                        </Link>
+                                        <div className="flex gap-2">
+                                            <Link
+                                                to={`/learner/courses/${course.id || course._id}`}
+                                                className="px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition text-xs font-bold uppercase tracking-wider"
+                                            >
+                                                Details
+                                            </Link>
+                                            <button
+                                                onClick={() => handleEnroll(course.id || course._id)}
+                                                disabled={enrollingId === (course.id || course._id)}
+                                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-xs font-bold uppercase tracking-wider shadow-lg shadow-indigo-100 disabled:opacity-50"
+                                            >
+                                                {enrollingId === (course.id || course._id) ? '...' : 'Enroll to Start'}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

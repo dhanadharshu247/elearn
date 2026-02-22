@@ -1,0 +1,16 @@
+﻿--- Database Schema Check ---
+Tables in DB: ['users', 'badges', 'user_badges', 'courses', 'notifications', 'messages', 'modules', 'enrolments', 'batches', 'certificates', 'batch_students', 'questions', 'quiz_results', 'question_options']
+[OK] Table 'user_badges'
+[OK] Table 'batch_students'
+[OK] Table 'users'
+[OK] Table 'courses'
+[OK] Table 'modules'
+[OK] Table 'questions'
+[OK] Table 'question_options'
+[OK] Table 'enrolments'
+[OK] Table 'quiz_results'
+[OK] Table 'badges'
+[OK] Table 'batches'
+[OK] Table 'notifications'
+[OK] Table 'messages'
+[OK] Table 'certificates'

@@ -101,7 +101,7 @@ const InstructorDashboard = () => {
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {courses.map(course => (
-                                    <tr key={course._id} className="hover:bg-slate-50/50 transition-colors">
+                                    <tr key={course.id || course._id} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="font-semibold text-slate-900">{course.title}</div>
                                             <div className="text-xs text-slate-500 line-clamp-1">{course.description}</div>
@@ -115,7 +115,7 @@ const InstructorDashboard = () => {
                                         <td className="px-6 py-4">
                                             <select
                                                 value={course.status || 'Draft'}
-                                                onChange={(e) => handleStatusUpdate(course._id, e.target.value)}
+                                                onChange={(e) => handleStatusUpdate(course.id || course._id, e.target.value)}
                                                 className={`text-xs font-bold px-2 py-1 rounded-full border-none focus:ring-2 focus:ring-indigo-500 cursor-pointer ${(course.status === 'Published') ? 'bg-emerald-100 text-emerald-700' :
                                                     (course.status === 'Archived') ? 'bg-slate-100 text-slate-700' :
                                                         'bg-amber-100 text-amber-700'
@@ -128,7 +128,7 @@ const InstructorDashboard = () => {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <Link
-                                                to={`/instructor/courses/${course._id}`}
+                                                to={`/instructor/edit-course/${course.id || course._id}`}
                                                 className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
                                             >
                                                 Manage
