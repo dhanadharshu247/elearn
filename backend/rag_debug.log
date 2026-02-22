@@ -28,6 +28,7 @@
 2026-02-20 21:37:13.202815: Generating 2 mcq questions for topic: machine learning
 2026-02-20 21:38:29.703071: Generating 1 mcq questions for topic: Machine learning
 2026-02-20 21:38:43.788857: Generating 2 descriptive questions for topic: Machine learning
+<<<<<<< HEAD
 2026-02-20 22:22:22.305138: Requesting Groq with model: llama-3.1-8b-instant
 2026-02-20 22:22:22.308177: Key used: gsk_tg...pooM
 2026-02-20 22:22:24.104320: Groq Response Status: 200
@@ -43,3 +44,595 @@
 2026-02-21 22:07:17.597921: Key used: gsk_tg...pooM
 2026-02-21 22:07:20.184175: Groq Response Status: 200
 2026-02-21 22:07:20.185812: Groq Response Data: {'id': 'chatcmpl-fa614362-9cc5-4b26-82b0-cd2b885af4a7', 'object': 'chat.completion', 'created': 1771691844, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': "**Data**\n\nData is a collection of facts, numbers, or information that can be used to describe, analyze, or understand a situation, event, or phenomenon. It can be in the form of:\n\n- Numbers (quantitative data)\n- Words or text (qualitative data)\n- Images or videos\n- Audio recordings\n- Any other type of information that can be collected and stored.\n\nThink of data like a puzzle piece. Each piece of data is like a single puzzle piece that, when combined with other pieces, helps to create a complete picture or understanding of a situation.\n\nData can be used for various purposes, such as:\n\n- Research and analysis\n- Decision-making\n- Problem-solving\n- Predicting future outcomes\n- Identifying trends or patterns\n\nIn your studies, you'll likely work with data in various forms, such as:\n\n- Statistical data in math and science classes\n- Text data in language and literature classes\n- Image and video data in computer science and engineering classes\n\nI hope this helps you understand what data is! Do you have any specific questions or areas you'd like me to clarify?"}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045973065, 'prompt_tokens': 59, 'prompt_time': 0.003360623, 'completion_tokens': 227, 'completion_time': 0.350582239, 'total_tokens': 286, 'total_time': 0.353942862}, 'usage_breakdown': None, 'system_fingerprint': 'fp_ff2b098aaf', 'x_groq': {'id': 'req_01kj0h08d5ejh81cs8nm7kshvz', 'seed': 400799251}, 'service_tier': 'on_demand'}
+=======
+2026-02-21 14:16:49.305834: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-21 14:16:49.306627: Key used: gsk_tg...pooM
+2026-02-21 14:16:49.593080: Groq Response Status: 200
+2026-02-21 14:16:49.593080: Groq Response Data: {'id': 'chatcmpl-8fd37f65-ddaa-491c-9620-30c6158ae7a1', 'object': 'chat.completion', 'created': 1771663624, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': 'It looks like you\'re just saying "hi" to get started. That\'s perfectly fine. \n\nTo begin, how can I assist you today? Do you need help with a specific assignment, studying for an exam, or something else?'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045182331, 'prompt_tokens': 59, 'prompt_time': 0.003168098, 'completion_tokens': 49, 'completion_time': 0.079277193, 'total_tokens': 108, 'total_time': 0.082445291}, 'usage_breakdown': None, 'system_fingerprint': 'fp_4387d3edbb', 'x_groq': {'id': 'req_01khzp322eek580t4anv04753c', 'seed': 131324619}, 'service_tier': 'on_demand'}
+2026-02-21 14:17:03.587190: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-21 14:17:03.588686: Key used: gsk_tg...pooM
+2026-02-21 14:17:05.754384: Groq Response Status: 200
+2026-02-21 14:17:05.756105: Groq Response Data: {'id': 'chatcmpl-c67adf74-56ce-457a-83d0-6c1987b1d13a', 'object': 'chat.completion', 'created': 1771663640, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': "To start learning any module, follow these simple steps:\n\n1. **Understand the Module Overview**:\n   - Read the module description and syllabus to know what topics you'll be covering.\n   - Familiarize yourself with the module's learning objectives and outcomes.\n\n2. **Set Clear Goals**:\n   - Identify what you want to achieve from the module (e.g., passing the exam, understanding a specific concept).\n   - Break down your goals into smaller, manageable tasks.\n\n3. **Gather Resources**:\n   - Collect all the required textbooks, notes, and online materials for the module.\n   - Explore additional resources like online tutorials, videos, or study groups.\n\n4. **Create a Study Schedule**:\n   - Plan out when and how you'll study each topic.\n   - Set realistic deadlines and allocate sufficient time for each task.\n\n5. **Start with the Basics**:\n   - Begin with the fundamental concepts and build your understanding from there.\n   - Focus on understanding the 'why' behind the concepts rather than just memorizing formulas or definitions.\n\n6. **Practice and Review**:\n   - Engage in active learning by attempting practice problems, quizzes, or past exams.\n   - Regularly review what you've learned to reinforce your understanding and identify areas for improvement.\n\n7. **Seek Help When Needed**:\n   - Don't hesitate to ask your instructor, teaching assistant, or classmates for help when you're struggling.\n   - Take advantage of office hours, study groups, or online forums for support.\n\n8. **Stay Organized and Motivated**:\n   - Use a planner, calendar, or app to stay on top of your schedule and deadlines.\n   - Reward yourself for achieving milestones and celebrate your progress.\n\nBy following these steps, you'll be well on your way to learning any module and achieving your academic goals."}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.046317426, 'prompt_tokens': 66, 'prompt_time': 0.003533814, 'completion_tokens': 376, 'completion_time': 0.453380685, 'total_tokens': 442, 'total_time': 0.456914499}, 'usage_breakdown': None, 'system_fingerprint': 'fp_1151d4f23c', 'x_groq': {'id': 'req_01khzp3h05ejjbamgyc6bd9gke', 'seed': 425734251}, 'service_tier': 'on_demand'}
+2026-02-21 14:28:32.013048: Generating 3 mcq questions for topic: Module 1
+2026-02-21 14:28:39.412696: Generating 2 descriptive questions for topic: Module 1
+2026-02-21 14:29:25.034062: Generating 2 mcq questions for topic: Module 2
+2026-02-21 14:29:53.895188: Generating 2 descriptive questions for topic: Module 2
+2026-02-21 14:30:18.774943: Generating 2 mcq questions for topic: Module 2
+2026-02-21 14:30:36.421362: Generating 10 mcq questions for topic: Deep Learning
+2026-02-21 15:01:41.138664: Generating 2 mcq questions for topic: Module 1
+2026-02-21 15:01:51.967540: Generating 2 mcq questions for topic: Module 1
+2026-02-21 15:02:03.070802: Generating 3 descriptive questions for topic: Module 1
+2026-02-21 15:02:15.441365: Generating 2 descriptive questions for topic: Module 1
+2026-02-21 15:02:37.532690: Generating 10 mcq questions for topic: Deep learning
+2026-02-21 15:13:41.145251: Generating 2 mcq questions for topic: Module 1
+2026-02-21 15:13:55.569106: Generating 2 descriptive questions for topic: Module 1
+2026-02-21 15:14:06.575577: Generating 3 descriptive questions for topic: Module 1
+2026-02-21 15:14:36.074981: Generating 2 mcq questions for topic: Module 2
+2026-02-21 15:14:41.894140: Generating 2 descriptive questions for topic: Module 2
+2026-02-21 15:14:50.946683: Generating 10 mcq questions for topic: Deep learning
+2026-02-21 15:36:24.131726: Generating 2 mcq questions for topic: Module 1
+2026-02-21 15:36:49.115189: Generation Error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-02-21 15:37:07.713497: Generating 2 mcq questions for topic: Module 1
+2026-02-21 15:38:10.782749: Generation Error: HTTPSConnectionPool(host='api.groq.com', port=443): Read timed out. (read timeout=60)
+2026-02-21 15:45:42.902249: Generating 3 mcq questions for topic: Python Programming
+2026-02-21 15:45:43.415897: Generating 2 descriptive questions for topic: Cloud Computing
+2026-02-21 15:46:47.699191: Generation Error: HTTPSConnectionPool(host='api.groq.com', port=443): Read timed out. (read timeout=60)
+2026-02-21 15:47:08.317863: Generating 1 mcq questions for topic: Python
+2026-02-21 15:47:08.607137: Generating 1 descriptive questions for topic: Cloud
+2026-02-21 15:48:15.069256: Generating 2 mcq questions for topic: Module 1
+2026-02-21 15:48:57.096117: Generating 10 mcq questions for topic: Deep learning
+2026-02-21 15:53:27.796905: Generating 10 mcq questions for topic: Deep learning
+2026-02-21 15:55:15.604004: Generating 10 mcq questions for topic: Deep learning
+2026-02-21 21:17:39.602258: Generating 1 mcq questions for topic: Module 1
+2026-02-21 21:17:40.030078: Groq Response Data: {'id': 'chatcmpl-e6c7acb8-52c8-4c47-92df-313767318b61', 'object': 'chat.completion', 'created': 1771688875, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '{\n  "questions": [\n       {\n           "questionText": "What is the main topic covered in Module 1?",\n           "questionType": "mcq",\n           "options": [\n               {"text": "Data Structures"},\n               {"text": "Algorithms"},\n               {"text": "Machine Learning"},\n               {"text": "Database Systems"}\n           ],\n           "correctOptionIndex": 0\n       }\n   ]\n}'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045439852, 'prompt_tokens': 176, 'prompt_time': 0.009770488, 'completion_tokens': 87, 'completion_time': 0.090776283, 'total_tokens': 263, 'total_time': 0.100546771}, 'usage_breakdown': None, 'system_fingerprint': 'fp_1151d4f23c', 'x_groq': {'id': 'req_01kj0e5ns7em0a366t8dhnr9h5', 'seed': 86684509}, 'service_tier': 'on_demand'}
+2026-02-21 21:17:40.030591: AI Response Content: {
+  "questions": [
+       {
+           "questionText": "What is the main topic covered in Module 1?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Data Structures"},
+               {"text": "Algorithms"},
+               {"text": "Machine Learning"},
+               {"text": "Database Systems"}
+           ],
+           "correctOptionIndex": 0
+       }
+   ]
+}
+2026-02-21 21:17:53.975145: Generating 1 descriptive questions for topic: Knn
+2026-02-21 21:17:55.338562: Groq Response Data: {'id': 'chatcmpl-8598bb47-face-47e3-a4f7-5e42f2e012c7', 'object': 'chat.completion', 'created': 1771688891, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '{\n  "questions": [\n      {\n         "questionText": "What is K-Nearest Neighbors (KNN) algorithm and how does it work?",\n         "questionType": "descriptive",\n         "correctAnswerText": "KNN is a supervised learning algorithm that uses the concept of local similarity to classify new data points. It works by finding the K most similar instances from the training data and using their class labels to predict the target variable for the new data point."\n      }\n   ]\n}'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045051994, 'prompt_tokens': 138, 'prompt_time': 0.007614806, 'completion_tokens': 103, 'completion_time': 0.142232623, 'total_tokens': 241, 'total_time': 0.149847429}, 'usage_breakdown': None, 'system_fingerprint': 'fp_1151d4f23c', 'x_groq': {'id': 'req_01kj0e64qcemdvvjtady0n9jqd', 'seed': 999028162}, 'service_tier': 'on_demand'}
+2026-02-21 21:17:55.338562: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is K-Nearest Neighbors (KNN) algorithm and how does it work?",
+         "questionType": "descriptive",
+         "correctAnswerText": "KNN is a supervised learning algorithm that uses the concept of local similarity to classify new data points. It works by finding the K most similar instances from the training data and using their class labels to predict the target variable for the new data point."
+      }
+   ]
+}
+2026-02-21 21:18:05.336754: Generating 10 mcq questions for topic: machine learning
+2026-02-21 21:18:06.849004: Groq Response Data: {'id': 'chatcmpl-8a2069ef-bb9b-4894-a674-4fa13b78c12f', 'object': 'chat.completion', 'created': 1771688902, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '{\n  "questions": [\n      {\n         "questionText": "What does the term \'supervised learning\' mean in machine learning?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "The model learns from unrelated data"},\n            {"text": "The model learns from labeled data to make predictions"},\n            {"text": "The model learns from unlabeled data to make predictions"},\n            {"text": "The model learns from data with noise and outliers"}\n         ],\n         "correctOptionIndex": 1\n      },\n      {\n         "questionText": "What is the primary goal of the \'k-means\' algorithm in machine learning?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "To classify data points into clusters"},\n            {"text": "To predict continuous outcomes"},\n            {"text": "To identify trends in data"},\n            {"text": "To detect outliers in data"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the term for a model that can make predictions on new, unseen data?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Overfit model"},\n            {"text": "Underfit model"},\n            {"text": "Generalization"},\n            {"text": "Bias-variance tradeoff"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is the \'decision boundary\' in machine learning?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "A measure of model complexity"},\n            {"text": "A measure of model accuracy"},\n            {"text": "A line or curve that separates classes in a dataset"},\n            {"text": "A type of machine learning algorithm"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is the term for the process of selecting the most informative features in a dataset?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Data preprocessing"},\n            {"text": "Feature selection"},\n            {"text": "Data transformation"},\n            {"text": "Model tuning"}\n         ],\n         "correctOptionIndex": 1\n      },\n      {\n         "questionText": "What is the \'bias-variance tradeoff\' in machine learning?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "A measure of model complexity and accuracy"},\n            {"text": "A type of machine learning algorithm"},\n            {"text": "A tradeoff between high bias and low variance"},\n            {"text": "A tradeoff between low bias and high variance"}\n         ],\n         "correctOptionIndex": 3\n      },\n      {\n         "questionText": "What is the primary goal of the \'Gradient Boosting\' algorithm in machine learning?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "To classify data points into clusters"},\n            {"text": "To predict continuous outcomes"},\n            {"text": "To identify trends in data"},\n            {"text": "To combine multiple weak models into a strong model"}\n         ],\n         "correctOptionIndex": 3\n      },\n      {\n         "questionText": "What is the term for a model that is too complex and fits the noise in the training data?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Overfit model"},\n            {"text": "Underfit model"},\n            {"text": "Overconfident model"},\n            {"text": "Underconfident model"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the \'Receiver Operating Characteristic\' (ROC) curve in machine learning?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "A measure of model accuracy"},\n            {"text": "A measure of model complexity"},\n            {"text": "A plot of true positives vs false positives"},\n            {"text": "A plot of precision vs recall"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is the term for the process of converting categorical variables into numerical variables?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Data preprocessing"},\n            {"text": "Data transformation"},\n            {"text": "Feature selection"},\n            {"text": "Model tuning"}\n         ],\n         "correctOptionIndex": 1\n      }\n   ]\n}'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045048868, 'prompt_tokens': 175, 'prompt_time': 0.009606042, 'completion_tokens': 960, 'completion_time': 1.260304957, 'total_tokens': 1135, 'total_time': 1.269910999}, 'usage_breakdown': None, 'system_fingerprint': 'fp_4387d3edbb', 'x_groq': {'id': 'req_01kj0e6es1fv7sj5dyx909p2m8', 'seed': 2112757315}, 'service_tier': 'on_demand'}
+2026-02-21 21:18:06.850981: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What does the term 'supervised learning' mean in machine learning?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "The model learns from unrelated data"},
+            {"text": "The model learns from labeled data to make predictions"},
+            {"text": "The model learns from unlabeled data to make predictions"},
+            {"text": "The model learns from data with noise and outliers"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the primary goal of the 'k-means' algorithm in machine learning?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To classify data points into clusters"},
+            {"text": "To predict continuous outcomes"},
+            {"text": "To identify trends in data"},
+            {"text": "To detect outliers in data"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the term for a model that can make predictions on new, unseen data?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Overfit model"},
+            {"text": "Underfit model"},
+            {"text": "Generalization"},
+            {"text": "Bias-variance tradeoff"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the 'decision boundary' in machine learning?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "A measure of model complexity"},
+            {"text": "A measure of model accuracy"},
+            {"text": "A line or curve that separates classes in a dataset"},
+            {"text": "A type of machine learning algorithm"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for the process of selecting the most informative features in a dataset?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Data preprocessing"},
+            {"text": "Feature selection"},
+            {"text": "Data transformation"},
+            {"text": "Model tuning"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the 'bias-variance tradeoff' in machine learning?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "A measure of model complexity and accuracy"},
+            {"text": "A type of machine learning algorithm"},
+            {"text": "A tradeoff between high bias and low variance"},
+            {"text": "A tradeoff between low bias and high variance"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the primary goal of the 'Gradient Boosting' algorithm in machine learning?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To classify data points into clusters"},
+            {"text": "To predict continuous outcomes"},
+            {"text": "To identify trends in data"},
+            {"text": "To combine multiple weak models into a strong model"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the term for a model that is too complex and fits the noise in the training data?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Overfit model"},
+            {"text": "Underfit model"},
+            {"text": "Overconfident model"},
+            {"text": "Underconfident model"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the 'Receiver Operating Characteristic' (ROC) curve in machine learning?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "A measure of model accuracy"},
+            {"text": "A measure of model complexity"},
+            {"text": "A plot of true positives vs false positives"},
+            {"text": "A plot of precision vs recall"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for the process of converting categorical variables into numerical variables?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Data preprocessing"},
+            {"text": "Data transformation"},
+            {"text": "Feature selection"},
+            {"text": "Model tuning"}
+         ],
+         "correctOptionIndex": 1
+      }
+   ]
+}
+2026-02-22 00:44:44.451172: Generating 2 mcq questions for topic: marketing
+2026-02-22 00:44:44.898319: Groq Response Data: {'id': 'chatcmpl-9b736f88-566a-47e7-b35a-8d7ae399f6d9', 'object': 'chat.completion', 'created': 1771701300, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '{\n  "questions": [\n      {\n         "questionText": "What is the primary goal of marketing?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "To increase brand awareness"},\n            {"text": "To generate revenue"},\n            {"text": "To reduce costs"},\n            {"text": "To improve customer satisfaction"}\n         ],\n         "correctOptionIndex": 1\n      },\n      {\n         "questionText": "Which of the following is NOT a key aspect of digital marketing?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Influencer marketing"},\n            {"text": "Email marketing"},\n            {"text": "Social media marketing"},\n            {"text": "Television advertising"}\n         ],\n         "correctOptionIndex": 3\n      }\n   ]\n}'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045634323, 'prompt_tokens': 174, 'prompt_time': 0.009500425, 'completion_tokens': 174, 'completion_time': 0.188647806, 'total_tokens': 348, 'total_time': 0.198148231}, 'usage_breakdown': None, 'system_fingerprint': 'fp_ff2b098aaf', 'x_groq': {'id': 'req_01kj0t0ttjfqkrmcdbg3pe407j', 'seed': 1895397709}, 'service_tier': 'on_demand'}
+2026-02-22 00:44:44.899319: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary goal of marketing?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To increase brand awareness"},
+            {"text": "To generate revenue"},
+            {"text": "To reduce costs"},
+            {"text": "To improve customer satisfaction"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is NOT a key aspect of digital marketing?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Influencer marketing"},
+            {"text": "Email marketing"},
+            {"text": "Social media marketing"},
+            {"text": "Television advertising"}
+         ],
+         "correctOptionIndex": 3
+      }
+   ]
+}
+2026-02-22 00:44:56.557094: Generating 10 mcq questions for topic: Business
+2026-02-22 00:44:57.472807: Groq Response Data: {'id': 'chatcmpl-728d14f7-e826-4d6e-b697-eb81a5477321', 'object': 'chat.completion', 'created': 1771701312, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '{\n  "questions": [\n      {\n         "questionText": "What is the primary goal of a business?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "To make a profit"},\n            {"text": "To provide a service"},\n            {"text": "To create jobs"},\n            {"text": "To help the environment"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the term for a company\'s ownership structure?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Management structure"},\n            {"text": "Financial structure"},\n            {"text": "Ownership structure"},\n            {"text": "Marketing structure"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is the process of dividing a company into smaller units?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Mergers and Acquisitions"},\n            {"text": "Divestiture"},\n            {"text": "Spin-off"},\n            {"text": "Joint Venture"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is the term for a company\'s financial statements?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Balance sheet"},\n            {"text": "Income statement"},\n            {"text": "Cash flow statement"},\n            {"text": "All of the above"}\n         ],\n         "correctOptionIndex": 3\n      },\n      {\n         "questionText": "What is the process of hiring employees?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Marketing"},\n            {"text": "Sales"},\n            {"text": "Human Resources"},\n            {"text": "Finance"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is the term for a company\'s market value?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Market capitalization"},\n            {"text": "Book value"},\n            {"text": "Net worth"},\n            {"text": "Asset value"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the process of analyzing a company\'s financial performance?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Financial analysis"},\n            {"text": "Market research"},\n            {"text": "SWOT analysis"},\n            {"text": "Break-even analysis"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the term for a company\'s financial obligations?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Liabilities"},\n            {"text": "Equity"},\n            {"text": "Assets"},\n            {"text": "Revenue"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the process of making strategic decisions?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Tactical planning"},\n            {"text": "Operational planning"},\n            {"text": "Strategic planning"},\n            {"text": "Financial planning"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is the term for a company\'s long-term goals?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Short-term goals"},\n            {"text": "Medium-term goals"},\n            {"text": "Long-term goals"},\n            {"text": "Mission statement"}\n         ],\n         "correctOptionIndex": 2\n      }\n   ]\n}'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045478006, 'prompt_tokens': 174, 'prompt_time': 0.009502464, 'completion_tokens': 804, 'completion_time': 0.774146188, 'total_tokens': 978, 'total_time': 0.783648652}, 'usage_breakdown': None, 'system_fingerprint': 'fp_ff2b098aaf', 'x_groq': {'id': 'req_01kj0t16hmfvjax5yaeyvkse1x', 'seed': 1441954895}, 'service_tier': 'on_demand'}
+2026-02-22 00:44:57.472807: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary goal of a business?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To make a profit"},
+            {"text": "To provide a service"},
+            {"text": "To create jobs"},
+            {"text": "To help the environment"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the term for a company's ownership structure?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Management structure"},
+            {"text": "Financial structure"},
+            {"text": "Ownership structure"},
+            {"text": "Marketing structure"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the process of dividing a company into smaller units?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mergers and Acquisitions"},
+            {"text": "Divestiture"},
+            {"text": "Spin-off"},
+            {"text": "Joint Venture"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for a company's financial statements?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Balance sheet"},
+            {"text": "Income statement"},
+            {"text": "Cash flow statement"},
+            {"text": "All of the above"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the process of hiring employees?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Marketing"},
+            {"text": "Sales"},
+            {"text": "Human Resources"},
+            {"text": "Finance"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for a company's market value?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Market capitalization"},
+            {"text": "Book value"},
+            {"text": "Net worth"},
+            {"text": "Asset value"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the process of analyzing a company's financial performance?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Financial analysis"},
+            {"text": "Market research"},
+            {"text": "SWOT analysis"},
+            {"text": "Break-even analysis"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the term for a company's financial obligations?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Liabilities"},
+            {"text": "Equity"},
+            {"text": "Assets"},
+            {"text": "Revenue"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the process of making strategic decisions?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Tactical planning"},
+            {"text": "Operational planning"},
+            {"text": "Strategic planning"},
+            {"text": "Financial planning"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for a company's long-term goals?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Short-term goals"},
+            {"text": "Medium-term goals"},
+            {"text": "Long-term goals"},
+            {"text": "Mission statement"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}
+2026-02-22 01:25:33.396130: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 01:25:33.397635: Key used: gsk_tg...pooM
+2026-02-22 01:25:33.914426: Groq Response Status: 200
+2026-02-22 01:25:33.915510: Groq Response Data: {'id': 'chatcmpl-e302fbdb-5ce9-4982-96a9-9404db4924d0', 'object': 'chat.completion', 'created': 1771703749, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': "Hello. I'd be happy to help you with your Business course. Since you didn't specify a particular module, I'll give you a general overview of the course.\n\nThe Business course covers the fundamental principles of business operations, management, and decision-making. Here are some key modules you might encounter:\n\n1. **Business Environment**: This module explores the external factors that affect businesses, such as the economy, government policies, and social trends.\n2. **Business Organization**: You'll learn about different types of business structures, including sole proprietorships, partnerships, and corporations.\n3. **Marketing**: This module covers the process of creating and delivering value to customers, including market research, product development, and pricing strategies.\n4. **Finance**: You'll learn about financial management, including budgeting, forecasting, and financial analysis.\n5. **Management**: This module focuses on leadership, organizational behavior, and human resources management.\n6. **Entrepreneurship**: You'll learn about starting and running a business, including business planning, innovation, and risk management.\n\nThese are just some of the modules you might encounter in a Business course. Do you have a specific question or topic you'd like me to help with?"}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045458841, 'prompt_tokens': 66, 'prompt_time': 0.003630219, 'completion_tokens': 243, 'completion_time': 0.314593192, 'total_tokens': 309, 'total_time': 0.318223411}, 'usage_breakdown': None, 'system_fingerprint': 'fp_1151d4f23c', 'x_groq': {'id': 'req_01kj0wbj92f8ws6dcsnknj5acn', 'seed': 734851169}, 'service_tier': 'on_demand'}
+2026-02-22 10:53:19.655548: Generating 2 mcq questions for topic: history
+2026-02-22 10:53:20.191255: Groq Response Data: {'id': 'chatcmpl-dd0b623d-04af-4834-bb8a-bce49a76303d', 'object': 'chat.completion', 'created': 1771737816, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '{\n  "questions": [\n      {\n         "questionText": "Which ancient civilization built the Great Pyramid of Giza?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Egyptians"},\n            {"text": "Greeks"},\n            {"text": "Romans"},\n            {"text": "Mayans"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What event occurred on July 14, 1789?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "The signing of the Magna Carta"},\n            {"text": "The execution of King Charles I"},\n            {"text": "The storming of the Bastille"},\n            {"text": "The Battle of Waterloo"}\n         ],\n         "correctOptionIndex": 2\n      }\n   ]\n}'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.047367269, 'prompt_tokens': 174, 'prompt_time': 0.010074721, 'completion_tokens': 184, 'completion_time': 0.189659454, 'total_tokens': 358, 'total_time': 0.199734175}, 'usage_breakdown': None, 'system_fingerprint': 'fp_ff2b098aaf', 'x_groq': {'id': 'req_01kj1wv77wfnarrk1dt4hhpedf', 'seed': 1106320400}, 'service_tier': 'on_demand'}
+2026-02-22 10:53:20.192255: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "Which ancient civilization built the Great Pyramid of Giza?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Egyptians"},
+            {"text": "Greeks"},
+            {"text": "Romans"},
+            {"text": "Mayans"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What event occurred on July 14, 1789?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "The signing of the Magna Carta"},
+            {"text": "The execution of King Charles I"},
+            {"text": "The storming of the Bastille"},
+            {"text": "The Battle of Waterloo"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}
+2026-02-22 10:54:11.871501: Generating 10 mcq questions for topic: Geography
+2026-02-22 10:54:20.163851: Groq Response Data: {'id': 'chatcmpl-3f7fff8f-313a-4892-80d4-2c3851022120', 'object': 'chat.completion', 'created': 1771737876, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '{\n  "questions": [\n      {\n         "questionText": "Which river is the longest in South America?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Amazon River"},\n            {"text": "Rio Grande"},\n            {"text": "Orinoco River"},\n            {"text": "Magdalena River"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the world\'s largest desert?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Sahara Desert"},\n            {"text": "Gobi Desert"},\n            {"text": "Mojave Desert"},\n            {"text": "Himalayan Desert"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "Which mountain range runs along the border between France and Spain?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Pyrenees"},\n            {"text": "Cantabrian Mountains"},\n            {"text": "Apennine Mountains"},\n            {"text": "Carpathian Mountains"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the capital city of Australia?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Canberra"},\n            {"text": "Melbourne"},\n            {"text": "Sydney"},\n            {"text": "Perth"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "Which city is the most populous in North America?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Mexico City"},\n            {"text": "New York City"},\n            {"text": "Los Angeles"},\n            {"text": "Toronto"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the world\'s largest island?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Greenland"},\n            {"text": "New Guinea"},\n            {"text": "Borneo"},\n            {"text": "Ellesmere Island"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "Which river flows through the Grand Canyon?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Colorado River"},\n            {"text": "Rio Grande River"},\n            {"text": "Mississippi River"},\n            {"text": "Snake River"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the capital city of China?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Beijing"},\n            {"text": "Shanghai"},\n            {"text": "Guangzhou"},\n            {"text": "Chongqing"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "Which city is the highest in the world?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "La Paz"},\n            {"text": "Lhasa"},\n            {"text": "Quito"},\n            {"text": "El Alto"}\n         ],\n         "correctOptionIndex": 1\n      },\n      {\n         "questionText": "What is the world\'s largest waterfall, by volume of water?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Victoria Falls"},\n            {"text": "Iguazu Falls"},\n            {"text": "Niagara Falls"},\n            {"text": "Angel Falls"}\n         ],\n         "correctOptionIndex": 0\n      }\n   ]\n}'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045300614, 'prompt_tokens': 175, 'prompt_time': 0.009848756, 'completion_tokens': 802, 'completion_time': 1.009217708, 'total_tokens': 977, 'total_time': 1.019066464}, 'usage_breakdown': None, 'system_fingerprint': 'fp_f757f4b0bf', 'x_groq': {'id': 'req_01kj1wx10mfqnr2fh7gjq3363b', 'seed': 428018510}, 'service_tier': 'on_demand'}
+2026-02-22 10:54:20.164394: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "Which river is the longest in South America?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Amazon River"},
+            {"text": "Rio Grande"},
+            {"text": "Orinoco River"},
+            {"text": "Magdalena River"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the world's largest desert?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Sahara Desert"},
+            {"text": "Gobi Desert"},
+            {"text": "Mojave Desert"},
+            {"text": "Himalayan Desert"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which mountain range runs along the border between France and Spain?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Pyrenees"},
+            {"text": "Cantabrian Mountains"},
+            {"text": "Apennine Mountains"},
+            {"text": "Carpathian Mountains"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the capital city of Australia?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Canberra"},
+            {"text": "Melbourne"},
+            {"text": "Sydney"},
+            {"text": "Perth"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which city is the most populous in North America?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mexico City"},
+            {"text": "New York City"},
+            {"text": "Los Angeles"},
+            {"text": "Toronto"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the world's largest island?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Greenland"},
+            {"text": "New Guinea"},
+            {"text": "Borneo"},
+            {"text": "Ellesmere Island"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which river flows through the Grand Canyon?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Colorado River"},
+            {"text": "Rio Grande River"},
+            {"text": "Mississippi River"},
+            {"text": "Snake River"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the capital city of China?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Beijing"},
+            {"text": "Shanghai"},
+            {"text": "Guangzhou"},
+            {"text": "Chongqing"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which city is the highest in the world?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "La Paz"},
+            {"text": "Lhasa"},
+            {"text": "Quito"},
+            {"text": "El Alto"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the world's largest waterfall, by volume of water?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Victoria Falls"},
+            {"text": "Iguazu Falls"},
+            {"text": "Niagara Falls"},
+            {"text": "Angel Falls"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-22 11:58:13.892711: Generating 10 mcq questions for topic: Social
+2026-02-22 11:58:15.308281: Groq Response Data: {'id': 'chatcmpl-7c351a80-2e1c-4a2e-92f3-efc56700fc50', 'object': 'chat.completion', 'created': 1771741711, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '{\n  "questions": [\n      {\n         "questionText": "What is the main purpose of a family?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "To earn money"},\n            {"text": "To provide love and support"},\n            {"text": "To have fun together"},\n            {"text": "To complete tasks"}\n         ],\n         "correctOptionIndex": 1\n      },\n      {\n         "questionText": "What is the definition of a friend?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "A person you meet at school"},\n            {"text": "A person you work with"},\n            {"text": "A person you trust and care for"},\n            {"text": "A person you see on TV"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is cultural diversity?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "The practice of speaking one language"},\n            {"text": "The practice of eating the same food"},\n            {"text": "The presence of different cultures and customs"},\n            {"text": "The practice of celebrating one holiday"}\n         ],\n         "correctOptionIndex": 2\n      },\n      {\n         "questionText": "What is the definition of social etiquette?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "The rules of behavior in a workplace"},\n            {"text": "The rules of behavior in a social setting"},\n            {"text": "The rules of behavior in a school"},\n            {"text": "The rules of behavior in a home"}\n         ],\n         "correctOptionIndex": 1\n      },\n      {\n         "questionText": "What is the importance of social norms?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "They help to establish rules and expectations"},\n            {"text": "They help to create conflict and tension"},\n            {"text": "They help to bring people together"},\n            {"text": "They help to separate people"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is community service?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "Volunteering to help others in need"},\n            {"text": "Donating money to a charity"},\n            {"text": "Participating in a school event"},\n            {"text": "Watching a movie at home"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the impact of social media on society?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "It has a positive impact on society"},\n            {"text": "It has a negative impact on society"},\n            {"text": "It has no impact on society"},\n            {"text": "It has both positive and negative impacts on society"}\n         ],\n         "correctOptionIndex": 3\n      },\n      {\n         "questionText": "What is the definition of social responsibility?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "The responsibility of individuals to their community"},\n            {"text": "The responsibility of companies to their shareholders"},\n            {"text": "The responsibility of governments to their citizens"},\n            {"text": "The responsibility of individuals to themselves"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the importance of empathy in social relationships?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "It helps to build trust and understanding"},\n            {"text": "It helps to create conflict and tension"},\n            {"text": "It has no impact on social relationships"},\n            {"text": "It helps to establish rules and expectations"}\n         ],\n         "correctOptionIndex": 0\n      },\n      {\n         "questionText": "What is the definition of social justice?",\n         "questionType": "mcq",\n         "options": [\n            {"text": "The fair treatment and equal opportunities for all"},\n            {"text": "The unequal treatment of certain groups"},\n            {"text": "The absence of rules and expectations"},\n            {"text": "The presence of rules and expectations"}\n         ],\n         "correctOptionIndex": 0\n      }\n   ]\n}'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.04671877, 'prompt_tokens': 174, 'prompt_time': 0.009780269, 'completion_tokens': 933, 'completion_time': 1.025330832, 'total_tokens': 1107, 'total_time': 1.035111101}, 'usage_breakdown': None, 'system_fingerprint': 'fp_4387d3edbb', 'x_groq': {'id': 'req_01kj20j224ek6rb8m4qznt7fz1', 'seed': 1625905765}, 'service_tier': 'on_demand'}
+2026-02-22 11:58:15.309477: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the main purpose of a family?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To earn money"},
+            {"text": "To provide love and support"},
+            {"text": "To have fun together"},
+            {"text": "To complete tasks"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the definition of a friend?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "A person you meet at school"},
+            {"text": "A person you work with"},
+            {"text": "A person you trust and care for"},
+            {"text": "A person you see on TV"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is cultural diversity?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "The practice of speaking one language"},
+            {"text": "The practice of eating the same food"},
+            {"text": "The presence of different cultures and customs"},
+            {"text": "The practice of celebrating one holiday"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the definition of social etiquette?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "The rules of behavior in a workplace"},
+            {"text": "The rules of behavior in a social setting"},
+            {"text": "The rules of behavior in a school"},
+            {"text": "The rules of behavior in a home"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the importance of social norms?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "They help to establish rules and expectations"},
+            {"text": "They help to create conflict and tension"},
+            {"text": "They help to bring people together"},
+            {"text": "They help to separate people"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is community service?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Volunteering to help others in need"},
+            {"text": "Donating money to a charity"},
+            {"text": "Participating in a school event"},
+            {"text": "Watching a movie at home"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the impact of social media on society?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "It has a positive impact on society"},
+            {"text": "It has a negative impact on society"},
+            {"text": "It has no impact on society"},
+            {"text": "It has both positive and negative impacts on society"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the definition of social responsibility?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "The responsibility of individuals to their community"},
+            {"text": "The responsibility of companies to their shareholders"},
+            {"text": "The responsibility of governments to their citizens"},
+            {"text": "The responsibility of individuals to themselves"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the importance of empathy in social relationships?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "It helps to build trust and understanding"},
+            {"text": "It helps to create conflict and tension"},
+            {"text": "It has no impact on social relationships"},
+            {"text": "It helps to establish rules and expectations"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the definition of social justice?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "The fair treatment and equal opportunities for all"},
+            {"text": "The unequal treatment of certain groups"},
+            {"text": "The absence of rules and expectations"},
+            {"text": "The presence of rules and expectations"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+>>>>>>> ad71cb2 (added new features and fixes)

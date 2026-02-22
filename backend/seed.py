@@ -45,20 +45,8 @@ def seed():
         db.commit()
         print("[SEED] Users committed.")
 
-        # 2. Courses
-        if db.query(models.Course).count() == 0:
-            instructor = db.query(models.User).filter(models.User.role == "instructor").first()
-            if instructor:
-                course = models.Course(
-                    title="Introduction to FastAPI",
-                    description="Learn basics.",
-                    price=49.99,
-                    status="Published",
-                    instructor_id=instructor.id
-                )
-                db.add(course)
-                db.commit()
-                print("[SEED] Applied courses.")
+        # 2. Courses (Removed static seeding)
+        print("[SEED] Static course seeding disabled.")
         
         print("[SEED] Seeding SUCCESS.")
     except Exception as e:

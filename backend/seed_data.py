@@ -22,44 +22,8 @@ def seed():
         db["users"].append(instructor)
         print(f"Created instructor: {instructor['email']}")
 
-    # Check if courses exist
-    if not db["courses"]:
-        courses = [
-            {
-                "id": 1,
-                "title": "Introduction to FastAPI",
-                "description": "Learn the basics of building high-performance APIs with Python.",
-                "instructor_id": instructor["id"],
-                "price": 49.99,
-                "status": "Published",
-                "thumbnail": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=800&q=80",
-                "created_at": models.CourseResponse(title="1", description="1", id=1, instructor_id=1).created_at
-            },
-            {
-                "id": 2,
-                "title": "Advanced React Patterns",
-                "description": "Master compound components, render props, and hooks for scalable UI.",
-                "instructor_id": instructor["id"],
-                "price": 79.99,
-                "status": "Published",
-                "thumbnail": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=800&q=80",
-                "created_at": models.CourseResponse(title="2", description="2", id=2, instructor_id=1).created_at
-            },
-            {
-                "id": 3,
-                "title": "Data Science with Python",
-                "description": "A comprehensive guide to data analysis and machine learning.",
-                "instructor_id": instructor["id"],
-                "price": 0.0,
-                "status": "Published",
-                "thumbnail": "https://images.unsplash.com/photo-1551288049-bbda48658a7e?auto=format&fit=crop&w=800&q=80",
-                "created_at": models.CourseResponse(title="3", description="3", id=3, instructor_id=1).created_at
-            }
-        ]
-        db["courses"].extend(courses)
-        print(f"Added {len(courses)} sample courses.")
-    else:
-        print("Courses already exist in database.")
+    # Check if courses exist (Disabled static seeding)
+    print("Static course seeding disabled in seed_data.py")
 
     database.save_db_data(db)
 

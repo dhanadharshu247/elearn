@@ -52,6 +52,7 @@ class Course(Base):
 
     instructor = relationship("User", back_populates="courses")
     modules = relationship("Module", back_populates="course", cascade="all, delete-orphan")
+    assessment = relationship("Question", back_populates="course", cascade="all, delete-orphan")
     enrolments = relationship("Enrolment", back_populates="course", cascade="all, delete-orphan")
     batches = relationship("Batch", back_populates="course", cascade="all, delete-orphan")
 
@@ -75,9 +76,12 @@ class Question(Base):
     questionType = Column(String, default="mcq") # 'mcq' or 'descriptive'
     correctOptionIndex = Column(Integer, nullable=True) # For MCQ
     correctAnswerText = Column(String, nullable=True) # For Descriptive
-    module_id = Column(Integer, ForeignKey("modules.id"))
-
+    module_id = Column(Integer, ForeignKey("modules.id"), nullable=True) # Optional for assessment
+    course_id = Column(Integer, ForeignKey("courses.id"), nullable=True) # For final assessment
+    difficulty = Column(String, default="medium") # 'easy', 'medium', 'hard'
+    
     module = relationship("Module", back_populates="quiz")
+    course = relationship("Course", back_populates="assessment")
     options = relationship("QuestionOption", back_populates="question", cascade="all, delete-orphan")
 
 class QuestionOption(Base):
@@ -159,4 +163,15 @@ class Message(Base):
 
     sender = relationship("User", foreign_keys=[sender_id])
     receiver = relationship("User", foreign_keys=[receiver_id])
+
+class Certificate(Base):
+    __tablename__ = "certificates"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    course_id = Column(Integer, ForeignKey("courses.id"))
+    certificate_code = Column(String, unique=True)
+    issued_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User")
+    course = relationship("Course")
 
