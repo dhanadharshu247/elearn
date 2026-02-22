@@ -18,8 +18,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30  # 30 days
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-# Password hashing setup using pbkdf2_sha256 for maximum compatibility
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+# Password hashing setup using pbkdf2_sha256 and bcrypt for maximum compatibility
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)

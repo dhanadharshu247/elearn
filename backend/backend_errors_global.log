@@ -5725,3 +5725,111 @@ fastapi.exceptions.ResponseValidationError: 1 validation error:
 
   File "C:\Users\HP\Desktop\elearning\elearn\backend\main.py", line 130, in login
     POST /auth/login
+
+Unhandled Error: GET http://127.0.0.1:8000/courses
+Traceback (most recent call last):
+  File "C:\Users\HP\Desktop\elearning\elearn\backend\main.py", line 88, in catch_exceptions_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\cors.py", line 87, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 119, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 222, in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\concurrency.py", line 37, in contextmanager_in_threadpool
+    raise e
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\concurrency.py", line 29, in contextmanager_in_threadpool
+    yield await run_in_threadpool(cm.__enter__)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 105, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 446, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 290, in serialize_response
+    return field.serialize(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\_compat\v2.py", line 174, in serialize
+    return self._type_adapter.dump_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\type_adapter.py", line 605, in dump_python
+    return self.serializer.to_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.PydanticSerializationError: Unable to serialize unknown type: <class 'models.User'>
+
+Unhandled Error: GET http://127.0.0.1:8000/courses/my-courses
+Traceback (most recent call last):
+  File "C:\Users\HP\Desktop\elearning\elearn\backend\main.py", line 88, in catch_exceptions_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\cors.py", line 87, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 119, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 222, in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\concurrency.py", line 37, in contextmanager_in_threadpool
+    raise e
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\concurrency.py", line 29, in contextmanager_in_threadpool
+    yield await run_in_threadpool(cm.__enter__)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 105, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 446, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 290, in serialize_response
+    return field.serialize(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\_compat\v2.py", line 174, in serialize
+    return self._type_adapter.dump_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\type_adapter.py", line 605, in dump_python
+    return self.serializer.to_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.PydanticSerializationError: Unable to serialize unknown type: <class 'models.User'>
