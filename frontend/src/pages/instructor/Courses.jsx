@@ -150,7 +150,7 @@ const Courses = () => {
                 }
             });
             const formattedCourses = response.data.map(course => ({
-                id: course._id,
+                id: course.id || course._id,
                 title: course.title,
                 description: course.description,
                 students: course.enrolledStudents ? course.enrolledStudents.length : 0,

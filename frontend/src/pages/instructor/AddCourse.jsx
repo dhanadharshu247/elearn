@@ -16,7 +16,8 @@ const AddCourse = () => {
                 documents: [],
                 quiz: []
             }
-        ]
+        ],
+        assessment: []
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -57,6 +58,18 @@ const AddCourse = () => {
     };
 
     const addQuestion = (moduleIndex) => {
+        if (moduleIndex === 'assessment') {
+            const updatedAssessment = [...courseData.assessment];
+            updatedAssessment.push({
+                questionText: '',
+                questionType: 'mcq',
+                options: [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
+                correctOptionIndex: 0,
+                correctAnswerText: ''
+            });
+            setCourseData(prev => ({ ...prev, assessment: updatedAssessment }));
+            return;
+        }
         const updatedModules = [...courseData.modules];
         updatedModules[moduleIndex].quiz.push({
             questionText: '',
@@ -69,18 +82,36 @@ const AddCourse = () => {
     };
 
     const updateQuestion = (mIndex, qIndex, field, value) => {
+        if (mIndex === 'assessment') {
+            const updatedAssessment = [...courseData.assessment];
+            updatedAssessment[qIndex][field] = value;
+            setCourseData(prev => ({ ...prev, assessment: updatedAssessment }));
+            return;
+        }
         const updatedModules = [...courseData.modules];
         updatedModules[mIndex].quiz[qIndex][field] = value;
         setCourseData(prev => ({ ...prev, modules: updatedModules }));
     };
 
     const updateOption = (mIndex, qIndex, oIndex, value) => {
+        if (mIndex === 'assessment') {
+            const updatedAssessment = [...courseData.assessment];
+            updatedAssessment[qIndex].options[oIndex].text = value;
+            setCourseData(prev => ({ ...prev, assessment: updatedAssessment }));
+            return;
+        }
         const updatedModules = [...courseData.modules];
         updatedModules[mIndex].quiz[qIndex].options[oIndex].text = value;
         setCourseData(prev => ({ ...prev, modules: updatedModules }));
     };
 
     const removeQuestion = (mIndex, qIndex) => {
+        if (mIndex === 'assessment') {
+            const updatedAssessment = [...courseData.assessment];
+            updatedAssessment.splice(qIndex, 1);
+            setCourseData(prev => ({ ...prev, assessment: updatedAssessment }));
+            return;
+        }
         const updatedModules = [...courseData.modules];
         updatedModules[mIndex].quiz.splice(qIndex, 1);
         setCourseData(prev => ({ ...prev, modules: updatedModules }));
@@ -100,7 +131,6 @@ const AddCourse = () => {
 
             const newQuestions = response.data.questions;
             if (newQuestions && newQuestions.length > 0) {
-                const updatedModules = [...courseData.modules];
                 const formattedQuestions = newQuestions.map(q => ({
                     questionText: q.questionText,
                     questionType: q.questionType || type,
@@ -109,8 +139,16 @@ const AddCourse = () => {
                     correctAnswerText: q.correctAnswerText || ''
                 }));
 
-                updatedModules[index].quiz = [...updatedModules[index].quiz, ...formattedQuestions];
-                setCourseData(prev => ({ ...prev, modules: updatedModules }));
+                if (index === 'assessment') {
+                    setCourseData(prev => ({
+                        ...prev,
+                        assessment: [...prev.assessment, ...formattedQuestions]
+                    }));
+                } else {
+                    const updatedModules = [...courseData.modules];
+                    updatedModules[index].quiz = [...updatedModules[index].quiz, ...formattedQuestions];
+                    setCourseData(prev => ({ ...prev, modules: updatedModules }));
+                }
             }
         } catch (err) {
             console.error('AI Generation failed:', err);
@@ -289,10 +327,11 @@ const AddCourse = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => removeQuestion(mIndex, qIndex)}
-                                                className="absolute top-2 right-2 text-slate-300 hover:text-red-400"
+                                                className="absolute top-2 right-2 text-red-400 hover:text-red-600 transition-colors"
+                                                title="Delete Question"
                                             >
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
                                             </button>
                                             <div className="flex gap-4 mb-3">
@@ -332,7 +371,7 @@ const AddCourse = () => {
                                                                 type="text"
                                                                 value={opt.text}
                                                                 onChange={(e) => updateOption(mIndex, qIndex, oIndex, e.target.value)}
-                                                                className="flex-1 text-sm px-2 py-1 border-none focus:ring-b-2 focus:ring-indigo-100"
+                                                                className="flex-1 text-sm px-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
                                                                 placeholder={`Option ${oIndex + 1}`}
                                                             />
                                                         </div>
@@ -356,6 +395,113 @@ const AddCourse = () => {
                             </div>
                         </div>
                     ))}
+                </div>
+
+                {/* Final Assessment Section */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mt-8">
+                    <div className="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-800">Final Course Assessment</h2>
+                            <p className="text-sm text-slate-500">Add 25 questions for the final test</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                disabled={generatingIndex !== null}
+                                onClick={() => setAiModalData({ index: 'assessment', topic: courseData.title, count: 25, type: 'mcq' }) || setIsAIModalOpen(true)}
+                                className="bg-indigo-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 disabled:opacity-50"
+                            >
+                                ✨ AI Generate 25 Qs
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => addQuestion('assessment')}
+                                className="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl font-bold hover:bg-slate-200 transition"
+                            >
+                                + Add Manually
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        {courseData.assessment.map((q, qIndex) => (
+                            <div key={qIndex} className="bg-slate-50 p-4 rounded-xl border border-slate-200 relative">
+                                <button
+                                    type="button"
+                                    onClick={() => removeQuestion('assessment', qIndex)}
+                                    className="absolute top-2 right-2 text-red-400 hover:text-red-600 transition-colors"
+                                    title="Delete Question"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                                <div className="flex gap-4 mb-3">
+                                    <div className="flex-1">
+                                        <input
+                                            type="text"
+                                            value={q.questionText}
+                                            onChange={(e) => updateQuestion('assessment', qIndex, 'questionText', e.target.value)}
+                                            className="w-full px-3 py-2 bg-white border border-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/10 font-medium"
+                                            placeholder={`Assessment Question ${qIndex + 1}`}
+                                        />
+                                    </div>
+                                    <div className="w-32">
+                                        <select
+                                            value={q.questionType}
+                                            onChange={(e) => updateQuestion('assessment', qIndex, 'questionType', e.target.value)}
+                                            className="w-full p-2 text-sm border-none bg-white rounded-lg focus:ring-2 focus:ring-indigo-500/10"
+                                        >
+                                            <option value="mcq">MCQ</option>
+                                            <option value="descriptive">Descriptive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                {q.questionType === 'mcq' ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {q.options.map((opt, oIndex) => (
+                                            <div key={oIndex} className="flex items-center space-x-2">
+                                                <input
+                                                    type="radio"
+                                                    name={`assessment-correct-${qIndex}`}
+                                                    checked={q.correctOptionIndex === oIndex}
+                                                    onChange={() => updateQuestion('assessment', qIndex, 'correctOptionIndex', oIndex)}
+                                                    className="text-indigo-600 focus:ring-indigo-500"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={opt.text}
+                                                    onChange={(e) => updateOption('assessment', qIndex, oIndex, e.target.value)}
+                                                    className="flex-1 text-sm px-2 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
+                                                    placeholder={`Option ${oIndex + 1}`}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <textarea
+                                        value={q.correctAnswerText || ''}
+                                        onChange={(e) => updateQuestion('assessment', qIndex, 'correctAnswerText', e.target.value)}
+                                        className="w-full p-3 bg-white border border-slate-100 rounded-xl focus:ring-2 focus:ring-indigo-500/10 text-sm"
+                                        rows="2"
+                                        placeholder="Enter the correct answer or key points..."
+                                    />
+                                )}
+                            </div>
+                        ))}
+                        {courseData.assessment.length === 0 && (
+                            <div className="text-center py-12 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl">
+                                <p className="text-slate-400 font-medium">No assessment questions added yet. Use AI to generate 25 questions quickly!</p>
+                            </div>
+                        )}
+                        {courseData.assessment.length > 0 && (
+                            <div className="text-right pt-2">
+                                <span className={`text-sm font-bold ${courseData.assessment.length === 25 ? 'text-emerald-600' : 'text-amber-500'}`}>
+                                    Total Questions: {courseData.assessment.length} / 25
+                                </span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex justify-end space-x-4 pt-8">

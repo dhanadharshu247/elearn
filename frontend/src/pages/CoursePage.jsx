@@ -11,11 +11,17 @@ const CoursePage = () => {
     const [error, setError] = useState(null);
     const [enrolling, setEnrolling] = useState(false);
     const [activeModuleIndex, setActiveModuleIndex] = useState(0);
+    const [activeQuizQuestionIndex, setActiveQuizQuestionIndex] = useState(0);
     const [quizAnswers, setQuizAnswers] = useState({});
     const [quizResult, setQuizResult] = useState(null);
 
     useEffect(() => {
         const fetchCourseData = async () => {
+            if (!id || id === 'undefined') {
+                setError('Invalid course ID');
+                setLoading(false);
+                return;
+            }
             try {
                 const response = await api.get(`/courses/${id}`);
                 setCourse(response.data);
@@ -30,6 +36,10 @@ const CoursePage = () => {
     }, [id]);
 
     const handleEnroll = async () => {
+        if (!id || id === 'undefined') {
+            alert('Unable to enroll: Invalid course ID. Please go back and try again.');
+            return;
+        }
         setEnrolling(true);
         try {
             await api.post(`/courses/${id}/enroll`);
@@ -51,42 +61,40 @@ const CoursePage = () => {
         setQuizResult(null);
     };
 
+    const getEmbedUrl = (url) => {
+        if (!url) return '';
+        if (url.includes('youtube.com/watch?v=')) {
+            const id = url.split('v=')[1].split('&')[0];
+            return `https://www.youtube.com/embed/${id}`;
+        }
+        if (url.includes('youtu.be/')) {
+            const id = url.split('youtu.be/')[1].split('?')[0];
+            return `https://www.youtube.com/embed/${id}`;
+        }
+        if (url.includes('youtube.com/embed/')) return url;
+        return url;
+    };
+
     const submitQuiz = async () => {
         const currentModule = course.modules[activeModuleIndex];
-        let correctCount = 0;
-        let mcqCount = 0;
-        currentModule.quiz.forEach((q, idx) => {
-            if (q.questionType === 'mcq') {
-                mcqCount++;
-                if (quizAnswers[idx] === q.correctOptionIndex) {
-                    correctCount++;
-                }
-            }
-        });
-
-        const totalScorable = mcqCount || 1;
-        const score = parseInt(((correctCount / totalScorable) * 100).toFixed(0));
+        const answersList = Object.keys(quizAnswers)
+            .sort((a, b) => Number(a) - Number(b))
+            .map(key => quizAnswers[key]);
 
         try {
-            await api.post(`/modules/${currentModule.id}/quiz/submit`, {
-                score: score,
+            const response = await api.post(`/modules/${currentModule.id}/quiz/submit`, {
+                answers: answersList,
                 total_questions: currentModule.quiz.length
             });
 
             setQuizResult({
-                score: score,
-                correct: correctCount,
-                total: currentModule.quiz.length
+                score: response.data.score,
+                correct: Math.round((response.data.score / 100) * (currentModule.quiz ? currentModule.quiz.length : 0)),
+                total: currentModule.quiz ? currentModule.quiz.length : 0
             });
         } catch (err) {
             console.error('Failed to submit quiz:', err);
-            alert('Progress could not be saved, but here is your score: ' + score + '%');
-            // Still show local result even if save fails? Yes, better UX.
-            setQuizResult({
-                score: score,
-                correct: correctCount,
-                total: currentModule.quiz.length
-            });
+            alert('Progress could not be saved.');
         }
     };
 
@@ -136,6 +144,7 @@ const CoursePage = () => {
                                     key={idx}
                                     onClick={() => {
                                         setActiveModuleIndex(idx);
+                                        setActiveQuizQuestionIndex(0);
                                         setQuizAnswers({});
                                         setQuizResult(null);
                                     }}
@@ -148,6 +157,25 @@ const CoursePage = () => {
                                     <div className="font-bold truncate">{m.title}</div>
                                 </button>
                             ))}
+
+                            {/* Final Assessment Link */}
+                            {course.assessment && course.assessment.length > 0 && (isEnrolled || isInstructor) && (
+                                <div className="pt-4 mt-4 border-t border-slate-100">
+                                    <Link
+                                        to={`/learner/quiz/${course.id}`}
+                                        className="w-full flex items-center justify-between p-4 rounded-2xl bg-amber-50 text-amber-700 border border-amber-100 hover:bg-amber-100 transition-all font-bold shadow-sm"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-xl">🏆</span>
+                                            <div className="text-left">
+                                                <div className="text-[10px] uppercase tracking-wider opacity-70">Final Step</div>
+                                                <div className="truncate">Course Assessment</div>
+                                            </div>
+                                        </div>
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -194,7 +222,7 @@ const CoursePage = () => {
                                         <div className="w-full h-full">
                                             <iframe
                                                 className="w-full h-full rounded-[1.5rem]"
-                                                src={activeModule.contentLink.replace('watch?v=', 'embed/')}
+                                                src={getEmbedUrl(activeModule.contentLink)}
                                                 title="YouTube video player"
                                                 frameBorder="0"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -225,74 +253,105 @@ const CoursePage = () => {
                             {/* Quiz Section */}
                             {activeModule?.quiz && activeModule.quiz.length > 0 && (
                                 <div className="space-y-8">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-2xl">📝</span>
-                                        <h2 className="text-2xl font-bold text-slate-900">Module Knowledge Check</h2>
-                                    </div>
-
-                                    <div className="space-y-6">
-                                        {activeModule.quiz.map((q, qIndex) => (
-                                            <div key={qIndex} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
-                                                <div className="flex justify-between items-start mb-6">
-                                                    <h3 className="text-lg font-bold text-slate-800">{qIndex + 1}. {q.questionText}</h3>
-                                                </div>
-                                                {q.questionType === 'mcq' ? (
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                        {q.options.map((opt, oIndex) => (
-                                                            <button
-                                                                key={oIndex}
-                                                                onClick={() => handleAnswerChange(qIndex, oIndex)}
-                                                                className={`p-4 rounded-2xl text-left transition-all border-2 font-medium ${quizAnswers[qIndex] === oIndex
-                                                                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                                                                    : 'hover:bg-slate-50 border-slate-100 text-slate-600'
-                                                                    }`}
-                                                            >
-                                                                <div className="flex items-center gap-3">
-                                                                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 ${quizAnswers[qIndex] === oIndex ? 'bg-indigo-500 text-white border-indigo-500' : 'border-slate-200'}`}>
-                                                                        {String.fromCharCode(65 + oIndex)}
-                                                                    </span>
-                                                                    {opt.text}
-                                                                </div>
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <div className="space-y-4">
-                                                        <textarea
-                                                            value={quizAnswers[qIndex] || ''}
-                                                            onChange={(e) => handleAnswerChange(qIndex, e.target.value)}
-                                                            className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 focus:bg-white transition-all outline-none italic text-slate-600"
-                                                            rows="4"
-                                                            placeholder="Type your answer here..."
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-
-                                        <div className="flex flex-col items-center pt-8">
-                                            {quizResult ? (
-                                                <div className="bg-white p-8 rounded-[2rem] border-2 border-indigo-500 shadow-2xl shadow-indigo-100 text-center space-y-4 animate-bounce-in">
-                                                    <div className="text-4xl font-black text-indigo-600">{quizResult.score}%</div>
-                                                    <div className="text-slate-500 font-bold">You got {quizResult.correct} out of {quizResult.total} correct!</div>
-                                                    <button
-                                                        onClick={() => { setQuizResult(null); setQuizAnswers({}); }}
-                                                        className="text-xs font-bold text-slate-400 hover:text-indigo-600 transition"
-                                                    >
-                                                        Retry Quiz
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <button
-                                                    onClick={submitQuiz}
-                                                    disabled={Object.keys(quizAnswers).length < activeModule.quiz.length}
-                                                    className="px-12 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition shadow-xl shadow-slate-900/20 disabled:opacity-50"
-                                                >
-                                                    Submit Module Quiz
-                                                </button>
-                                            )}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-2xl">📝</span>
+                                            <h2 className="text-2xl font-bold text-slate-900">Module Quiz</h2>
+                                        </div>
+                                        <div className="text-xs font-bold text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider">
+                                            Question {activeQuizQuestionIndex + 1} of {activeModule.quiz.length}
                                         </div>
                                     </div>
+
+                                    {!quizResult ? (
+                                        <div className="space-y-8 animate-fade-in">
+                                            {/* Single Question View */}
+                                            {activeModule.quiz.map((q, qIndex) => (
+                                                qIndex === activeQuizQuestionIndex && (
+                                                    <div key={qIndex} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                                                        <div className="mb-6">
+                                                            <h3 className="text-xl font-bold text-slate-800">{q.questionText}</h3>
+                                                        </div>
+                                                        {q.questionType === 'mcq' || (q.options && q.options.length > 0) ? (
+                                                            <div className="grid grid-cols-1 gap-3">
+                                                                {q.options.map((opt, oIndex) => (
+                                                                    <button
+                                                                        key={oIndex}
+                                                                        onClick={() => handleAnswerChange(qIndex, oIndex)}
+                                                                        className={`p-4 rounded-2xl text-left transition-all border-2 font-medium ${quizAnswers[qIndex] === oIndex
+                                                                            ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
+                                                                            : 'hover:bg-slate-50 border-slate-100 text-slate-600'
+                                                                            }`}
+                                                                    >
+                                                                        <div className="flex items-center gap-3">
+                                                                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 ${quizAnswers[qIndex] === oIndex ? 'bg-indigo-500 text-white border-indigo-500' : 'border-slate-200'}`}>
+                                                                                {String.fromCharCode(65 + oIndex)}
+                                                                            </span>
+                                                                            {opt.text}
+                                                                        </div>
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="space-y-4">
+                                                                <textarea
+                                                                    value={quizAnswers[qIndex] || ''}
+                                                                    onChange={(e) => handleAnswerChange(qIndex, e.target.value)}
+                                                                    className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 focus:bg-white transition-all outline-none italic text-slate-600"
+                                                                    rows="4"
+                                                                    placeholder="Type your answer here..."
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )
+                                            ))}
+
+                                            {/* Quiz Navigation */}
+                                            <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
+                                                <button
+                                                    onClick={() => setActiveQuizQuestionIndex(prev => Math.max(0, prev - 1))}
+                                                    disabled={activeQuizQuestionIndex === 0}
+                                                    className="px-6 py-2 text-slate-400 font-bold hover:bg-slate-50 rounded-xl transition disabled:opacity-10"
+                                                >
+                                                    Back
+                                                </button>
+
+                                                {activeQuizQuestionIndex < activeModule.quiz.length - 1 ? (
+                                                    <button
+                                                        onClick={() => setActiveQuizQuestionIndex(prev => prev + 1)}
+                                                        disabled={quizAnswers[activeQuizQuestionIndex] === undefined || quizAnswers[activeQuizQuestionIndex] === ''}
+                                                        className="px-8 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition disabled:opacity-50"
+                                                    >
+                                                        Next
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={submitQuiz}
+                                                        disabled={quizAnswers[activeQuizQuestionIndex] === undefined || quizAnswers[activeQuizQuestionIndex] === ''}
+                                                        className="px-8 py-2 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition disabled:opacity-50"
+                                                    >
+                                                        Finish Quiz
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-white p-12 rounded-[2rem] border-2 border-indigo-500 shadow-2xl shadow-indigo-100 text-center space-y-4 animate-bounce-in">
+                                            <div className="text-5xl font-black text-indigo-600">{quizResult.score}%</div>
+                                            <div className="text-slate-500 font-bold text-lg">You got {quizResult.correct} out of {quizResult.total} correct!</div>
+                                            <button
+                                                onClick={() => {
+                                                    setQuizResult(null);
+                                                    setQuizAnswers({});
+                                                    setActiveQuizQuestionIndex(0);
+                                                }}
+                                                className="mt-4 px-8 py-3 bg-slate-50 text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition border border-indigo-100"
+                                            >
+                                                Retry Quiz
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

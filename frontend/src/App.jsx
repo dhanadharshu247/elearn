@@ -30,6 +30,7 @@ import MyCourses from './pages/learner/MyCourses';
 import Achievements from './pages/learner/Achievements';
 import LearnerProfile from './pages/learner/Profile';
 import LearnerMessages from './pages/learner/Messages';
+import CertificatePage from './pages/learner/CertificatePage';
 
 // Common Pages
 import CoursePage from './pages/CoursePage';
@@ -76,6 +77,7 @@ function App() {
 
               <Route path="courses/:id" element={<CoursePage />} />
               <Route path="quiz/:id" element={<QuizPage />} />
+              <Route path="certificate/:id" element={<CertificatePage />} />
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/learner/dashboard" replace />} />
             </Route>
