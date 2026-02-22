@@ -77,19 +77,12 @@ function App() {
                 <Route path="profile" element={<LearnerProfile />} />
                 <Route path="messages" element={<LearnerMessages />} />
 
-<<<<<<< HEAD
-              <Route path="courses/:id" element={<CoursePage />} />
-              <Route path="quiz/:id" element={<QuizPage />} />
-              <Route path="certificate/:id" element={<CertificatePage />} />
-              {/* Fallback */}
-              <Route path="*" element={<Navigate to="/learner/dashboard" replace />} />
-=======
                 <Route path="courses/:id" element={<CoursePage />} />
                 <Route path="quiz/:id" element={<QuizPage />} />
+                <Route path="certificate/:id" element={<CertificatePage />} />
                 {/* Fallback */}
                 <Route path="*" element={<Navigate to="/learner/dashboard" replace />} />
               </Route>
->>>>>>> 19cdab04f6d8580a984d5c25f17446f182c9cc47
             </Route>
 
             <Route element={<PrivateRoute allowedRoles={['instructor', 'learner']} />}>

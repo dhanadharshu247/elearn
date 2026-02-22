@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
+import VoiceAccessibilityBox from '../components/VoiceAccessibilityBox';
 
 const QuizPage = () => {
     const { id } = useParams();
@@ -18,6 +19,9 @@ const QuizPage = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [totalSteps] = useState(10); // Target 10 questions
     const [selectedAnswer, setSelectedAnswer] = useState(null);
+
+    // Accessibility state
+    const [accessibilityMode, setAccessibilityMode] = useState(false);
 
     useEffect(() => {
         const startAdaptive = async () => {
@@ -38,6 +42,56 @@ const QuizPage = () => {
         setSelectedAnswer(value);
     };
 
+    /**
+     * handleVoiceCommand - Processes cleaned voice input to auto-select options.
+     * Implements fuzzy matching and keyword detection.
+     */
+    const handleVoiceCommand = useCallback((text) => {
+        if (!currentQuestion) return;
+        const lowerText = text.toLowerCase();
+
+        // 1. Direct Pattern Matching (Option A, First Option, etc.)
+        const optionPatterns = [
+            { patterns: ['option a', 'first option', 'number 1', 'option 1', 'first one'], index: 0 },
+            { patterns: ['option b', 'second option', 'number 2', 'option 2', 'second one'], index: 1 },
+            { patterns: ['option c', 'third option', 'number 3', 'option 3', 'third one'], index: 2 },
+            { patterns: ['option d', 'fourth option', 'number 4', 'option 4', 'fourth one'], index: 3 }
+        ];
+
+        for (const patternGroup of optionPatterns) {
+            if (patternGroup.patterns.some(p => lowerText.includes(p))) {
+                if (currentQuestion.options && currentQuestion.options[patternGroup.index]) {
+                    handleAnswerChange(patternGroup.index);
+                    return;
+                }
+            }
+        }
+
+        // 2. Fuzzy Text Matching for MCQ options
+        if (currentQuestion.questionType === 'mcq' && currentQuestion.options) {
+            let bestMatchIndex = -1;
+            let highestSimilarity = 0;
+
+            currentQuestion.options.forEach((opt, index) => {
+                const optText = opt.text.toLowerCase();
+                // Extremely simple similarity - check if cleaned transcript contains substantial part of option text
+                if (lowerText.includes(optText) || optText.includes(lowerText)) {
+                    bestMatchIndex = index;
+                }
+            });
+
+            if (bestMatchIndex !== -1) {
+                handleAnswerChange(bestMatchIndex);
+                return;
+            }
+        }
+
+        // 3. Descriptive Answers
+        if (currentQuestion.questionType === 'descriptive') {
+            handleAnswerChange(text);
+        }
+    }, [currentQuestion]);
+
     const handleNext = async () => {
         if (selectedAnswer === null || selectedAnswer === '') return;
 
@@ -52,17 +106,6 @@ const QuizPage = () => {
         if (currentStep + 1 >= totalSteps) {
             // End of adaptive session - Final Submission
             try {
-                // Map performance back to the format backend expects for final scoring/rewards
-                // Since final scoring endpoint expects full array indexed by original course assessment,
-                // we might need to be careful if we serve random questions.
-                // However, the backend adaptive next endpoint just serves questions.
-                // Let's create a specialized adaptive finish endpoint or reuse final submit if it handles partials.
-                // For now, let's reuse finalized submission with the answers we collected.
-
-                // Constructing an answer map for the final submit logic which evaluates 'course.assessment'
-                // Actually, let's just send the collection of {id, answer} and let backend handle it if we modify it.
-                // For simplicity, I'll send the answers we collected.
-
                 const finalRes = await api.post(`/quizzes/${id}/submit`, {
                     answers: newPerformance.map(p => p.answer),
                     is_adaptive: true,
@@ -85,7 +128,6 @@ const QuizPage = () => {
                 });
 
                 if (res.data.finished) {
-                    // Force finish if no more questions
                     const finalRes = await api.post(`/quizzes/${id}/submit`, {
                         answers: newPerformance.map(p => p.answer),
                         is_adaptive: true,
@@ -105,8 +147,8 @@ const QuizPage = () => {
         }
     };
 
-    if (loading) return <div className="p-8 text-center">Initializing Adaptive Assessment...</div>;
-    if (!currentQuestion && !result) return <div className="p-8 text-center text-red-500">Failed to load assessment.</div>;
+    if (loading) return <div className="p-8 text-center font-bold text-slate-400 uppercase tracking-widest">Initializing Adaptive Assessment...</div>;
+    if (!currentQuestion && !result) return <div className="p-8 text-center text-red-500 font-bold">Failed to load assessment.</div>;
 
     if (result) {
         return (
@@ -136,7 +178,7 @@ const QuizPage = () => {
                         <div className="text-6xl font-black text-indigo-600 mb-2">
                             {result.percentage}%
                         </div>
-                        <p className="text-lg text-slate-400 font-bold uppercase tracking-widest text-xs">
+                        <p className="text-lg text-slate-400 font-bold uppercase tracking-widest text-[10px]">
                             Score: {result.score} / {result.totalQuestions}
                         </p>
                     </div>
@@ -164,19 +206,30 @@ const QuizPage = () => {
 
     return (
         <div className="container mx-auto p-6 max-w-3xl min-h-[600px] flex flex-col">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-start mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Adaptive Assessment</h1>
-                    <span className="text-xs font-bold text-indigo-500 uppercase tracking-tighter">Difficulty: {currentQuestion.difficulty || 'medium'}</span>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Adaptive Assessment</h1>
+                    <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded">Difficulty: {currentQuestion.difficulty || 'medium'}</span>
+                    </div>
                 </div>
-                <div className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full font-bold text-sm">
-                    Question {currentStep + 1} of {totalSteps}
+                <div className="flex flex-col items-end gap-2">
+                    <div className="px-4 py-2 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100">
+                        Question {currentStep + 1} / {totalSteps}
+                    </div>
+                    {/* Accessibility Toggle */}
+                    <button
+                        onClick={() => setAccessibilityMode(!accessibilityMode)}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${accessibilityMode ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                    >
+                        <span>♿</span> {accessibilityMode ? 'Voice Mode On' : 'Accessibility Mode'}
+                    </button>
                 </div>
             </div>
 
             <div className="flex-1">
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 animate-fade-in">
-                    <h3 className="text-xl font-semibold mb-6 text-gray-900 leading-tight">
+                <div className="bg-white p-10 rounded-[2.5rem] shadow-xl border border-slate-100 animate-fade-in">
+                    <h3 className="text-2xl font-bold mb-8 text-slate-800 leading-tight tracking-tight">
                         {currentQuestion.questionText}
                     </h3>
 
@@ -185,9 +238,9 @@ const QuizPage = () => {
                             {currentQuestion.options.map((opt, oIndex) => (
                                 <label
                                     key={oIndex}
-                                    className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedAnswer === oIndex
-                                        ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/10'
-                                        : 'hover:bg-gray-50 border-gray-100'
+                                    className={`flex items-center p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${selectedAnswer === oIndex
+                                        ? 'bg-indigo-50 border-indigo-500 ring-4 ring-indigo-500/5'
+                                        : 'hover:bg-slate-50 border-slate-100'
                                         }`}
                                 >
                                     <input
@@ -197,10 +250,13 @@ const QuizPage = () => {
                                         checked={selectedAnswer === oIndex}
                                         onChange={() => handleAnswerChange(oIndex)}
                                     />
-                                    <div className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${selectedAnswer === oIndex ? 'border-blue-600' : 'border-gray-300'}`}>
-                                        {selectedAnswer === oIndex && <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />}
+                                    <div className={`w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-colors ${selectedAnswer === oIndex ? 'border-indigo-600' : 'border-slate-300'}`}>
+                                        {selectedAnswer === oIndex && <div className="w-3 h-3 rounded-full bg-indigo-600 animate-scale-in" />}
                                     </div>
-                                    <span className={`font-medium ${selectedAnswer === oIndex ? 'text-blue-900' : 'text-gray-700'}`}>{opt.text}</span>
+                                    <span className={`text-lg font-bold ${selectedAnswer === oIndex ? 'text-indigo-900' : 'text-slate-600'}`}>
+                                        <span className="inline-block w-6 text-slate-300 mr-2">{String.fromCharCode(65 + oIndex)}.</span>
+                                        {opt.text}
+                                    </span>
                                 </label>
                             ))}
                         </div>
@@ -208,22 +264,29 @@ const QuizPage = () => {
                         <textarea
                             value={selectedAnswer || ''}
                             onChange={(e) => handleAnswerChange(e.target.value)}
-                            className="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-blue-500 focus:bg-white transition-all outline-none italic text-gray-700"
-                            rows="6"
+                            className="w-full p-6 bg-slate-50 border-2 border-slate-100 rounded-3xl focus:border-indigo-500 focus:bg-white transition-all outline-none font-medium text-slate-700 min-h-[200px] shadow-inner"
                             placeholder="Type your adaptive answer here..."
+                        />
+                    )}
+
+                    {/* AI Voice Accessibility Box */}
+                    {accessibilityMode && (
+                        <VoiceAccessibilityBox
+                            onCommand={handleVoiceCommand}
+                            options={currentQuestion.options}
                         />
                     )}
                 </div>
             </div>
 
-            <div className="mt-8 flex justify-end items-center bg-white p-4 rounded-2xl border border-gray-200">
+            <div className="mt-8 flex justify-end items-center bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
                 <button
                     onClick={handleNext}
                     disabled={submitting || selectedAnswer === null || selectedAnswer === ''}
-                    className="px-10 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-100 disabled:opacity-50 flex items-center gap-2"
+                    className="px-12 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition shadow-2xl shadow-indigo-100 disabled:opacity-50 flex items-center gap-3 uppercase tracking-widest text-sm"
                 >
                     {submitting ? 'Processing...' : (currentStep + 1 === totalSteps ? 'Finish Assessment' : 'Next Question')}
-                    {!submitting && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>}
+                    {!submitting && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7-7 7" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 5l7 7-7 7" /></svg>}
                 </button>
             </div>
         </div>

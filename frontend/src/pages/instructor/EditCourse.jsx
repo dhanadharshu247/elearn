@@ -424,13 +424,8 @@ const EditCourse = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => removeQuestion(mIndex, qIndex)}
-<<<<<<< HEAD
-                                                        className="absolute top-4 right-4 text-red-400 hover:text-red-600 transition-all"
-                                                        title="Delete Question"
-=======
                                                         className="absolute top-4 right-4 text-slate-400 hover:text-red-500 p-1.5 bg-slate-50 hover:bg-red-50 rounded-lg transition-all"
                                                         title="Remove Question"
->>>>>>> 19cdab04f6d8580a984d5c25f17446f182c9cc47
                                                     >
                                                         <Trash2 className="w-5 h-5" />
                                                     </button>

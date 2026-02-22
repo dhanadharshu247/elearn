@@ -636,3 +636,282 @@
 2026-02-21 22:07:20.184175: Groq Response Status: 200
 2026-02-21 22:07:20.185812: Groq Response Data: {'id': 'chatcmpl-fa614362-9cc5-4b26-82b0-cd2b885af4a7', 'object': 'chat.completion', 'created': 1771691844, 'model': 'llama-3.1-8b-instant', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': "**Data**\n\nData is a collection of facts, numbers, or information that can be used to describe, analyze, or understand a situation, event, or phenomenon. It can be in the form of:\n\n- Numbers (quantitative data)\n- Words or text (qualitative data)\n- Images or videos\n- Audio recordings\n- Any other type of information that can be collected and stored.\n\nThink of data like a puzzle piece. Each piece of data is like a single puzzle piece that, when combined with other pieces, helps to create a complete picture or understanding of a situation.\n\nData can be used for various purposes, such as:\n\n- Research and analysis\n- Decision-making\n- Problem-solving\n- Predicting future outcomes\n- Identifying trends or patterns\n\nIn your studies, you'll likely work with data in various forms, such as:\n\n- Statistical data in math and science classes\n- Text data in language and literature classes\n- Image and video data in computer science and engineering classes\n\nI hope this helps you understand what data is! Do you have any specific questions or areas you'd like me to clarify?"}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'queue_time': 0.045973065, 'prompt_tokens': 59, 'prompt_time': 0.003360623, 'completion_tokens': 227, 'completion_time': 0.350582239, 'total_tokens': 286, 'total_time': 0.353942862}, 'usage_breakdown': None, 'system_fingerprint': 'fp_ff2b098aaf', 'x_groq': {'id': 'req_01kj0h08d5ejh81cs8nm7kshvz', 'seed': 400799251}, 'service_tier': 'on_demand'}
 >>>>>>> 19cdab04f6d8580a984d5c25f17446f182c9cc47
+2026-02-22 20:57:02.394956: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:00:58.217686: Generating 10 mcq questions for topic: Module 1
+2026-02-22 21:00:59.169606: Groq Response Data: {'error': {'message': 'Invalid API Key', 'type': 'invalid_request_error', 'code': 'invalid_api_key'}}
+2026-02-22 21:03:04.569200: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:19:17.759716: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:20:47.973669: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:21:49.185277: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:28:47.865729: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:28:47.871744: Groq Result received
+2026-02-22 21:28:47.872306: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:28:47.872306: AI ERROR: API Key Invalid
+2026-02-22 21:28:47.872306: Generating 1 mcq questions for topic: topic
+2026-02-22 21:28:47.872306: AI Response Content: {"questions": [{"questionText": "Q1", "questionType": "mcq"}]}
+2026-02-22 21:37:38.166209: Index persisted to data/vector_store.json
+2026-02-22 21:37:38.166209: Index persisted to data/vector_store.json
+2026-02-22 21:37:38.179346: Index persisted to data/vector_store.json
+2026-02-22 21:37:38.550123: Index persisted to data/vector_store.json
+2026-02-22 21:51:31.741607: Index persisted to data/vector_store.json
+2026-02-22 21:51:31.743298: Index loaded from data/vector_store.json (1 chunks)
+2026-02-22 21:53:13.128821: Index loaded from data/vector_store.json (1 chunks)
+2026-02-22 21:53:13.129951: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:53:14.278509: Groq Result received
+2026-02-22 21:54:19.218189: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-22 21:54:19.861313: Groq Result received
+2026-02-22 21:55:22.150184: Generating 10 mcq questions for topic: Module 1
+2026-02-22 21:55:23.355940: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the main topic of Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Introduction to Computer Science"},
+            {"text": "Algorithms and Data Structures"},
+            {"text": "Operating System Basics"},
+            {"text": "Networking Fundamentals"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Module 1 focuses on teaching students about",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Database Management Systems"},
+            {"text": "Object-Oriented Programming"},
+            {"text": "Problem-Solving Strategies"},
+            {"text": "Computer Hardware Components"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the primary goal of Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mastering a specific programming language"},
+            {"text": "Developing problem-solving skills"},
+            {"text": "Understanding computer networking fundamentals"},
+            {"text": "Learning data structures and algorithms"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Module 1 covers the basics of",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Cloud Computing"},
+            {"text": "Cyber Security"},
+            {"text": "Artificial Intelligence"},
+            {"text": "Discrete Mathematics"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What type of projects are typically assigned in Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Large-scale software development"},
+            {"text": "Research-based projects"},
+            {"text": "Simple coding exercises"},
+            {"text": "Case studies and presentations"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Module 1 emphasizes the importance of",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Teamwork and collaboration"},
+            {"text": "Critical thinking and analysis"},
+            {"text": "Communication and presentation"},
+            {"text": "Time management and organization"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the typical duration of Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "2-3 weeks"},
+            {"text": "4-6 weeks"},
+            {"text": "8-12 weeks"},
+            {"text": "No fixed duration"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Module 1 requires students to have prior knowledge of",
+         "questionType": "mcq",
+         "options": [
+            {"text": "C++ programming language"},
+            {"text": "Python programming language"},
+            {"text": "Java programming language"},
+            {"text": "No prior programming knowledge is required"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the primary assessment method for Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Midterm exams"},
+            {"text": "Final project presentations"},
+            {"text": "Quizzes and assignments"},
+            {"text": "Peer review and feedback"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Module 1 is designed to prepare students for",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Module 2: Advanced Algorithms and Data Structures"},
+            {"text": "Module 3: Computer Systems and Architecture"},
+            {"text": "Module 4: Database Systems and Management"},
+            {"text": "Module 5: Artificial Intelligence and Machine Learning"}
+         ],
+         "correctOptionIndex": 1
+      }
+   ]
+}
+2026-02-22 21:56:09.890984: Generating 5 mcq questions for topic: Neural Network
+2026-02-22 21:56:10.665166: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What does the term 'backpropagation' refer to in the context of Neural Networks?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "A method for training Neural Networks"},
+            {"text": "A type of activation function"},
+            {"text": "A type of neural network architecture"},
+            {"text": "A type of optimization algorithm"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the primary goal of the 'forward pass' in a Neural Network?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To compute the error between the predicted output and the actual output"},
+            {"text": "To update the weights of the network"},
+            {"text": "To propagate the input through the network and compute the output"},
+            {"text": "To regularize the network"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for the 'weights' and 'biases' in a Neural Network?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Parameters"},
+            {"text": "Hyperparameters"},
+            {"text": "Activation functions"},
+            {"text": "Loss functions"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following is a type of Neural Network architecture?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Recurrent Neural Network (RNN)"},
+            {"text": "Convolutional Neural Network (CNN)"},
+            {"text": "Both of the above"},
+            {"text": "Neither of the above"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for the process of adding noise to the input data in a Neural Network?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Regularization"},
+            {"text": "Augmentation"},
+            {"text": "Data preprocessing"},
+            {"text": "Data normalization"}
+         ],
+         "correctOptionIndex": 1
+      }
+   ]
+}
+2026-02-22 21:58:03.308291: Generating 5 mcq questions for topic: Neural Network
+2026-02-22 21:58:04.116487: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary function of an activation function in a Neural Network?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To reduce the number of neurons in the network"},
+            {"text": "To introduce non-linearity into the model"},
+            {"text": "To increase the number of weights in the network"},
+            {"text": "To improve the accuracy of the model without affecting its complexity"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What type of learning in Neural Networks allows the model to learn from examples?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Supervised learning"},
+            {"text": "Unsupervised learning"},
+            {"text": "Reinforcement learning"},
+            {"text": "Self-supervised learning"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is a key characteristic of a Feedforward Neural Network?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "It has multiple inputs and outputs"},
+            {"text": "It has multiple layers and feedback connections"},
+            {"text": "It has no feedback connections, data flows only in one direction"},
+            {"text": "It is a type of Recurrent Neural Network"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the process of presenting the model with the same input and observing different outputs called?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Overfitting"},
+            {"text": "Underfitting"},
+            {"text": "Regularization"},
+            {"text": "Sensitivity analysis"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What type of Neural Network is designed to work with sequential data, such as time series or speech?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Convolutional Neural Network"},
+            {"text": "Recurrent Neural Network"},
+            {"text": "Autoencoder"},
+            {"text": "Generative Adversarial Network"}
+         ],
+         "correctOptionIndex": 1
+      }
+   ]
+}
+2026-02-22 22:31:26.398799: Cleaning speech: I... I want to... select... option A...
+2026-02-22 22:31:26.660011: Cleaned result: I want to select option A.
+2026-02-22 22:31:26.661048: Cleaning speech: The first... first option please...
+2026-02-22 22:31:26.778207: Cleaned result: I would like the first option, please.
+2026-02-22 22:31:26.788698: Cleaning speech: Wh-what is the... the answer for... gravity...
+2026-02-22 22:31:26.888664: Cleaned result: What is the answer to gravity?
+2026-02-22 22:53:48.480700: Cleaning speech: ba back pro pa ga tion train net work...
+2026-02-22 22:53:48.725113: Cleaned result: Based on the given speech transcript, I've reconstructed it into a clear sentence:
+
+"Back to the pattern of the train network."
+
+This sentence preserves the original intent and meaning of the impaired speech, while ensuring grammatical correctness.
+2026-02-22 22:57:04.453684: Cleaning speech with strict prompt: I... I want to... select... option A...
+2026-02-22 22:57:04.880213: Final cleaned result: I want to select option A.
+2026-02-22 22:57:04.886381: Cleaning speech with strict prompt: The first... first option please...
+2026-02-22 22:57:05.075675: Final cleaned result: Please consider the first option.
+2026-02-22 22:57:05.080124: Cleaning speech with strict prompt: Wh-what is the... the answer for... gravity...
+2026-02-22 22:57:05.227260: Final cleaned result: What is the answer to gravity?
+2026-02-22 22:59:46.224922: Cleaning speech with strict prompt: ba back pro pa ga tion train net work...
+2026-02-22 22:59:46.443491: Final cleaned result: The train network is back in operation.

@@ -250,6 +250,13 @@ class AIGenerateRequest(BaseModel):
     difficulty: str = "medium"  # easy / medium / hard
     count: Optional[int] = 5
 
+class CleanSpeechRequest(BaseModel):
+    text: str
+
+class CleanSpeechResponse(BaseModel):
+    cleaned_text: str
+    confidence: Optional[float] = None
+
 class CertificateResponse(BaseModel):
     id: int
     user_id: int

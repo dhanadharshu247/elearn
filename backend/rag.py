@@ -1,35 +1,64 @@
 import os
 import math
 import logging
-import requests
+import json
 from datetime import datetime
 from dotenv import load_dotenv
+from groq import Groq
 
 load_dotenv(override=True)
 logger = logging.getLogger(__name__)
 
 print(f"--- RAG.PY INITIALIZED ---")
-print(f"Working Directory: {os.getcwd()}")
-print(f"File Path: {__file__}")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 if GROQ_API_KEY:
     GROQ_API_KEY = GROQ_API_KEY.strip().strip('"').strip("'")
-    print(f"GROQ_API_KEY loaded: {GROQ_API_KEY[:6]}...{GROQ_API_KEY[-4:]} (Length: {len(GROQ_API_KEY)})")
+    print(f"GROQ_API_KEY loaded: {GROQ_API_KEY[:6]}...{GROQ_API_KEY[-4:]}")
 else:
     print("WARNING: GROQ_API_KEY NOT FOUND in environment!")
+
+# Initialize Groq Client
+client = None
+if GROQ_API_KEY:
+    client = Groq(api_key=GROQ_API_KEY)
 
 def log_debug(msg):
     with open("rag_debug.log", "a") as f:
         f.write(f"{datetime.now()}: {msg}\n")
 
 # In-memory vector store
-VECTOR_STORE = []
+VECTOR_STORE = None
+INDEX_FILE = "data/vector_store.json"
 
+def save_index():
+    """Persist the VECTOR_STORE to disk."""
+    global VECTOR_STORE
+    if VECTOR_STORE is None:
+        return
+    
+    os.makedirs(os.path.dirname(INDEX_FILE), exist_ok=True)
+    try:
+        with open(INDEX_FILE, "w") as f:
+            json.dump(VECTOR_STORE, f)
+        log_debug(f"Index persisted to {INDEX_FILE}")
+    except Exception as e:
+        log_debug(f"Failed to save index: {e}")
 
-# ---------- SIMPLE TEXT EMBEDDING (NO AI NEEDED) ----------
-# We simulate embeddings using word frequency (works fine for college project)
+def load_index():
+    """Load the VECTOR_STORE from disk if it exists."""
+    global VECTOR_STORE
+    if os.path.exists(INDEX_FILE):
+        try:
+            with open(INDEX_FILE, "r") as f:
+                VECTOR_STORE = json.load(f)
+            log_debug(f"Index loaded from {INDEX_FILE} ({len(VECTOR_STORE)} chunks)")
+            return True
+        except Exception as e:
+            log_debug(f"Failed to load index: {e}")
+    return False
+
 def get_embedding(text):
     words = text.lower().split()
     freq = {}
@@ -37,51 +66,56 @@ def get_embedding(text):
         freq[w] = freq.get(w, 0) + 1
     return freq
 
-
 def cosine_similarity(v1, v2):
     common = set(v1.keys()) & set(v2.keys())
     dot = sum(v1[w] * v2[w] for w in common)
-
     mag1 = math.sqrt(sum(v*v for v in v1.values()))
     mag2 = math.sqrt(sum(v*v for v in v2.values()))
-
     if mag1 == 0 or mag2 == 0:
         return 0
     return dot / (mag1 * mag2)
 
-
-# ---------- INDEX ----------
 def index_content(courses_data):
+    """Build and save the index."""
     global VECTOR_STORE
-    VECTOR_STORE = []
-
+    new_store = []
     for course in courses_data:
         text = f"Course: {course['title']} Description: {course['description']}"
-        VECTOR_STORE.append({
+        new_store.append({
             "text": text,
             "embedding": get_embedding(text)
         })
+    VECTOR_STORE = new_store
+    save_index()
 
+def is_indexed():
+    """Check if the index exists on disk or in memory."""
+    if VECTOR_STORE is not None:
+        return True
+    return os.path.exists(INDEX_FILE)
 
-# ---------- RETRIEVE ----------
 def retrieve(query, top_k=3):
-    query_emb = get_embedding(query)
+    """Retrieve context chunks, loading index from disk if necessary."""
+    global VECTOR_STORE
+    if VECTOR_STORE is None:
+        if not load_index():
+            log_debug("Retrieve called but no index found.")
+            return []
 
+    query_emb = get_embedding(query)
     scored = []
     for chunk in VECTOR_STORE:
         score = cosine_similarity(query_emb, chunk["embedding"])
         scored.append((score, chunk["text"]))
-
     scored.sort(reverse=True, key=lambda x: x[0])
     return [text for _, text in scored[:top_k]]
 
-
-# ---------- GENERATE (OpenRouter AI) ----------
-
 def generate_response(query, context_chunks):
+    if not client:
+        return "AI Error: Groq client not initialized. Check API Key."
+
     try:
         context = "\n".join(context_chunks)
-
         prompt = f"""
 You are an AI learning assistant helping a college student.
 
@@ -93,40 +127,34 @@ Student Question:
 
 Explain clearly and simply.
 """
-
         log_debug(f"Requesting Groq with model: llama-3.1-8b-instant")
-        log_debug(f"Key used: {GROQ_API_KEY[:6]}...{GROQ_API_KEY[-4:]}")
-
-        response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type": "application/json"
-            },
-            json={
-                "model": "llama-3.1-8b-instant",
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ],
-                "temperature": 0.4
-            },
+        
+        result = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
             timeout=120
         )
 
-        log_debug(f"Groq Response Status: {response.status_code}")
-        data = response.json()
-        log_debug(f"Groq Response Data: {data}")
-        print("GROQ:", data)
+        log_debug(f"Groq Result received")
 
-        if "choices" in data:
-            return data["choices"][0]["message"]["content"]
-
-        return str(data)
+        if result and result.choices:
+            content = result.choices[0].message.content
+            return content
+        
+        return "AI Error: No response generated by AI."
 
     except Exception as e:
-        return f"AI Error: {e}"
+        print("AI ERROR:", str(e))
+        log_debug(f"AI ERROR: {str(e)}")
+        raise e
 
 def generate_questions(topic, question_type, count=10):
+    if not client:
+        return []
+
     try:
         if question_type == "mcq":
             prompt = f"""
@@ -156,33 +184,22 @@ Each object MUST follow this structure exactly:
     "correctAnswerText": "A sample correct answer or key points"
 }}
 """
-
         log_debug(f"Generating {count} {question_type} questions for topic: {topic}")
 
-        response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type": "application/json"
-            },
-            json={
-                "model": "llama-3.1-8b-instant",
-                "messages": [
-                    {"role": "system", "content": "You are a helpful educational assistant that generates structured quiz questions in JSON format."},
-                    {"role": "user", "content": prompt}
-                ],
-                "temperature": 0.7,
-                "response_format": { "type": "json_object" }
-            },
+        result = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": "You are a helpful educational assistant that generates structured quiz questions in JSON format."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            response_format={ "type": "json_object" },
             timeout=60
         )
 
-        data = response.json()
-        log_debug(f"Groq Response Data: {data}")
-        if "choices" in data:
-            content = data["choices"][0]["message"]["content"]
+        if result and result.choices:
+            content = result.choices[0].message.content
             log_debug(f"AI Response Content: {content}")
-            import json
             parsed = json.loads(content)
             
             if isinstance(parsed, dict):
@@ -197,5 +214,77 @@ Each object MUST follow this structure exactly:
         return []
 
     except Exception as e:
-        log_debug(f"Generation Error: {e}")
-        return []
+        print("AI ERROR (Generation):", str(e))
+        log_debug(f"Generation Error: {str(e)}")
+        raise e
+
+def clean_speech(text):
+    if not client:
+        return text
+
+    try:
+        # 1. Use the EXACT strict prompt requested
+        prompt = f"""You are an accessibility speech reconstruction engine.
+
+The following text was generated from fragmented or impaired speech.
+It may contain broken words, repeated syllables, or incomplete fragments.
+
+Your task:
+- Reconstruct it into ONE clear, grammatically correct sentence.
+- Preserve the original meaning.
+- Do NOT explain.
+- Do NOT add commentary.
+- Do NOT say what you did.
+- Output ONLY the corrected sentence.
+
+Input:
+{text}
+
+Corrected sentence:"""
+
+        log_debug(f"Cleaning speech with strict prompt: {text[:50]}...")
+        
+        result = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.1, # Lower temperature for better structural adherence
+            max_tokens=256
+        )
+
+        if result and result.choices:
+            raw_content = result.choices[0].message.content
+            if not raw_content:
+                return text
+                
+            # 2. Post-processing to remove unintended prefixes or commentary
+            cleaned = raw_content.strip()
+            
+            # Remove common conversational prefixes that some models might ignore instructions for
+            prefixes_to_remove = [
+                "Here is the corrected sentence:",
+                "Corrected sentence:",
+                "The corrected sentence is:",
+                "Based on the input,",
+                "I have reconstructed the speech into:",
+                "Modified sentence:"
+            ]
+            
+            for prefix in prefixes_to_remove:
+                if cleaned.lower().startswith(prefix.lower()):
+                    cleaned = cleaned[len(prefix):].strip()
+            
+            # Remove starting/ending quotes if the AI wrapped it
+            cleaned = cleaned.strip('"').strip("'").strip()
+
+            log_debug(f"Final cleaned result: {cleaned}")
+            return cleaned if cleaned else text
+        
+        return text
+
+    except Exception as e:
+        print("AI ERROR (Clean Speech):", str(e))
+        log_debug(f"Clean Speech Error: {str(e)}")
+        # If parsing or API fails, log error and return original text safely per requirements
+        return text

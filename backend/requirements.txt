@@ -8,3 +8,4 @@ pydantic[email]
 cors
 python-dotenv
 bcrypt
+groq

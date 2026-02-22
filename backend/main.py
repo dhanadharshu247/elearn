@@ -32,7 +32,12 @@ app.add_middleware(
 # --- RAG Integration ---
 @app.on_event("startup")
 def startup_event():
-    # Index content on startup
+    # Only index content if not already indexed (lazy/persisted)
+    if rag.is_indexed():
+        print("RAG Index found on disk. Skipping startup indexing.")
+        return
+
+    print("Building initial RAG Index...")
     db = database.SessionLocal()
     try:
         courses = db.query(models.Course).filter(models.Course.status == "Published").all()
@@ -49,7 +54,7 @@ def startup_event():
         
         # Build Index
         rag.index_content(courses_data)
-        print("RAG Index built successfully.")
+        print("RAG Index built and persisted successfully.")
     except Exception as e:
         print(f"Failed to build RAG index: {e}")
     finally:
@@ -71,6 +76,20 @@ async def chat_endpoint(request: ChatRequest):
     response_text = rag.generate_response(user_query, context_chunks)
     
     return {"response": response_text}
+
+@app.post("/api/ai/clean-speech", response_model=schemas.CleanSpeechResponse)
+async def clean_speech_endpoint(request: schemas.CleanSpeechRequest):
+    """
+    Intelligently reconstructs fragmented/impaired speech using Groq.
+    Part of the Accessibility Voice Mode feature.
+    """
+    try:
+        cleaned = rag.clean_speech(request.text)
+        return {"cleaned_text": cleaned, "confidence": None}
+    except Exception as e:
+        print(f"Clean Speech Endpoint Error: {e}")
+        # Always return something safe for accessibility users
+        return {"cleaned_text": request.text, "confidence": None}
 
 @app.post("/api/ai/generate-questions")
 async def ai_generate_questions(request: schemas.AIGenerateRequest, current_user: dict = Depends(auth.get_current_user)):
