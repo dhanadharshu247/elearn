@@ -1,29 +1,19 @@
-import models, database
-from sqlalchemy.orm import Session
+import sqlite3
 
-def check():
-    db = next(database.get_db())
-    users = db.query(models.User).all()
-    courses = db.query(models.Course).all()
-    enrolments = db.query(models.Enrolment).all()
+def check_users():
+    conn = sqlite3.connect('edweb.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT email, role FROM users')
+    users = cursor.fetchall()
+    print(f"Users: {users}")
     
-    print(f"Users: {len(users)}")
-    for u in users:
-        print(f" - {u.email} ({u.role})")
-        
-    print(f"Courses: {len(courses)}")
-    for c in courses:
-        print(f" - {c.title} (Instructor: {c.instructor.email if c.instructor else 'None'})")
-        print(f"   Modules: {len(c.modules)}")
-        for m in c.modules:
-            print(f"     - {m.title} (id: {m.id}, Quiz Qs: {len(m.quiz)})")
-            
-    print(f"Enrolments: {len(enrolments)}")
+    # Ensure some questions have varied difficulty for course 1
+    cursor.execute("UPDATE questions SET difficulty='easy' WHERE id IN (SELECT id FROM questions WHERE course_id=1 LIMIT 2)")
+    cursor.execute("UPDATE questions SET difficulty='medium' WHERE id IN (SELECT id FROM questions WHERE course_id=1 AND difficulty!='easy' LIMIT 2)")
+    cursor.execute("UPDATE questions SET difficulty='hard' WHERE id IN (SELECT id FROM questions WHERE course_id=1 AND difficulty NOT IN ('easy', 'medium') LIMIT 2)")
     
-    results = db.query(models.QuizResult).all()
-    print(f"Quiz Results: {len(results)}")
-    for r in results:
-        print(f" - User {r.user_id}, Module {r.module_id}, Score {r.score}")
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
-    check()
+    check_users()

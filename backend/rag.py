@@ -110,7 +110,7 @@ Explain clearly and simply.
                 ],
                 "temperature": 0.4
             },
-            timeout=60
+            timeout=120
         )
 
         log_debug(f"Groq Response Status: {response.status_code}")
@@ -131,7 +131,7 @@ def generate_questions(topic, question_type, count=10):
         if question_type == "mcq":
             prompt = f"""
 Generate {count} multiple choice questions about '{topic}'. 
-Return ONLY a valid JSON list of objects. Do not include any other text or explanation.
+Return a JSON object with a key "questions" containing a list of objects.
 Each object MUST follow this structure exactly:
 {{
     "questionText": "The question string",
@@ -148,7 +148,7 @@ Each object MUST follow this structure exactly:
         else: # descriptive
             prompt = f"""
 Generate {count} descriptive questions about '{topic}'. 
-Return ONLY a valid JSON list of objects. Do not include any other text or explanation.
+Return a JSON object with a key "questions" containing a list of objects.
 Each object MUST follow this structure exactly:
 {{
     "questionText": "The descriptive question string",
@@ -178,8 +178,10 @@ Each object MUST follow this structure exactly:
         )
 
         data = response.json()
+        log_debug(f"Groq Response Data: {data}")
         if "choices" in data:
             content = data["choices"][0]["message"]["content"]
+            log_debug(f"AI Response Content: {content}")
             import json
             parsed = json.loads(content)
             

@@ -336,13 +336,39 @@ def create_course(course: schemas.CourseCreate, current_user: dict = Depends(aut
         for q_data in mod_data.quiz:
             new_q = models.Question(
                 questionText=q_data.questionText,
+                questionType=q_data.questionType or "mcq",
                 correctOptionIndex=q_data.correctOptionIndex,
+                correctAnswerText=q_data.correctAnswerText,
+                difficulty=q_data.difficulty or "medium",
                 module_id=new_module.id
             )
             db.add(new_q)
             db.commit()
             db.refresh(new_q)
             
+            if q_data.options:
+                for opt_data in q_data.options:
+                    new_opt = models.QuestionOption(
+                        text=opt_data.text,
+                        question_id=new_q.id
+                    )
+                    db.add(new_opt)
+    
+    # Create course-level assessment questions if provided
+    for q_data in course.assessment:
+        new_q = models.Question(
+            questionText=q_data.questionText,
+            questionType=q_data.questionType or "mcq",
+            correctOptionIndex=q_data.correctOptionIndex,
+            correctAnswerText=q_data.correctAnswerText,
+            difficulty=q_data.difficulty or "medium",
+            course_id=new_course.id
+        )
+        db.add(new_q)
+        db.commit()
+        db.refresh(new_q)
+        
+        if q_data.options:
             for opt_data in q_data.options:
                 new_opt = models.QuestionOption(
                     text=opt_data.text,
@@ -461,6 +487,40 @@ def update_course(course_id: int, course_update: schemas.CourseUpdate, current_u
             
             # Recreate options for simplicity
             db.query(models.QuestionOption).filter(models.QuestionOption.question_id == db_q.id).delete()
+            for opt_data in q_data.options:
+                db.add(models.QuestionOption(text=opt_data.text, question_id=db_q.id))
+
+    # Handle Course-Level Assessment
+    incoming_ass_ids = [q.id for q in course_update.assessment if q.id is not None]
+    db.query(models.Question).filter(
+        models.Question.course_id == course_id,
+        ~models.Question.id.in_(incoming_ass_ids)
+    ).delete(synchronize_session=False)
+
+    for q_data in course_update.assessment:
+        if q_data.id:
+            db_q = db.query(models.Question).filter(models.Question.id == q_data.id).first()
+            if db_q:
+                db_q.questionText = q_data.questionText
+                db_q.questionType = q_data.questionType or "mcq"
+                db_q.correctOptionIndex = q_data.correctOptionIndex
+                db_q.correctAnswerText = q_data.correctAnswerText
+                db_q.difficulty = q_data.difficulty or "medium"
+        else:
+            db_q = models.Question(
+                questionText=q_data.questionText,
+                questionType=q_data.questionType or "mcq",
+                correctOptionIndex=q_data.correctOptionIndex,
+                correctAnswerText=q_data.correctAnswerText,
+                difficulty=q_data.difficulty or "medium",
+                course_id=course_id
+            )
+            db.add(db_q)
+            db.flush()
+
+        # Recreate options
+        db.query(models.QuestionOption).filter(models.QuestionOption.question_id == db_q.id).delete()
+        if q_data.options:
             for opt_data in q_data.options:
                 db.add(models.QuestionOption(text=opt_data.text, question_id=db_q.id))
 
@@ -620,11 +680,26 @@ def get_course(course_id: int, current_user_opt: Optional[dict] = Depends(auth.g
                             {
                                 "id": q.id,
                                 "questionText": q.questionText,
-                                "correctOptionIndex": q.correctOptionIndex,
+                                "questionType": q.questionType,
                                 "options": [{"text": o.text} for o in q.options]
+                                # Removed correctOptionIndex for learner security
                             } for q in m.quiz
                         ]
                     } for m in course.modules
+                ],
+                "assessment": [
+                    {
+                        "id": q.id,
+                        "questionText": q.questionText,
+                        "questionType": q.questionType,
+                        "options": [{"text": o.text} for o in q.options],
+                        # Only instructor sees answers and difficulty in course view
+                        **({
+                            "correctOptionIndex": q.correctOptionIndex,
+                            "correctAnswerText": q.correctAnswerText,
+                            "difficulty": q.difficulty
+                        } if (current_user_opt and current_user_opt.get("role") == "instructor" and course.instructor_id == current_user_opt.get("id")) else {})
+                    } for q in course.assessment
                 ]
         }
     except Exception as e:
@@ -661,18 +736,26 @@ def enroll_in_course(course_id: int, current_user: dict = Depends(auth.get_curre
 
 @app.post("/modules/{module_id}/quiz/submit", response_model=schemas.QuizResultResponse)
 def submit_quiz_result(module_id: int, result: schemas.QuizResultCreate, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # Check if module exists
     module = db.query(models.Module).filter(models.Module.id == module_id).first()
     if not module:
         raise HTTPException(status_code=404, detail="Module not found")
     
-    # Check if a result already exists to update or just add new
-    # For now, let's keep all attempts or just the latest? Let's keep the latest high score or just the latest attempt.
-    # Simple: Always save the latest attempt.
+    score = result.score
+    if result.answers is not None:
+        # Perform backend scoring
+        correct_count = 0
+        mcq_questions = [q for q in module.quiz if q.questionType == 'mcq']
+        for i, q in enumerate(mcq_questions):
+            if i < len(result.answers) and result.answers[i] == q.correctOptionIndex:
+                correct_count += 1
+        
+        total_scorable = len(mcq_questions) or 1
+        score = int((correct_count / total_scorable) * 100)
+
     new_result = models.QuizResult(
         user_id=current_user["id"],
         module_id=module_id,
-        score=result.score,
+        score=score if score is not None else 0,
         total_questions=result.total_questions
     )
     db.add(new_result)
@@ -778,6 +861,203 @@ def submit_quiz_result(module_id: int, result: schemas.QuizResultCreate, current
             db.commit()
 
     return new_result
+
+@app.get("/quizzes/{course_id}")
+def get_quiz_questions(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # Check enrollment
+    enrollment = db.query(models.Enrolment).filter(
+        models.Enrolment.course_id == course_id,
+        models.Enrolment.user_id == current_user["id"]
+    ).first()
+    if not enrollment:
+        raise HTTPException(status_code=403, detail="You must be enrolled in the course to access the assessment.")
+    
+    questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
+    
+    return {
+        "questions": [
+            {
+                "id": q.id,
+                "questionText": q.questionText,
+                "questionType": q.questionType,
+                "options": [{"text": o.text} for o in q.options],
+                # Do not return correct answers to the student!
+            } for q in questions
+        ]
+    }
+
+@app.post("/quizzes/{course_id}/adaptive/start")
+def start_adaptive_quiz(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # Check enrollment
+    enrollment = db.query(models.Enrolment).filter(
+        models.Enrolment.course_id == course_id,
+        models.Enrolment.user_id == current_user["id"]
+    ).first()
+    if not enrollment:
+         raise HTTPException(status_code=403, detail="Not enrolled")
+
+    # Start with a medium question
+    question = db.query(models.Question).filter(
+        models.Question.course_id == course_id,
+        models.Question.difficulty == "medium"
+    ).first()
+
+    if not question:
+        # Fallback to any question
+        question = db.query(models.Question).filter(models.Question.course_id == course_id).first()
+
+    if not question:
+        raise HTTPException(status_code=404, detail="No questions found for this course.")
+
+    return {
+        "question": {
+            "id": question.id,
+            "questionText": question.questionText,
+            "questionType": question.questionType,
+            "difficulty": question.difficulty,
+            "options": [{"text": o.text} for o in question.options]
+        }
+    }
+
+@app.post("/quizzes/{course_id}/adaptive/next")
+def next_adaptive_question(course_id: int, request: schemas.AdaptiveNextRequest, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # 1. Identify the last question answered (the last ID in answered_ids)
+    if not request.answered_ids:
+        raise HTTPException(status_code=400, detail="answered_ids cannot be empty")
+    
+    last_q_id = request.answered_ids[-1]
+    last_q = db.query(models.Question).filter(models.Question.id == last_q_id).first()
+    if not last_q:
+        raise HTTPException(status_code=404, detail="Last question not found")
+
+    # 2. Evaluate if the last answer was correct
+    is_correct = False
+    if last_q.questionType == "mcq":
+        try:
+            is_correct = int(request.last_answer) == last_q.correctOptionIndex
+        except (ValueError, TypeError):
+            is_correct = False
+    else:
+        is_correct = str(request.last_answer).strip().lower() == (last_q.correctAnswerText or "").strip().lower()
+
+    # 3. Determine next difficulty
+    diff_map = {"easy": 1, "medium": 2, "hard": 3}
+    rev_diff_map = {1: "easy", 2: "medium", 3: "hard"}
+    
+    curr_level = diff_map.get(request.last_difficulty, 2)
+    if is_correct:
+        next_level = min(curr_level + 1, 3)
+    else:
+        next_level = max(curr_level - 1, 1)
+    
+    target_diff = rev_diff_map[next_level]
+    
+    # Find next question
+    question = db.query(models.Question).filter(
+        models.Question.course_id == course_id,
+        models.Question.difficulty == target_diff,
+        ~models.Question.id.in_(request.answered_ids)
+    ).first()
+    
+    if not question:
+        # Try any other difficulty if target not found
+        question = db.query(models.Question).filter(
+            models.Question.course_id == course_id,
+            ~models.Question.id.in_(request.answered_ids)
+        ).first()
+        
+    if not question:
+        return {"finished": True}
+
+    return {
+        "finished": False,
+        "question": {
+            "id": question.id,
+            "questionText": question.questionText,
+            "questionType": question.questionType,
+            "difficulty": question.difficulty,
+            "options": [{"text": o.text} for o in question.options]
+        }
+    }
+
+@app.post("/quizzes/{course_id}/submit")
+def submit_course_quiz(course_id: int, request: schemas.QuizSubmitRequest, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if request.is_adaptive:
+        questions = db.query(models.Question).filter(models.Question.id.in_(request.question_ids)).all()
+        # Sort questions to match the order of answer ids provided
+        id_to_q = {q.id: q for q in questions}
+        sorted_questions = [id_to_q[qid] for qid in request.question_ids if qid in id_to_q]
+    else:
+        sorted_questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
+
+    score = 0
+    total = len(sorted_questions)
+    
+    for i, q in enumerate(sorted_questions):
+        if i >= len(request.answers): break
+        user_answer = request.answers[i]
+        
+        if q.questionType == "mcq":
+            if user_answer is not None and int(user_answer) == q.correctOptionIndex:
+                score += 1
+        else: # descriptive
+            if str(user_answer).strip().lower() == (q.correctAnswerText or "").strip().lower():
+                score += 1
+                
+    percentage = (score / total * 100) if total > 0 else 0
+    
+    # Save results (using module_id=None or create a separate table for final assessment results)
+    # The models currently only have QuizResult with module_id.
+    # We'll use module_id=None if allowed or just save it.
+    # Looking at models.py, QuizResult has module_id = Column(Integer, ForeignKey("modules.id"))
+    # it doesn't say nullable=False, so let's hope it works.
+    
+    res = models.QuizResult(
+        user_id = current_user["id"],
+        score = score,
+        total_questions = total
+        # module_id will be NULL
+    )
+    db.add(res)
+    db.commit()
+    
+    badge_awarded = False
+    certificate_generated = False
+    
+    if percentage >= 50:
+        # Award Certificate
+        import uuid
+        cert = models.Certificate(
+            user_id = current_user["id"],
+            course_id = course_id,
+            certificate_code = f"CERT-{uuid.uuid4().hex[:8].upper()}"
+        )
+        db.add(cert)
+        certificate_generated = True
+        
+        # Award Master Badge
+        course = db.query(models.Course).get(course_id)
+        badge_name = f"{course.title} Master"
+        badge = db.query(models.Badge).filter(models.Badge.name == badge_name).first()
+        if not badge:
+            badge = models.Badge(name=badge_name, description=f"Mastered {course.title}", icon="Star")
+            db.add(badge)
+            db.flush()
+        
+        user = db.query(models.User).get(current_user["id"])
+        if badge not in user.badges:
+            user.badges.append(badge)
+            badge_awarded = True
+
+    db.commit()
+    
+    return {
+        "score": score,
+        "totalQuestions": total,
+        "percentage": int(percentage),
+        "badgeAwarded": badge_awarded,
+        "certificate": certificate_generated
+    }
 
 # --- New Feature Endpoints ---
 
