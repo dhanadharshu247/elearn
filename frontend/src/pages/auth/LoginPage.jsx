@@ -5,6 +5,7 @@ import Input from '../../components/ui/Input';
 import PasswordInput from '../../components/ui/PasswordInput';
 import Button from '../../components/ui/Button';
 import { AlertCircle, LogIn, Mail, ArrowRight, BookOpen, GraduationCap, Sparkles } from 'lucide-react';
+import AccessibilitySettings from '../../components/AccessibilitySettings';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -48,6 +49,10 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen w-full flex bg-slate-50 relative overflow-hidden">
+            {/* Accessibility Controls */}
+            <div className="absolute top-4 right-4 z-[100]">
+                <AccessibilitySettings />
+            </div>
             {/* Background Decorative Blob */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-200/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 animate-blob"></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 animate-blob animation-delay-2000"></div>
