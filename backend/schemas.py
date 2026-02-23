@@ -249,7 +249,6 @@ class AIGenerateRequest(BaseModel):
     questionType: str = "mcq"   # mcq / descriptive
     difficulty: str = "medium"  # easy / medium / hard
     count: Optional[int] = 5
-
 class CleanSpeechRequest(BaseModel):
     text: str
 

@@ -251,11 +251,7 @@ def get_all_courses(q: Optional[str] = None, db: Session = Depends(database.get_
             "instructor_id": c.instructor_id,
             "enrolledStudents": [e.user_id for e in c.enrolments],
             "progress": 0,
-            "instructor": {
-                "id": c.instructor.id,
-                "name": c.instructor.name,
-                "email": c.instructor.email
-            }
+            "instructor": schemas.UserResponse.from_orm(c.instructor) if c.instructor else None
         })
     return result
 
@@ -316,11 +312,7 @@ def get_my_courses(
             "instructor_id": c.instructor_id,
             "enrolledStudents": [e.user_id for e in c.enrolments],
             "progress": progress,
-            "instructor": {
-                "id": c.instructor.id,
-                "name": c.instructor.name,
-                "email": c.instructor.email
-            }
+            "instructor": schemas.UserResponse.from_orm(c.instructor) if c.instructor else None
         })
     return result
 
