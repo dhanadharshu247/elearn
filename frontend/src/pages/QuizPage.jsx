@@ -12,6 +12,7 @@ const QuizPage = () => {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [result, setResult] = useState(null);
+    const [showReview, setShowReview] = useState(false);
 
     // Adaptive tracking
     const [answeredIds, setAnsweredIds] = useState([]);
@@ -24,18 +25,25 @@ const QuizPage = () => {
     const [accessibilityMode, setAccessibilityMode] = useState(false);
 
     useEffect(() => {
-        const startAdaptive = async () => {
-            setLoading(true);
-            try {
-                const res = await api.post(`/quizzes/${id}/adaptive/start`);
-                setCurrentQuestion(res.data.question);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        if (id) startAdaptive();
+        if (id) {
+            const startAdaptive = async () => {
+                setLoading(true);
+                try {
+                    const res = await api.post(`/quizzes/${id}/adaptive/start`);
+                    if (res.data.completed) {
+                        setResult(res.data);
+                        setShowReview(true);
+                    } else {
+                        setCurrentQuestion(res.data.question);
+                    }
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            startAdaptive();
+        }
     }, [id]);
 
     const handleAnswerChange = (value) => {
@@ -112,6 +120,7 @@ const QuizPage = () => {
                     question_ids: newAnsweredIds
                 });
                 setResult(finalRes.data);
+                setShowReview(true);
             } catch (err) {
                 console.error(err);
                 alert('Failed to submit final results');
@@ -134,6 +143,7 @@ const QuizPage = () => {
                         question_ids: newAnsweredIds
                     });
                     setResult(finalRes.data);
+                    setShowReview(true);
                 } else {
                     setCurrentQuestion(res.data.question);
                     setCurrentStep(prev => prev + 1);
@@ -195,10 +205,84 @@ const QuizPage = () => {
                     </div>
 
                     <div className="flex flex-col gap-3">
+                        {result.review && (
+                            <button
+                                onClick={() => setShowReview(!showReview)}
+                                className="px-6 py-4 bg-indigo-50 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-100 transition"
+                            >
+                                {showReview ? 'Hide Review' : 'Show Detailed Review'}
+                            </button>
+                        )}
                         <button onClick={() => navigate(`/learner/courses/${id}`)} className="px-6 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition">
                             Back to Course
                         </button>
                     </div>
+
+                    {showReview && result.review && (
+                        <div className="mt-12 text-left space-y-6 animate-fade-in">
+                            <h3 className="text-2xl font-black text-slate-900 mb-6">Assessment Review</h3>
+                            {result.review.map((rev, idx) => (
+                                <div key={idx} className="bg-slate-50 p-8 rounded-3xl border border-slate-100">
+                                    <div className="flex gap-4 mb-4">
+                                        <span className="w-8 h-8 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center text-sm font-bold shrink-0">
+                                            {idx + 1}
+                                        </span>
+                                        <p className="font-bold text-slate-800 leading-tight">{rev.questionText}</p>
+                                    </div>
+
+                                    {rev.questionType === 'mcq' ? (
+                                        <div className="pl-12 space-y-3">
+                                            <div className="grid gap-2">
+                                                {rev.options.map((opt, oIdx) => {
+                                                    const isUserSelected = result.userAnswers && result.userAnswers[idx] === oIdx;
+                                                    const isCorrect = oIdx === rev.correctOptionIndex;
+
+                                                    return (
+                                                        <div
+                                                            key={oIdx}
+                                                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${isCorrect
+                                                                ? 'bg-green-50 border-green-200 text-green-700'
+                                                                : isUserSelected
+                                                                    ? 'bg-red-50 border-red-200 text-red-700 shadow-inner'
+                                                                    : 'bg-white border-slate-100 text-slate-500'
+                                                                }`}
+                                                        >
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="opacity-50">{String.fromCharCode(65 + oIdx)}.</span>
+                                                                {opt.text}
+                                                                {isCorrect && <span className="ml-auto flex items-center gap-1">✅ <span className="text-[10px] font-black uppercase tracking-widest">Correct Answer</span></span>}
+                                                                {isUserSelected && !isCorrect && <span className="ml-auto flex items-center gap-1">❌ <span className="text-[10px] font-black uppercase tracking-widest">Your Choice</span></span>}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                            {/* Explicit Correct Answer Block if user was wrong */}
+                                            {result.userAnswers && result.userAnswers[idx] !== rev.correctOptionIndex && (
+                                                <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl animate-fade-in">
+                                                    <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">Correct Answer</p>
+                                                    <p className="text-indigo-900 font-bold">
+                                                        {String.fromCharCode(65 + rev.correctOptionIndex)}. {rev.options[rev.correctOptionIndex].text}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="pl-12 space-y-3">
+                                            <div className="bg-slate-100 p-4 rounded-xl border border-slate-200">
+                                                <p className="text-[10px] uppercase font-black text-slate-500 mb-1 tracking-widest">Your Answer</p>
+                                                <p className="text-slate-800 font-bold italic">"{result.userAnswers && result.userAnswers[idx]}"</p>
+                                            </div>
+                                            <div className="bg-green-50 p-4 rounded-xl border border-green-200">
+                                                <p className="text-[10px] uppercase font-black text-green-600 mb-1 tracking-widest">Correct Answer Pattern</p>
+                                                <p className="text-green-800 font-bold italic">"{rev.correctAnswerText}"</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         );

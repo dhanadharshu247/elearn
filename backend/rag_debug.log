@@ -1506,3 +1506,161 @@ This sentence preserves the original intent and meaning of the impaired speech, 
 }
 >>>>>>> ad71cb2 (added new features and fixes)
 >>>>>>> e98c3593ec4bc47de0838dde25302a4916579826
+2026-02-24 11:10:05.072867: Generating 2 mcq questions for topic: algebra
+2026-02-24 11:10:05.891806: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "Solve for x in the equation 2x + 5 = 11.",
+         "questionType": "mcq",
+         "options": [
+            {
+               "text": "x = 2"
+            },
+            {
+               "text": "x = 3"
+            },
+            {
+               "text": "x = 4"
+            },
+            {
+               "text": "x = 5"
+            }
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is a true statement about the equation y = 2x + 3?",
+         "questionType": "mcq",
+         "options": [
+            {
+               "text": "The equation represents a circle"
+            },
+            {
+               "text": "The equation represents a parabola"
+            },
+            {
+               "text": "The equation represents a straight line"
+            },
+            {
+               "text": "The equation represents a hyperbola"
+            }
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}
+2026-02-24 11:10:18.679359: Generating 10 mcq questions for topic: Maths
+2026-02-24 11:10:19.793499: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the value of x in the equation 2x + 5 = 11?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "2"},
+            {"text": "3"},
+            {"text": "4"},
+            {"text": "5"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the sum of 5 and 7?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "10"},
+            {"text": "11"},
+            {"text": "12"},
+            {"text": "15"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the product of 4 and 9?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "30"},
+            {"text": "35"},
+            {"text": "36"},
+            {"text": "40"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the value of y in the equation y - 3 = 7?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "4"},
+            {"text": "5"},
+            {"text": "6"},
+            {"text": "10"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the quotient of 12 and 4?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "2"},
+            {"text": "3"},
+            {"text": "4"},
+            {"text": "6"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the value of z in the equation 2z = 12?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "3"},
+            {"text": "4"},
+            {"text": "5"},
+            {"text": "6"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the difference between 15 and 9?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "4"},
+            {"text": "5"},
+            {"text": "6"},
+            {"text": "10"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the sum of 2 and 8?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "8"},
+            {"text": "9"},
+            {"text": "10"},
+            {"text": "12"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the product of 6 and 8?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "35"},
+            {"text": "45"},
+            {"text": "48"},
+            {"text": "50"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the value of w in the equation 3w = 24?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "4"},
+            {"text": "6"},
+            {"text": "8"},
+            {"text": "9"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}

@@ -142,6 +142,8 @@ class Token(BaseModel):
     role: str
     user: UserResponse
 
+    model_config = {"from_attributes": True}
+
 
 # ---------------- QUIZ RESULT ----------------
 
@@ -157,8 +159,13 @@ class QuizResultCreate(BaseModel):
 class QuizResultResponse(QuizResultBase):
     id: int
     user_id: int
-    module_id: int
+    module_id: Optional[int] = None
+    course_id: Optional[int] = None
     completed_at: datetime
+    review: Optional[List[dict]] = None
+    userAnswers: Optional[List[Any]] = None
+    percentage: Optional[int] = None
+    correctCount: Optional[int] = None
     model_config = {"from_attributes": True}
 
 class AdaptiveNextRequest(BaseModel):

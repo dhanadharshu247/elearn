@@ -2,10 +2,11 @@ import models, database, auth, schemas, random
 from datetime import timedelta, datetime
 from typing import List, Dict, Any, Optional
 from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-import os, shutil
+import os, shutil, csv
+from io import StringIO
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from pydantic import BaseModel  # Import BaseModel
@@ -711,7 +712,15 @@ def get_course(course_id: int, current_user_opt: Optional[dict] = Depends(auth.g
                             "difficulty": q.difficulty
                         } if (current_user_opt and current_user_opt.get("role") == "instructor" and course.instructor_id == current_user_opt.get("id")) else {})
                     } for q in course.assessment
-                ]
+                ],
+                "isAssessmentCompleted": db.query(models.QuizResult).filter(
+                    models.QuizResult.user_id == current_user_opt.get("id"),
+                    models.QuizResult.course_id == course_id
+                ).first() is not None if (current_user_opt and current_user_opt.get("role") == "learner") else False,
+                "hasCertificate": db.query(models.Certificate).filter(
+                    models.Certificate.user_id == current_user_opt.get("id"),
+                    models.Certificate.course_id == course_id
+                ).first() is not None if (current_user_opt and current_user_opt.get("role") == "learner") else False
         }
     except Exception as e:
         import traceback
@@ -747,134 +756,188 @@ def enroll_in_course(course_id: int, current_user: dict = Depends(auth.get_curre
 
 @app.post("/modules/{module_id}/quiz/submit", response_model=schemas.QuizResultResponse)
 def submit_quiz_result(module_id: int, result: schemas.QuizResultCreate, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    module = db.query(models.Module).filter(models.Module.id == module_id).first()
-    if not module:
-        raise HTTPException(status_code=404, detail="Module not found")
-    
-    score = result.score
-    if result.answers is not None:
-        # Perform backend scoring
+    try:
+        module = db.query(models.Module).filter(models.Module.id == module_id).first()
+        if not module:
+            raise HTTPException(status_code=404, detail="Module not found")
+        
         correct_count = 0
-        mcq_questions = [q for q in module.quiz if q.questionType == 'mcq']
-        for i, q in enumerate(mcq_questions):
-            if i < len(result.answers) and result.answers[i] == q.correctOptionIndex:
-                correct_count += 1
+        total_questions = len(module.quiz)
         
-        total_scorable = len(mcq_questions) or 1
-        score = int((correct_count / total_scorable) * 100)
-
-    new_result = models.QuizResult(
-        user_id=current_user["id"],
-        module_id=module_id,
-        score=score if score is not None else 0,
-        total_questions=result.total_questions
-    )
-    db.add(new_result)
-    db.commit()
-    db.refresh(new_result)
-
-    # Check for course completion and award badge
-    course = module.course
-    total_modules = len(course.modules)
-    completed_modules = db.query(models.QuizResult.module_id).filter(
-        models.QuizResult.user_id == current_user["id"],
-        models.QuizResult.module_id.in_([m.id for m in course.modules])
-    ).distinct().count()
-
-    if completed_modules == total_modules:
-        # Create or fetch a badge for this course
-        badge_name = f"{course.title} Graduate"
-        badge = db.query(models.Badge).filter(models.Badge.name == badge_name).first()
-        if not badge:
-            badge = models.Badge(
-                name=badge_name,
-                description=f"Completed all modules in {course.title}",
-                icon="Award"
-            )
-            db.add(badge)
-            db.commit()
-            db.refresh(badge)
+        if result.answers is not None:
+            # Align with the order in CoursePage.jsx (indices 0..N)
+            for i, q in enumerate(module.quiz):
+                if i >= len(result.answers):
+                    break
+                
+                user_answer = result.answers[i]
+                if q.questionType == 'mcq' or (q.options and len(q.options) > 0):
+                    try:
+                        if int(user_answer) == q.correctOptionIndex:
+                            correct_count += 1
+                    except (ValueError, TypeError):
+                        pass
+                else: # descriptive
+                    if str(user_answer).strip().lower() == (q.correctAnswerText or "").strip().lower():
+                        correct_count += 1
         
-        # Award badge to user if they don't have it
-        user = db.query(models.User).filter(models.User.id == current_user["id"]).first()
-        if badge not in user.badges:
-            user.badges.append(badge)
-            db.commit()
-            
-            # Send notification
-            notification = models.Notification(
-                user_id=user.id,
-                title="Badge Earned!",
-                message=f"Congratulations! You've earned the '{badge_name}' badge.",
-                type="success"
-            )
-            db.add(notification)
-            db.commit()
+        percentage = int((correct_count / total_questions * 100)) if total_questions > 0 else 0
 
-        # --- Batch Assignment Logic ---
-        # Calculate average score
-        quiz_results = db.query(models.QuizResult).filter(
+        # Check if user already submitted a result for this module
+        existing_result = db.query(models.QuizResult).filter(
             models.QuizResult.user_id == current_user["id"],
-            models.QuizResult.module_id.in_([m.id for m in course.modules])
-        ).all()
-        
-        total_score_percentage = 0
-        count = 0
-        for qr in quiz_results:
-            if qr.total_questions > 0:
-                total_score_percentage += (qr.score / qr.total_questions) * 100
-                count += 1
-        
-        avg_score = total_score_percentage / count if count > 0 else 0
-        
-        # Determine Batch Name
-        batch_name = "Bronze"
-        if avg_score >= 90:
-            batch_name = "Diamond"
-        elif avg_score >= 80:
-            batch_name = "Gold"
-        elif avg_score >= 70:
-            batch_name = "Silver"
-        
-        # Get or Create Batch
-        # We need to find a batch for this course with this name.
-        # Ideally, batches are unique by (course_id, name).
-        batch = db.query(models.Batch).filter(
-            models.Batch.course_id == course.id,
-            models.Batch.name == batch_name
+            models.QuizResult.module_id == module_id
         ).first()
         
-        if not batch:
-            batch = models.Batch(
-                name=batch_name,
-                course_id=course.id,
-                instructor_id=course.instructor_id
+        if existing_result:
+            # Update existing result instead of failing
+            existing_result.score = correct_count
+            existing_result.total_questions = total_questions
+            existing_result.answers = result.answers
+            existing_result.completed_at = datetime.utcnow()
+            db.commit()
+            db.refresh(existing_result)
+            new_result = existing_result
+        else:
+            new_result = models.QuizResult(
+                user_id=current_user["id"],
+                module_id=module_id,
+                score=correct_count,
+                total_questions=total_questions,
+                answers=result.answers
             )
-            db.add(batch)
+            db.add(new_result)
             db.commit()
-            db.refresh(batch)
-        
-        # Assign User to Batch
-        # We need to fetch the user object again to be sure attached to session if needed, 
-        # but we already have 'user' from above.
-        if user not in batch.students:
-            batch.students.append(user)
-            db.commit()
-            
-            # Notify User about Batch
-            batch_notif = models.Notification(
-                user_id=user.id,
-                title="Batch Assigned!",
-                message=f"You've been assigned to the '{batch_name}' batch based on your performance ({int(avg_score)}%).",
-                type="info"
-            )
-            db.add(batch_notif)
-            db.commit()
+            db.refresh(new_result)
 
-    return new_result
+        # Check for course completion and award badge
+        course = module.course
+        if course:
+            total_modules = len(course.modules)
+            completed_modules = db.query(models.QuizResult.module_id).filter(
+                models.QuizResult.user_id == current_user["id"],
+                models.QuizResult.module_id.in_([m.id for m in course.modules])
+            ).distinct().count()
+
+            if total_modules > 0 and completed_modules == total_modules:
+                # Award Badge
+                badge_name = f"{course.title} Graduate"
+                badge = db.query(models.Badge).filter(models.Badge.name == badge_name).first()
+                if not badge:
+                    badge = models.Badge(name=badge_name, description=f"Completed {course.title}", icon="Award")
+                    db.add(badge)
+                    db.flush()
+                
+                # Use scalar ID from current_user
+                user_id = current_user["id"]
+                user_obj = db.query(models.User).get(user_id)
+                
+                if badge not in user_obj.badges:
+                    user_obj.badges.append(badge)
+                    notif = models.Notification(user_id=user_id, title="Badge Earned!", message=f"Earned '{badge_name}'", type="success")
+                    db.add(notif)
+                
+                # Batch logic
+                quiz_results = db.query(models.QuizResult).filter(
+                    models.QuizResult.user_id == user_id,
+                    models.QuizResult.module_id.in_([m.id for m in course.modules])
+                ).all()
+                
+                t_score = 0
+                t_count = 0
+                for qr in quiz_results:
+                    if qr.total_questions and qr.total_questions > 0:
+                        t_score += (qr.score / qr.total_questions) * 100
+                        t_count += 1
+                
+                if t_count > 0:
+                    avg = t_score / t_count
+                    b_name = "Bronze"
+                    if avg >= 90: b_name = "Diamond"
+                    elif avg >= 80: b_name = "Gold"
+                    elif avg >= 70: b_name = "Silver"
+                    
+                    batch = db.query(models.Batch).filter(models.Batch.course_id == course.id, models.Batch.name == b_name).first()
+                    if not batch:
+                        batch = models.Batch(name=b_name, course_id=course.id, instructor_id=course.instructor_id)
+                        db.add(batch)
+                        db.flush()
+                    
+                    if user_obj not in batch.students:
+                        batch.students.append(user_obj)
+                        notif2 = models.Notification(user_id=user_id, title="Batch Assigned!", message=f"Assigned to {b_name} batch", type="info")
+                        db.add(notif2)
+                
+                db.commit()
+
+        return {
+            "id": new_result.id,
+            "user_id": new_result.user_id,
+            "module_id": new_result.module_id,
+            "score": new_result.score,
+            "total_questions": new_result.total_questions,
+            "completed_at": new_result.completed_at,
+            "percentage": percentage,
+            "correctCount": correct_count,
+            "totalQuestions": total_questions,
+            "review": [
+                {
+                    "id": q.id,
+                    "questionText": q.questionText,
+                    "questionType": q.questionType,
+                    "options": [{"text": o.text} for o in q.options],
+                    "correctOptionIndex": q.correctOptionIndex,
+                    "correctAnswerText": q.correctAnswerText
+                } for q in module.quiz
+            ],
+            "userAnswers": result.answers
+        }
+
+    except Exception as e:
+        import traceback
+        with open("quiz_submit_error.log", "a") as f:
+            f.write(f"\n--- {datetime.now()} ---\n")
+            f.write(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/quizzes/{course_id}")
 def get_quiz_questions(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # Check if already completed
+    existing_result = db.query(models.QuizResult).filter(
+        models.QuizResult.user_id == current_user["id"],
+        models.QuizResult.course_id == course_id
+    ).first()
+    
+    if existing_result:
+        # Fetch questions based on stored IDs if available, otherwise course questions
+        if existing_result.question_ids:
+            questions = db.query(models.Question).filter(models.Question.id.in_(existing_result.question_ids)).all()
+            q_map = {q.id: q for q in questions}
+            sorted_review_questions = [q_map[qid] for qid in existing_result.question_ids if qid in q_map]
+        else:
+            sorted_review_questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
+        
+        # Return result and detailed review
+        return {
+            "completed": True,
+            "score": existing_result.score,
+            "totalQuestions": existing_result.total_questions,
+            "percentage": int((existing_result.score / existing_result.total_questions * 100) if existing_result.total_questions and existing_result.total_questions > 0 else 0),
+            "userAnswers": existing_result.answers,
+            "completed_at": existing_result.completed_at,
+            "certificate": db.query(models.Certificate).filter(models.Certificate.user_id == current_user["id"], models.Certificate.course_id == course_id).first() is not None,
+            "review": [
+                {
+                    "id": q.id,
+                    "questionText": q.questionText,
+                    "questionType": q.questionType,
+                    "options": [{"text": o.text} for o in q.options],
+                    "correctOptionIndex": q.correctOptionIndex,
+                    "correctAnswerText": q.correctAnswerText
+                } for q in sorted_review_questions
+            ]
+        }
+
     # Check enrollment
     enrollment = db.query(models.Enrolment).filter(
         models.Enrolment.course_id == course_id,
@@ -899,6 +962,40 @@ def get_quiz_questions(course_id: int, current_user: dict = Depends(auth.get_cur
 
 @app.post("/quizzes/{course_id}/adaptive/start")
 def start_adaptive_quiz(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # Check if already completed
+    existing_result = db.query(models.QuizResult).filter(
+        models.QuizResult.user_id == current_user["id"],
+        models.QuizResult.course_id == course_id
+    ).first()
+    
+    if existing_result:
+        # Fetch questions based on stored IDs if available
+        if existing_result.question_ids:
+            questions = db.query(models.Question).filter(models.Question.id.in_(existing_result.question_ids)).all()
+            q_map = {q.id: q for q in questions}
+            sorted_review_questions = [q_map[qid] for qid in existing_result.question_ids if qid in q_map]
+        else:
+            sorted_review_questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
+
+        return {
+            "completed": True,
+            "score": existing_result.score,
+            "totalQuestions": existing_result.total_questions,
+            "percentage": int((existing_result.score / existing_result.total_questions * 100) if existing_result.total_questions > 0 else 0),
+            "userAnswers": existing_result.answers,
+            "certificate": db.query(models.Certificate).filter(models.Certificate.user_id == current_user["id"], models.Certificate.course_id == course_id).first() is not None,
+            "review": [
+                {
+                    "id": q.id,
+                    "questionText": q.questionText,
+                    "questionType": q.questionType,
+                    "options": [{"text": o.text} for o in q.options],
+                    "correctOptionIndex": q.correctOptionIndex,
+                    "correctAnswerText": q.correctAnswerText
+                } for q in sorted_review_questions
+            ]
+        }
+
     # Check enrollment
     enrollment = db.query(models.Enrolment).filter(
         models.Enrolment.course_id == course_id,
@@ -1023,11 +1120,21 @@ def submit_course_quiz(course_id: int, request: schemas.QuizSubmitRequest, curre
     # Looking at models.py, QuizResult has module_id = Column(Integer, ForeignKey("modules.id"))
     # it doesn't say nullable=False, so let's hope it works.
     
+    # Check if already submitted
+    existing_result = db.query(models.QuizResult).filter(
+        models.QuizResult.user_id == current_user["id"],
+        models.QuizResult.course_id == course_id
+    ).first()
+    if existing_result:
+        raise HTTPException(status_code=400, detail="You have already completed the final assessment for this course.")
+
     res = models.QuizResult(
         user_id = current_user["id"],
-        score = score,
-        total_questions = total
-        # module_id will be NULL
+        course_id = course_id,
+        score = score, # score is already raw count here
+        total_questions = total,
+        answers = request.answers,
+        question_ids = request.question_ids if request.is_adaptive else [q.id for q in sorted_questions]
     )
     db.add(res)
     db.commit()
@@ -1193,6 +1300,98 @@ def get_my_badges(current_user: dict = Depends(auth.get_current_user), db: Sessi
 def get_all_badges(db: Session = Depends(database.get_db)):
     return db.query(models.Badge).all()
 
+
+# Certificates
+@app.get("/users/me/certificates", response_model=List[schemas.CertificateResponse])
+def get_my_certificates(current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    certs = db.query(models.Certificate).filter(models.Certificate.user_id == current_user["id"]).all()
+    # Populate extra fields for the response model
+    for cert in certs:
+        cert.course_title = cert.course.title if cert.course else "Unknown Course"
+        cert.user_name = cert.user.name if cert.user else "Unknown Learner"
+    return certs
+
+@app.get("/users/me/certificates/course/{course_id}", response_model=Optional[schemas.CertificateResponse])
+def get_course_certificate(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    cert = db.query(models.Certificate).filter(
+        models.Certificate.user_id == current_user["id"],
+        models.Certificate.course_id == course_id
+    ).first()
+    
+    if cert:
+        cert.course_title = cert.course.title if cert.course else "Unknown Course"
+        cert.user_name = cert.user.name if cert.user else "Unknown Learner"
+    
+    return cert
+
+@app.get("/courses/{course_id}/reports/performance")
+def get_performance_report(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user["role"] != "instructor":
+        raise HTTPException(status_code=403, detail="Only instructors can download performance reports")
+    
+    course = db.query(models.Course).filter(models.Course.id == course_id).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    if course.instructor_id != current_user["id"]:
+        raise HTTPException(status_code=403, detail="Not authorized to access reports for this course")
+    
+    # 1. Fetch Enrolled Students
+    # Joining with Enrolment table to find all students for this course
+    enrolled_users = db.query(models.User).join(models.Enrolment).filter(models.Enrolment.course_id == course_id).all()
+    
+    # 2. Prepare CSV Header
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Student Name", "Email", "Progress (%)", "Module Quiz Avg (%)", "Final Assessment Status", "Final Grade (%)"])
+    
+    total_modules = len(course.modules)
+    
+    for student in enrolled_users:
+        # Progress: Completed modules / total modules
+        completed_results = db.query(models.QuizResult).filter(
+            models.QuizResult.user_id == student.id,
+            models.QuizResult.module_id.in_([m.id for m in course.modules])
+        ).all()
+        
+        completed_count = len(completed_results)
+        progress = (completed_count / total_modules * 100) if total_modules > 0 else 0
+        
+        # Module Average
+        quiz_scores = []
+        for r in completed_results:
+            if r.total_questions and r.total_questions > 0:
+                quiz_scores.append((r.score / r.total_questions) * 100)
+        
+        mod_avg = sum(quiz_scores) / len(quiz_scores) if quiz_scores else 0
+        
+        # Final Assessment
+        final_result = db.query(models.QuizResult).filter(
+            models.QuizResult.user_id == student.id,
+            models.QuizResult.course_id == course_id
+        ).first()
+        
+        final_status = "Completed" if final_result else "Not Attempted"
+        final_score = int((final_result.score / final_result.total_questions * 100) if final_result and final_result.total_questions and final_result.total_questions > 0 else 0)
+        
+        writer.writerow([
+            student.name,
+            student.email,
+            f"{int(progress)}%",
+            f"{int(mod_avg)}%",
+            final_status,
+            f"{final_score}%" if final_result else "N/A"
+        ])
+    
+    output.seek(0)
+    sanitized_title = "".join(c for c in course.title if c.isalnum() or c in (" ", "_")).strip().replace(" ", "_")
+    filename = f"Performance_Report_{sanitized_title}.csv"
+    
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
 
 if __name__ == "__main__":
     import uvicorn

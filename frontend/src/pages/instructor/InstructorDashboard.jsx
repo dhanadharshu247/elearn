@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
+import { Download, FileText } from 'lucide-react';
 
 const InstructorDashboard = () => {
     const [courses, setCourses] = useState([]);
@@ -36,6 +37,24 @@ const InstructorDashboard = () => {
             // Revert on failure
             alert('Failed to update status');
             // You might want to re-fetch or revert state here
+        }
+    };
+
+    const handleDownloadReport = async (courseId, courseTitle) => {
+        try {
+            const response = await api.get(`/courses/${courseId}/reports/performance`, {
+                responseType: 'blob'
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Performance_Report_${courseTitle.replace(/\s+/g, '_')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (err) {
+            console.error('Download failed:', err);
+            alert('Failed to download report');
         }
     };
 
@@ -126,7 +145,14 @@ const InstructorDashboard = () => {
                                                 <option value="Archived">Archived</option>
                                             </select>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-6 py-4 text-right flex justify-end items-center gap-4">
+                                            <button
+                                                onClick={() => handleDownloadReport(course.id || course._id, course.title)}
+                                                className="text-emerald-600 hover:text-emerald-900 text-sm font-medium flex items-center gap-1.5"
+                                                title="Download Performance Report"
+                                            >
+                                                <Download className="w-4 h-4" /> Report
+                                            </button>
                                             <Link
                                                 to={`/instructor/edit-course/${course.id || course._id}`}
                                                 className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Table
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Table, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
@@ -109,13 +109,17 @@ class QuizResult(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    module_id = Column(Integer, ForeignKey("modules.id"))
+    module_id = Column(Integer, ForeignKey("modules.id"), nullable=True)
+    course_id = Column(Integer, ForeignKey("courses.id"), nullable=True)
     score = Column(Integer)
     total_questions = Column(Integer)
+    answers = Column(JSON, nullable=True)
+    question_ids = Column(JSON, nullable=True) # To track specific questions in order
     completed_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="quiz_results")
     module = relationship("Module", back_populates="results")
+    course = relationship("Course")
 
 class Badge(Base):
     __tablename__ = "badges"

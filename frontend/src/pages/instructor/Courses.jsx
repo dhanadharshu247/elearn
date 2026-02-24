@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
-import { Plus, MoreVertical, BookOpen, Clock, Users, Star, BarChart, Search, Edit, Archive, Trash2 } from 'lucide-react';
+import { Plus, MoreVertical, BookOpen, Clock, Users, Star, BarChart, Search, Edit, Archive, Trash2, Download } from 'lucide-react';
 import Button from '../../components/ui/Button';
 
-const CourseCard = ({ id, title, description, students, duration, rating, status, image, onStatusChange, onDelete, onEdit }) => {
+const CourseCard = ({ id, title, description, students, duration, rating, status, image, onStatusChange, onDelete, onEdit, onDownloadReport }) => {
     const [showMenu, setShowMenu] = useState(false);
 
     // Close menu when clicking elsewhere
@@ -60,6 +60,12 @@ const CourseCard = ({ id, title, description, students, duration, rating, status
                                     className="w-full text-left px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-600 flex items-center gap-3 transition-colors"
                                 >
                                     <Archive className="w-4 h-4 text-amber-500" /> {status === 'Archived' ? 'Unarchive' : 'Archive Course'}
+                                </button>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setShowMenu(false); onDownloadReport(); }}
+                                    className="w-full text-left px-4 py-2.5 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 flex items-center gap-3 transition-colors"
+                                >
+                                    <Download className="w-4 h-4" /> Download Report
                                 </button>
                                 <div className="border-t border-slate-50 my-1"></div>
                                 <button
@@ -188,6 +194,24 @@ const Courses = () => {
         }
     };
 
+    const handleDownloadReport = async (courseId, courseTitle) => {
+        try {
+            const response = await api.get(`/courses/${courseId}/reports/performance`, {
+                responseType: 'blob'
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Performance_Report_${courseTitle.replace(/\s+/g, '_')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (err) {
+            console.error('Download failed:', err);
+            alert('Failed to download report');
+        }
+    };
+
     useEffect(() => {
         fetchCourses();
     }, [activeTab, searchQuery]);
@@ -284,6 +308,7 @@ const Courses = () => {
                             onStatusChange={(status) => handleStatusUpdate(course.id, status)}
                             onDelete={() => handleDeleteCourse(course.id)}
                             onEdit={() => navigate(`/instructor/edit-course/${course.id}`)}
+                            onDownloadReport={() => handleDownloadReport(course.id, course.title)}
                         />
                     </div>
                 ))}

@@ -88,9 +88,11 @@ const CoursePage = () => {
             });
 
             setQuizResult({
-                score: response.data.score,
-                correct: Math.round((response.data.score / 100) * (currentModule.quiz ? currentModule.quiz.length : 0)),
-                total: currentModule.quiz ? currentModule.quiz.length : 0
+                score: response.data.percentage,
+                correct: response.data.correctCount,
+                total: response.data.totalQuestions,
+                review: response.data.review,
+                userAnswers: response.data.userAnswers
             });
         } catch (err) {
             console.error('Failed to submit quiz:', err);
@@ -163,17 +165,39 @@ const CoursePage = () => {
                                 <div className="pt-4 mt-4 border-t border-slate-100">
                                     <Link
                                         to={`/learner/quiz/${course.id}`}
-                                        className="w-full flex items-center justify-between p-4 rounded-2xl bg-amber-50 text-amber-700 border border-amber-100 hover:bg-amber-100 transition-all font-bold shadow-sm"
+                                        className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all font-bold shadow-sm ${course.isAssessmentCompleted
+                                            ? 'bg-green-50 text-green-700 border border-green-100 hover:bg-green-100'
+                                            : 'bg-amber-50 text-amber-700 border border-amber-100 hover:bg-amber-100'}`}
                                     >
                                         <div className="flex items-center gap-3">
-                                            <span className="text-xl">🏆</span>
+                                            <span className="text-xl">{course.isAssessmentCompleted ? '✅' : '🏆'}</span>
                                             <div className="text-left">
-                                                <div className="text-[10px] uppercase tracking-wider opacity-70">Final Step</div>
-                                                <div className="truncate">Course Assessment</div>
+                                                <div className="text-[10px] uppercase tracking-wider opacity-70">
+                                                    {course.isAssessmentCompleted ? 'Completed' : 'Final Step'}
+                                                </div>
+                                                <div className="truncate">
+                                                    {course.isAssessmentCompleted ? 'View Assessment Result' : 'Course Assessment'}
+                                                </div>
                                             </div>
                                         </div>
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                                     </Link>
+
+                                    {course.hasCertificate && (
+                                        <Link
+                                            to={`/learner/certificate/${course.id}`}
+                                            className="w-full flex items-center justify-between p-4 mt-2 rounded-2xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xl">📜</span>
+                                                <div className="text-left">
+                                                    <div className="text-[10px] uppercase tracking-wider opacity-70">Awarded</div>
+                                                    <div>View Certificate</div>
+                                                </div>
+                                            </div>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                                        </Link>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -337,19 +361,82 @@ const CoursePage = () => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="bg-white p-12 rounded-[2rem] border-2 border-indigo-500 shadow-2xl shadow-indigo-100 text-center space-y-4 animate-bounce-in">
-                                            <div className="text-5xl font-black text-indigo-600">{quizResult.score}%</div>
-                                            <div className="text-slate-500 font-bold text-lg">You got {quizResult.correct} out of {quizResult.total} correct!</div>
-                                            <button
-                                                onClick={() => {
-                                                    setQuizResult(null);
-                                                    setQuizAnswers({});
-                                                    setActiveQuizQuestionIndex(0);
-                                                }}
-                                                className="mt-4 px-8 py-3 bg-slate-50 text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition border border-indigo-100"
-                                            >
-                                                Retry Quiz
-                                            </button>
+                                        <div className="space-y-6">
+                                            <div className="bg-white p-12 rounded-[2rem] border-2 border-indigo-500 shadow-2xl shadow-indigo-100 text-center space-y-4 animate-bounce-in">
+                                                <div className="text-5xl font-black text-indigo-600">{quizResult.score}%</div>
+                                                <div className="text-slate-500 font-bold text-lg">You got {quizResult.correct} out of {quizResult.total} correct!</div>
+                                                <button
+                                                    onClick={() => {
+                                                        setQuizResult(null);
+                                                        setQuizAnswers({});
+                                                        setActiveQuizQuestionIndex(0);
+                                                    }}
+                                                    className="mt-4 px-8 py-3 bg-slate-50 text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition border border-indigo-100"
+                                                >
+                                                    Retry Quiz
+                                                </button>
+                                            </div>
+
+                                            {/* Detailed Review Section */}
+                                            {quizResult.review && (
+                                                <div className="space-y-6 mt-12 text-left">
+                                                    <h3 className="text-xl font-bold text-slate-800 border-b pb-4">Review Your Answers</h3>
+                                                    {quizResult.review.map((rev, idx) => (
+                                                        <div key={idx} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                                                            <div className="flex gap-4">
+                                                                <span className="w-8 h-8 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center text-sm font-bold shrink-0">{idx + 1}</span>
+                                                                <p className="font-bold text-slate-800 leading-tight">{rev.questionText}</p>
+                                                            </div>
+
+                                                            {rev.questionType === 'mcq' || (rev.options && rev.options.length > 0) ? (
+                                                                <div className="pl-12 space-y-2">
+                                                                    <div className="grid gap-2">
+                                                                        {rev.options.map((opt, oIdx) => {
+                                                                            const isUserSelected = quizResult.userAnswers && quizResult.userAnswers[idx] === oIdx;
+                                                                            const isCorrect = oIdx === rev.correctOptionIndex;
+
+                                                                            return (
+                                                                                <div
+                                                                                    key={oIdx}
+                                                                                    className={`p-3 rounded-xl border text-sm font-medium transition-all ${isCorrect
+                                                                                            ? 'bg-green-50 border-green-200 text-green-700'
+                                                                                            : isUserSelected
+                                                                                                ? 'bg-red-50 border-red-200 text-red-700'
+                                                                                                : 'bg-white border-slate-100 text-slate-500'
+                                                                                        }`}
+                                                                                >
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <span>{String.fromCharCode(65 + oIdx)}. {opt.text}</span>
+                                                                                        {isCorrect && <span className="ml-auto flex items-center gap-1 text-[10px] font-black uppercase tracking-tighter">✅ Correct</span>}
+                                                                                        {isUserSelected && !isCorrect && <span className="ml-auto flex items-center gap-1 text-[10px] font-black uppercase tracking-tighter">❌ Yours</span>}
+                                                                                    </div>
+                                                                                </div>
+                                                                            );
+                                                                        })}
+                                                                    </div>
+                                                                    {quizResult.userAnswers && quizResult.userAnswers[idx] !== rev.correctOptionIndex && (
+                                                                        <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-xs text-indigo-900 font-bold">
+                                                                            <span className="opacity-50 uppercase text-[9px] block mb-1">Correct Answer</span>
+                                                                            {String.fromCharCode(65 + rev.correctOptionIndex)}. {rev.options[rev.correctOptionIndex].text}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ) : (
+                                                                <div className="pl-12 space-y-3">
+                                                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+                                                                        <span className="opacity-50 uppercase text-[9px] block mb-1">Your Answer</span>
+                                                                        <p className="font-bold text-slate-800 italic">"{quizResult.userAnswers && quizResult.userAnswers[idx]}"</p>
+                                                                    </div>
+                                                                    <div className="bg-green-50 p-3 rounded-xl border border-green-100 text-xs">
+                                                                        <span className="opacity-50 uppercase text-[9px] block mb-1">Correct Answer Pattern</span>
+                                                                        <p className="font-bold text-green-800 italic">"{rev.correctAnswerText}"</p>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
