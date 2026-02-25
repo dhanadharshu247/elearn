@@ -23,6 +23,21 @@ const QuizPage = () => {
 
     // Accessibility state
     const [accessibilityMode, setAccessibilityMode] = useState(false);
+    const [isVoiceAdvancing, setIsVoiceAdvancing] = useState(false);
+
+    useEffect(() => {
+        const checkAccessibility = async () => {
+            try {
+                const res = await api.get(`/api/learner/courses/${id}/accessibility`);
+                if (res.data.accessibility_enabled) {
+                    setAccessibilityMode(true);
+                }
+            } catch (err) {
+                console.error('Failed to fetch accessibility status:', err);
+            }
+        };
+        if (id) checkAccessibility();
+    }, [id]);
 
     useEffect(() => {
         if (id) {
@@ -47,63 +62,20 @@ const QuizPage = () => {
     }, [id]);
 
     const handleAnswerChange = (value) => {
+        if (isVoiceAdvancing || submitting) return; // Prevent manual change during auto-next timer or submission
         setSelectedAnswer(value);
     };
 
-    /**
-     * handleVoiceCommand - Processes cleaned voice input to auto-select options.
-     * Implements fuzzy matching and keyword detection.
-     */
-    const handleVoiceCommand = useCallback((text) => {
-        if (!currentQuestion) return;
-        const lowerText = text.toLowerCase();
-
-        // 1. Direct Pattern Matching (Option A, First Option, etc.)
-        const optionPatterns = [
-            { patterns: ['option a', 'first option', 'number 1', 'option 1', 'first one'], index: 0 },
-            { patterns: ['option b', 'second option', 'number 2', 'option 2', 'second one'], index: 1 },
-            { patterns: ['option c', 'third option', 'number 3', 'option 3', 'third one'], index: 2 },
-            { patterns: ['option d', 'fourth option', 'number 4', 'option 4', 'fourth one'], index: 3 }
-        ];
-
-        for (const patternGroup of optionPatterns) {
-            if (patternGroup.patterns.some(p => lowerText.includes(p))) {
-                if (currentQuestion.options && currentQuestion.options[patternGroup.index]) {
-                    handleAnswerChange(patternGroup.index);
-                    return;
-                }
-            }
-        }
-
-        // 2. Fuzzy Text Matching for MCQ options
-        if (currentQuestion.questionType === 'mcq' && currentQuestion.options) {
-            let bestMatchIndex = -1;
-            let highestSimilarity = 0;
-
-            currentQuestion.options.forEach((opt, index) => {
-                const optText = opt.text.toLowerCase();
-                // Extremely simple similarity - check if cleaned transcript contains substantial part of option text
-                if (lowerText.includes(optText) || optText.includes(lowerText)) {
-                    bestMatchIndex = index;
-                }
-            });
-
-            if (bestMatchIndex !== -1) {
-                handleAnswerChange(bestMatchIndex);
-                return;
-            }
-        }
-
-        // 3. Descriptive Answers
-        if (currentQuestion.questionType === 'descriptive') {
-            handleAnswerChange(text);
-        }
-    }, [currentQuestion]);
-
     const handleNext = async () => {
-        if (selectedAnswer === null || selectedAnswer === '') return;
+        // Validation: must have an answer and not be already submitting
+        if (selectedAnswer === null || selectedAnswer === '' || submitting) {
+            console.warn('handleNext called but ignored: no answer or already submitting');
+            return;
+        }
 
+        console.log(`Submitting Answer for Question ${currentStep + 1}:`, selectedAnswer);
         setSubmitting(true);
+        setIsVoiceAdvancing(false); // Reset advancement state LOCK
 
         const newAnsweredIds = [...answeredIds, currentQuestion.id];
         const newPerformance = [...performanceData, { id: currentQuestion.id, answer: selectedAnswer }];
@@ -111,9 +83,9 @@ const QuizPage = () => {
         setAnsweredIds(newAnsweredIds);
         setPerformanceData(newPerformance);
 
-        if (currentStep + 1 >= totalSteps) {
-            // End of adaptive session - Final Submission
-            try {
+        try {
+            if (currentStep + 1 >= totalSteps) {
+                // Final Submission logic
                 const finalRes = await api.post(`/quizzes/${id}/submit`, {
                     answers: newPerformance.map(p => p.answer),
                     is_adaptive: true,
@@ -121,15 +93,9 @@ const QuizPage = () => {
                 });
                 setResult(finalRes.data);
                 setShowReview(true);
-            } catch (err) {
-                console.error(err);
-                alert('Failed to submit final results');
-            } finally {
-                setSubmitting(false);
-            }
-        } else {
-            // Fetch next adaptive question
-            try {
+                console.log('Final Assessment Submitted Successfully');
+            } else {
+                // Fetch next adaptive question
                 const res = await api.post(`/quizzes/${id}/adaptive/next`, {
                     answered_ids: newAnsweredIds,
                     last_answer: selectedAnswer,
@@ -144,18 +110,29 @@ const QuizPage = () => {
                     });
                     setResult(finalRes.data);
                     setShowReview(true);
+                    console.log('Adaptive Session Finished & Submitted');
                 } else {
                     setCurrentQuestion(res.data.question);
                     setCurrentStep(prev => prev + 1);
                     setSelectedAnswer(null);
+                    console.log('Advanced to Next Question:', res.data.question.id);
                 }
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setSubmitting(false);
             }
+        } catch (err) {
+            console.error('Error during navigation/submission:', err);
+            // Don't alert if we're in accessibility mode to avoid breaking focus, 
+            // but we might need a visual toast eventually.
+            if (!accessibilityMode) alert('An error occurred while moving to the next question.');
+        } finally {
+            setSubmitting(false);
         }
     };
+
+    const handleVoiceSelect = useCallback((index) => {
+        console.log('Voice Selection Triggered in QuizPage:', index);
+        setSelectedAnswer(index);
+        setIsVoiceAdvancing(true); // Lock manual inputs
+    }, []);
 
     if (loading) return <div className="p-8 text-center font-bold text-slate-400 uppercase tracking-widest">Initializing Adaptive Assessment...</div>;
     if (!currentQuestion && !result) return <div className="p-8 text-center text-red-500 font-bold">Failed to load assessment.</div>;
@@ -301,13 +278,6 @@ const QuizPage = () => {
                     <div className="px-4 py-2 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100">
                         Question {currentStep + 1} / {totalSteps}
                     </div>
-                    {/* Accessibility Toggle */}
-                    <button
-                        onClick={() => setAccessibilityMode(!accessibilityMode)}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${accessibilityMode ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
-                    >
-                        <span>♿</span> {accessibilityMode ? 'Voice Mode On' : 'Accessibility Mode'}
-                    </button>
                 </div>
             </div>
 
@@ -356,8 +326,10 @@ const QuizPage = () => {
                     {/* AI Voice Accessibility Box */}
                     {accessibilityMode && (
                         <VoiceAccessibilityBox
-                            onCommand={handleVoiceCommand}
+                            onSelect={handleVoiceSelect}
+                            onNext={handleNext}
                             options={currentQuestion.options}
+                            enabled={accessibilityMode && !submitting}
                         />
                     )}
                 </div>

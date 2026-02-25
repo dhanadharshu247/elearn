@@ -56,6 +56,7 @@ class UserLogin(BaseModel):
 class UserResponse(UserBase):
     id: int
     created_at: datetime
+    accessibility_enabled: Optional[bool] = False # For the enrollment context
     model_config = {"from_attributes": True}
 
 
@@ -143,6 +144,9 @@ class Token(BaseModel):
     user: UserResponse
 
     model_config = {"from_attributes": True}
+
+class EnrolmentAccessibilityUpdate(BaseModel):
+    accessibility_enabled: bool
 
 
 # ---------------- QUIZ RESULT ----------------

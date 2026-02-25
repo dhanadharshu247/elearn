@@ -603,6 +603,8 @@ def get_my_learners(current_user: dict = Depends(auth.get_current_user), db: Ses
                     "course_count": 0,
                     "badges": [],
                     "status": "Active",
+                    "accessibility_enabled": e.accessibility_enabled,
+                    "enrolment_id": e.id,
                     "lastActive": student.created_at.strftime("%Y-%m-%d") if student.created_at else "Recently",
                     "avatar": student.name[0].upper() if (student.name and len(student.name) > 0) else "U"
                 }
@@ -753,6 +755,35 @@ def enroll_in_course(course_id: int, current_user: dict = Depends(auth.get_curre
     db.commit()
     
     return {"message": "Enrolled successfully"}
+
+@app.put("/api/instructor/enrolments/{enrolment_id}/accessibility")
+def update_accessibility_status(enrolment_id: int, update: schemas.EnrolmentAccessibilityUpdate, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user["role"] != "instructor":
+        raise HTTPException(status_code=403, detail="Only instructors can toggle accessibility")
+    
+    enrolment = db.query(models.Enrolment).filter(models.Enrolment.id == enrolment_id).first()
+    if not enrolment:
+        raise HTTPException(status_code=404, detail="Enrolment not found")
+    
+    # Verify instructor owns the course
+    if enrolment.course.instructor_id != current_user["id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    enrolment.accessibility_enabled = update.accessibility_enabled
+    db.commit()
+    return {"message": "Accessibility status updated", "accessibility_enabled": enrolment.accessibility_enabled}
+
+@app.get("/api/learner/courses/{course_id}/accessibility")
+def get_learner_accessibility_status(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    enrolment = db.query(models.Enrolment).filter(
+        models.Enrolment.user_id == current_user["id"],
+        models.Enrolment.course_id == course_id
+    ).first()
+    
+    if not enrolment:
+        raise HTTPException(status_code=404, detail="Enrolment not found")
+    
+    return {"accessibility_enabled": enrolment.accessibility_enabled}
 
 @app.post("/modules/{module_id}/quiz/submit", response_model=schemas.QuizResultResponse)
 def submit_quiz_result(module_id: int, result: schemas.QuizResultCreate, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):

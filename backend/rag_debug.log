@@ -1664,3 +1664,463 @@ This sentence preserves the original intent and meaning of the impaired speech, 
       }
    ]
 }
+2026-02-25 09:28:12.707699: Generating 5 mcq questions for topic: Human cells
+2026-02-25 09:28:14.131981: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary function of the mitochondria in human cells?",
+         "questionType": "mcq",
+         "options": [
+            {
+               "text": "To synthesize proteins"
+            },
+            {
+               "text": "To store genetic information"
+            },
+            {
+               "text": "To produce energy through cellular respiration"
+            },
+            {
+               "text": "To regulate cell growth"
+            }
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which organelle is responsible for breaking down and recycling cellular waste?",
+         "questionType": "mcq",
+         "options": [
+            {
+               "text": "Nucleus"
+            },
+            {
+               "text": "Mitochondria"
+            },
+            {
+               "text": "Lysosome"
+            },
+            {
+               "text": "Ribosome"
+            }
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the main function of the cell membrane?",
+         "questionType": "mcq",
+         "options": [
+            {
+               "text": "To synthesize proteins"
+            },
+            {
+               "text": "To store genetic information"
+            },
+            {
+               "text": "To regulate the movement of materials in and out of the cell"
+            },
+            {
+               "text": "To produce energy through cellular respiration"
+            }
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which organelle is responsible for protein synthesis?",
+         "questionType": "mcq",
+         "options": [
+            {
+               "text": "Mitochondria"
+            },
+            {
+               "text": "Lysosome"
+            },
+            {
+               "text": "Ribosome"
+            },
+            {
+               "text": "Nucleus"
+            }
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the main component of the cytoskeleton?",
+         "questionType": "mcq",
+         "options": [
+            {
+               "text": "Microtubules"
+            },
+            {
+               "text": "Microfilaments"
+            },
+            {
+               "text": "Intermediate filaments"
+            },
+            {
+               "text": "All of the above"
+            }
+         ],
+         "correctOptionIndex": 3
+      }
+   ]
+}
+2026-02-25 09:28:31.214180: Generating 5 mcq questions for topic: Human Cells
+2026-02-25 09:28:32.111926: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary function of the mitochondria in a human cell?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To synthesize proteins"},
+            {"text": "To store genetic information"},
+            {"text": "To generate energy for the cell"},
+            {"text": "To regulate cell growth"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which of the following is a type of extracellular matrix in human cells?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Cytoplasm"},
+            {"text": "Nucleus"},
+            {"text": "Basement membrane"},
+            {"text": "Lysosome"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the main component of the cell membrane in human cells?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Carbohydrates"},
+            {"text": "Proteins"},
+            {"text": "Lipids"},
+            {"text": "DNA"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which organelle is responsible for breaking down and recycling cellular waste?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mitochondria"},
+            {"text": "Lysosome"},
+            {"text": "Golgi apparatus"},
+            {"text": "Ribosome"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the function of the cell wall in human cells?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To provide structural support"},
+            {"text": "To regulate cell growth"},
+            {"text": "To store genetic information"},
+            {"text": "To generate energy for the cell"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-25 09:36:36.370795: Index loaded from data/vector_store.json (1 chunks)
+2026-02-25 09:36:36.373008: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-25 09:36:36.871132: Groq Result received
+2026-02-25 09:37:07.871815: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-25 09:37:08.609927: Groq Result received
+2026-02-25 09:37:30.505990: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-25 09:37:31.138845: Groq Result received
+2026-02-25 09:37:47.220721: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-25 09:37:47.435594: Groq Result received
+2026-02-25 09:38:10.240020: Requesting Groq with model: llama-3.1-8b-instant
+2026-02-25 09:38:10.536465: Groq Result received
+2026-02-25 09:41:02.805608: Generating 5 mcq questions for topic: Plant reproduction 
+2026-02-25 09:41:03.566501: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary method of reproduction in plants?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Pollination"},
+            {"text": "Photosynthesis"},
+            {"text": "Respiration"},
+            {"text": "Fertilization"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the function of the stigma in a flower?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "It receives pollen from the anther"},
+            {"text": "It produces pollen for fertilization"},
+            {"text": "It is responsible for photosynthesis"},
+            {"text": "It helps in seed dispersal"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the term for the process of fusion of male and female gametes?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Pollination"},
+            {"text": "Fertilization"},
+            {"text": "Hybridization"},
+            {"text": "Mutation"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the role of the ovary in plant reproduction?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "It produces pollen for fertilization"},
+            {"text": "It receives pollen from the anther"},
+            {"text": "It produces seeds after fertilization"},
+            {"text": "It helps in seed dispersal"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for the transfer of pollen from the male reproductive organ to the female reproductive organ?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Germination"},
+            {"text": "Fertilization"},
+            {"text": "Pollination"},
+            {"text": "Hybridization"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}
+2026-02-25 09:42:04.292431: Generating 4 mcq questions for topic: Pollination
+2026-02-25 09:42:04.918670: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary function of bees in pollination?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To produce flowers"},
+            {"text": "To pollinate flowers"},
+            {"text": "To produce honey"},
+            {"text": "To produce beeswax"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is an example of a self-pollinating plant?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Hibiscus"},
+            {"text": "Corn"},
+            {"text": "Apple"},
+            {"text": "Potato"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "How do flowers often attract pollinators?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "By releasing a foul smell"},
+            {"text": "By releasing a sweet fragrance"},
+            {"text": "By producing bright colors"},
+            {"text": "By producing bright sounds"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is an example of a pollinator?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Butterfly"},
+            {"text": "Hummingbird"},
+            {"text": "Fruit Fly"},
+            {"text": "Spider"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-25 09:42:18.902489: Generating 5 mcq questions for topic: Reproduction in plants
+2026-02-25 09:42:19.732016: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the process by which plants produce seeds?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Photosynthesis"},
+            {"text": "Respiration"},
+            {"text": "Pollination and fertilization"},
+            {"text": "Transpiration"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which of the following is a method of asexual reproduction in plants?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Budding"},
+            {"text": "Pollination"},
+            {"text": "Runners"},
+            {"text": "Rhizome"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the function of the stigma in a flower?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To produce pollen"},
+            {"text": "To receive pollen"},
+            {"text": "To produce nectar"},
+            {"text": "To support the flower"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is the result of pollination in plants?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Production of nectar"},
+            {"text": "Production of pollen"},
+            {"text": "Fertilization of the ovum"},
+            {"text": "Absorption of water"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "How do plants produce seeds through sexual reproduction?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Through budding"},
+            {"text": "Through pollination and fertilization"},
+            {"text": "Through runners"},
+            {"text": "Through rhizomes"}
+         ],
+         "correctOptionIndex": 1
+      }
+   ]
+}
+2026-02-25 10:35:20.520563: Generating 5 mcq questions for topic: AI
+2026-02-25 10:35:21.624052: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary goal of artificial intelligence?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To create a perfect chess player"},
+            {"text": "To make decisions and learn from data"},
+            {"text": "To generate realistic music"},
+            {"text": "To play video games"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is a type of machine learning?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Artificial General Intelligence"},
+            {"text": "Deep Learning"},
+            {"text": "Expert System"},
+            {"text": "Human-Computer Interaction"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the term for a machine that can perform a specific task?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Artificial Intelligence"},
+            {"text": "Machine Learning"},
+            {"text": "Narrow AI"},
+            {"text": "Deep Learning"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which of the following is a key challenge in developing artificial intelligence?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Scalability"},
+            {"text": "Interoperability"},
+            {"text": "Explainability"},
+            {"text": "Data Quality"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for a machine that can understand natural language?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Speech Recognition"},
+            {"text": "Natural Language Processing"},
+            {"text": "Machine Translation"},
+            {"text": "Text Summarization"}
+         ],
+         "correctOptionIndex": 1
+      }
+   ]
+}
+2026-02-25 10:35:32.537641: Generating 5 mcq questions for topic: AI mechanism
+2026-02-25 10:35:33.283128: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary function of a Neural Network in AI?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To process and analyze unstructured data"},
+            {"text": "To simulate human decision-making processes"},
+            {"text": "To perform complex mathematical calculations"},
+            {"text": "To generate creative content"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the term for a machine learning algorithm that improves its performance over time?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Supervised learning"},
+            {"text": "Unsupervised learning"},
+            {"text": "Reinforcement learning"},
+            {"text": "Machine learning optimization"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the primary goal of a decision tree algorithm in AI?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To classify data"},
+            {"text": "To cluster data"},
+            {"text": "To predict continuous values"},
+            {"text": "To classify and predict data"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the term for a type of machine learning model that can handle multiple inputs and outputs?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Feedforward network"},
+            {"text": "Recurrent neural network"},
+            {"text": "Convolutional neural network"},
+            {"text": "Multilayer perception"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the term for the process of training a machine learning model on a dataset that is different from the dataset it was trained on?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Overfitting"},
+            {"text": "Underfitting"},
+            {"text": "Generalization"},
+            {"text": "Transfer learning"}
+         ],
+         "correctOptionIndex": 3
+      }
+   ]
+}

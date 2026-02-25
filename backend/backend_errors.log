@@ -1892,3 +1892,231 @@ FROM questions
 WHERE ? = questions.module_id]
 [parameters: (8,)]
 (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+Error in get_course(1):
+Traceback (most recent call last):
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: quiz_results.course_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\Downloads\elearn\backend\main.py", line 719, in get_course
+    ).first() is not None if (current_user_opt and current_user_opt.get("role") == "learner") else False,
+      ^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: quiz_results.course_id
+[SQL: SELECT quiz_results.id AS quiz_results_id, quiz_results.user_id AS quiz_results_user_id, quiz_results.module_id AS quiz_results_module_id, quiz_results.course_id AS quiz_results_course_id, quiz_results.score AS quiz_results_score, quiz_results.total_questions AS quiz_results_total_questions, quiz_results.answers AS quiz_results_answers, quiz_results.question_ids AS quiz_results_question_ids, quiz_results.completed_at AS quiz_results_completed_at 
+FROM quiz_results 
+WHERE quiz_results.user_id = ? AND quiz_results.course_id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (1, 1, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+Error in get_course(1):
+Traceback (most recent call last):
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: quiz_results.course_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\Downloads\elearn\backend\main.py", line 719, in get_course
+    ).first() is not None if (current_user_opt and current_user_opt.get("role") == "learner") else False,
+      ^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: quiz_results.course_id
+[SQL: SELECT quiz_results.id AS quiz_results_id, quiz_results.user_id AS quiz_results_user_id, quiz_results.module_id AS quiz_results_module_id, quiz_results.course_id AS quiz_results_course_id, quiz_results.score AS quiz_results_score, quiz_results.total_questions AS quiz_results_total_questions, quiz_results.answers AS quiz_results_answers, quiz_results.question_ids AS quiz_results_question_ids, quiz_results.completed_at AS quiz_results_completed_at 
+FROM quiz_results 
+WHERE quiz_results.user_id = ? AND quiz_results.course_id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (1, 1, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+Error in get_course(2):
+Traceback (most recent call last):
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: quiz_results.course_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\Downloads\elearn\backend\main.py", line 719, in get_course
+    ).first() is not None if (current_user_opt and current_user_opt.get("role") == "learner") else False,
+      ^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: quiz_results.course_id
+[SQL: SELECT quiz_results.id AS quiz_results_id, quiz_results.user_id AS quiz_results_user_id, quiz_results.module_id AS quiz_results_module_id, quiz_results.course_id AS quiz_results_course_id, quiz_results.score AS quiz_results_score, quiz_results.total_questions AS quiz_results_total_questions, quiz_results.answers AS quiz_results_answers, quiz_results.question_ids AS quiz_results_question_ids, quiz_results.completed_at AS quiz_results_completed_at 
+FROM quiz_results 
+WHERE quiz_results.user_id = ? AND quiz_results.course_id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (1, 2, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+Error in get_course(2):
+Traceback (most recent call last):
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: quiz_results.course_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\Downloads\elearn\backend\main.py", line 719, in get_course
+    ).first() is not None if (current_user_opt and current_user_opt.get("role") == "learner") else False,
+      ^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\HP\Downloads\elearn\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: quiz_results.course_id
+[SQL: SELECT quiz_results.id AS quiz_results_id, quiz_results.user_id AS quiz_results_user_id, quiz_results.module_id AS quiz_results_module_id, quiz_results.course_id AS quiz_results_course_id, quiz_results.score AS quiz_results_score, quiz_results.total_questions AS quiz_results_total_questions, quiz_results.answers AS quiz_results_answers, quiz_results.question_ids AS quiz_results_question_ids, quiz_results.completed_at AS quiz_results_completed_at 
+FROM quiz_results 
+WHERE quiz_results.user_id = ? AND quiz_results.course_id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (1, 2, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

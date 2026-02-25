@@ -100,6 +100,7 @@ class Enrolment(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     course_id = Column(Integer, ForeignKey("courses.id"))
     enrolled_at = Column(DateTime, default=datetime.utcnow)
+    accessibility_enabled = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="enrolments")
     course = relationship("Course", back_populates="enrolments")

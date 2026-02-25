@@ -1,172 +1,86 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import api from '../api/axios';
+import React, { useEffect } from 'react';
+import useVoiceAssessment from '../hooks/useVoiceAssessment';
 
 /**
- * VoiceAccessibilityBox - A component for AI-powered voice commands in quizzes.
- * Designed for users with motor or speech impairments.
- * 
- * Features:
- * - Real-time Speech-to-Text using Web Speech API.
- * - AI Speech Cleaning via Groq backend.
- * - Real-time feedback and confidence display.
+ * VoiceAccessibilityBox - A production-ready voice UI for assessments.
  */
-const VoiceAccessibilityBox = ({ onCommand, options = [] }) => {
-    const [isRecording, setIsRecording] = useState(false);
-    const [transcript, setTranscript] = useState('');
-    const [interimTranscript, setInterimTranscript] = useState('');
-    const [confidence, setConfidence] = useState(0);
-    const [isCleaning, setIsCleaning] = useState(false);
-    const [recognition, setRecognition] = useState(null);
+const VoiceAccessibilityBox = ({ onSelect, onNext, options = [], enabled = false }) => {
+    const {
+        isListening,
+        transcript,
+        interimTranscript,
+        countdown,
+        error,
+        recognizedAnswer,
+        reset
+    } = useVoiceAssessment(options, onSelect, onNext, enabled);
 
+    // Reset transcripts when the question changes (detected by options change)
     useEffect(() => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            console.error('Speech Recognition not supported in this browser.');
-            return;
-        }
-
-        const recognizer = new SpeechRecognition();
-        recognizer.continuous = true;
-        recognizer.interimResults = true;
-        recognizer.lang = 'en-US';
-
-        recognizer.onresult = (event) => {
-            let final = '';
-            let interim = '';
-            let conf = 0;
-
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    final += event.results[i][0].transcript;
-                    conf = event.results[i][0].confidence;
-                } else {
-                    interim += event.results[i][0].transcript;
-                }
-            }
-
-            if (final) {
-                setTranscript(prev => prev + ' ' + final);
-                setConfidence(conf);
-            }
-            setInterimTranscript(interim);
-        };
-
-        recognizer.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
-            setIsRecording(false);
-        };
-
-        recognizer.onend = () => {
-            setIsRecording(false);
-        };
-
-        setRecognition(recognizer);
-    }, []);
-
-    const startRecording = () => {
-        if (recognition && !isRecording) {
-            recognition.start();
-            setIsRecording(true);
-        }
-    };
-
-    const stopRecording = () => {
-        if (recognition && isRecording) {
-            recognition.stop();
-            setIsRecording(false);
-            processSpeech(transcript + ' ' + interimTranscript);
-        }
-    };
-
-    const clearTranscript = () => {
-        setTranscript('');
-        setInterimTranscript('');
-        setConfidence(0);
-    };
-
-    const processSpeech = async (rawText) => {
-        if (!rawText.trim()) return;
-
-        setIsCleaning(true);
-        try {
-            const response = await api.post('/ai/clean-speech', { text: rawText });
-            const cleanedText = response.data.cleaned_text;
-            setTranscript(cleanedText);
-
-            // Send cleaned text to parent for auto-selection logic
-            if (onCommand) {
-                onCommand(cleanedText);
-            }
-        } catch (err) {
-            console.error('Failed to clean speech:', err);
-            if (onCommand) onCommand(rawText);
-        } finally {
-            setIsCleaning(false);
-        }
-    };
+        reset();
+    }, [options]);
 
     return (
-        <div className="mt-6 p-5 bg-slate-50 border-2 border-dashed border-indigo-200 rounded-3xl animate-fade-in shadow-inner">
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                    <span className="text-xl">🎙️</span>
-                    <h4 className="font-bold text-slate-800 text-sm tracking-tight uppercase">Voice Mode Active</h4>
+        <div className="mt-6 p-6 bg-slate-50 border-2 border-dashed border-indigo-200 rounded-[2.5rem] animate-fade-in shadow-inner relative overflow-hidden">
+            {/* Background Pulse for Mic Active */}
+            {isListening && !countdown && (
+                <div className="absolute inset-0 bg-indigo-500/5 animate-pulse pointer-events-none" />
+            )}
+
+            <div className="flex items-center justify-between mb-4 relative z-10">
+                <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500 ${isListening ? 'bg-indigo-600 shadow-lg shadow-indigo-200 scale-110' : 'bg-slate-200'}`}>
+                        {isListening ? (
+                            <span className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                            </span>
+                        ) : (
+                            <span className="text-xl">🎙️</span>
+                        )}
+                    </div>
+                    <div>
+                        <h4 className="font-black text-slate-800 text-xs tracking-widest uppercase">
+                            {isListening ? 'Listening...' : 'Voice Mode Standby'}
+                        </h4>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                            {error ? `Error: ${error}` : 'Say "Option A", "Option B", etc.'}
+                        </p>
+                    </div>
                 </div>
-                {confidence > 0 && (
-                    <div className="text-[10px] font-black uppercase tracking-widest text-indigo-400 bg-white px-2 py-1 rounded-full shadow-sm border border-indigo-50">
-                        Confidence: {(confidence * 100).toFixed(0)}%
+
+                {recognizedAnswer && (
+                    <div className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg animate-bounce-in">
+                        <span>✅</span> Selected {recognizedAnswer}
+                    </div>
+                )}
+
+                {countdown !== null && (
+                    <div className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg animate-pulse">
+                        <span>⏱️</span> Next in {countdown}s
                     </div>
                 )}
             </div>
 
-            <div className="bg-white p-4 rounded-2xl min-h-[100px] shadow-sm border border-slate-100 flex flex-col justify-between mb-4">
-                <div className="text-sm text-slate-700 leading-relaxed font-medium">
+            <div className="bg-white p-5 rounded-3xl min-h-[80px] shadow-sm border border-slate-100 flex flex-col justify-center mb-0 relative z-10">
+                <div className="text-sm text-slate-700 leading-relaxed font-bold text-center">
                     {transcript}
                     <span className="text-slate-300 italic"> {interimTranscript}</span>
-                    {!transcript && !interimTranscript && (
-                        <p className="text-slate-300 text-xs text-center mt-4 italic font-normal">
-                            Try saying: "Option A" or "The first one"
+                    {!transcript && !interimTranscript && !isListening && (
+                        <p className="text-slate-300 text-xs italic font-normal">
+                            Voice mode is waiting for your permission...
+                        </p>
+                    )}
+                    {!transcript && !interimTranscript && isListening && (
+                        <p className="text-slate-400 text-xs animate-pulse font-normal">
+                            Try saying "Option A" or "Answer B"
                         </p>
                     )}
                 </div>
-                {isCleaning && (
-                    <div className="flex items-center gap-2 mt-2">
-                        <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.2s]" />
-                        <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.4s]" />
-                        <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">AI Refinement...</span>
-                    </div>
-                )}
             </div>
 
-            <div className="flex flex-wrap gap-2">
-                {!isRecording ? (
-                    <button
-                        onClick={startRecording}
-                        className="flex-1 min-w-[120px] py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 flex items-center justify-center gap-2"
-                    >
-                        <span>⏺️</span> Start
-                    </button>
-                ) : (
-                    <button
-                        onClick={stopRecording}
-                        className="flex-1 min-w-[120px] py-3 bg-rose-500 text-white font-bold rounded-xl hover:bg-rose-600 transition shadow-lg shadow-rose-100 flex items-center justify-center gap-2"
-                    >
-                        <span>⏹️</span> Stop
-                    </button>
-                )}
-
-                <button
-                    onClick={clearTranscript}
-                    disabled={isRecording || !transcript}
-                    className="px-6 py-3 bg-white text-slate-400 font-bold rounded-xl hover:bg-slate-100 transition border border-slate-100 disabled:opacity-30"
-                >
-                    Clear
-                </button>
-            </div>
-
-            <p className="mt-3 text-[10px] text-slate-400 font-medium text-center uppercase tracking-widest">
-                Optimized for speech impairments & motor disabilities
+            <p className="mt-4 text-[9px] text-slate-400 font-black text-center uppercase tracking-[0.2em] opacity-50">
+                Continuous AI Speech Recognition • v2.0
             </p>
         </div>
     );

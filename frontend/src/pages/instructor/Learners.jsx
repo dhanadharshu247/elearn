@@ -166,6 +166,7 @@ const Learners = () => {
                                     <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Progress</th>
                                     <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Badges</th>
                                     <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Accessibility</th>
                                     <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Last Active</th>
                                     <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                                 </tr>
@@ -222,6 +223,26 @@ const Learners = () => {
                                                 {learner.status === 'Active' && <Clock className="w-3 h-3 mr-1.5" />}
                                                 {learner.status}
                                             </span>
+                                        </td>
+                                        <td className="px-6 py-5">
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        const newVal = !learner.accessibility_enabled;
+                                                        await api.put(`/api/instructor/enrolments/${learner.enrolment_id}/accessibility`, { accessibility_enabled: newVal });
+                                                        // Update local state
+                                                        setLearners(prev => prev.map(l => l.enrolment_id === learner.enrolment_id ? { ...l, accessibility_enabled: newVal } : l));
+                                                    } catch (err) {
+                                                        console.error('Failed to toggle accessibility:', err);
+                                                        alert('Failed to update accessibility mode');
+                                                    }
+                                                }}
+                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${learner.accessibility_enabled ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                                            >
+                                                <span
+                                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${learner.accessibility_enabled ? 'translate-x-6' : 'translate-x-1'}`}
+                                                />
+                                            </button>
                                         </td>
                                         <td className="px-6 py-5 text-sm text-slate-500 font-medium">
                                             {learner.lastActive}
