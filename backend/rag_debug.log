@@ -2124,3 +2124,315 @@ This sentence preserves the original intent and meaning of the impaired speech, 
       }
    ]
 }
+2026-02-25 13:56:31.563901: Generating 5 mcq questions for topic: Module 1
+2026-02-25 13:56:32.764010: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary topic of Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Algebra"},
+            {"text": "Geometry"},
+            {"text": "Calculus"},
+            {"text": "Trigonometry"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following is a key concept in Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Quadratic Equations"},
+            {"text": "Linear Equations"},
+            {"text": "Polynomial Functions"},
+            {"text": "Rational Expressions"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the main goal of Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To introduce advanced calculus topics"},
+            {"text": "To review algebra and geometry fundamentals"},
+            {"text": "To explore number theory and combinatorics"},
+            {"text": "To develop problem-solving strategies"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is a key application of Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Solving optimization problems"},
+            {"text": "Modeling population growth"},
+            {"text": "Analyzing financial data"},
+            {"text": "Designing electrical circuits"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is a key benefit of completing Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Improved understanding of abstract concepts"},
+            {"text": "Enhanced problem-solving skills"},
+            {"text": "Increased knowledge of historical mathematicians"},
+            {"text": "Better retention of mathematical formulas"}
+         ],
+         "correctOptionIndex": 1
+      }
+   ]
+}
+2026-02-25 13:56:39.208513: Generating 5 mcq questions for topic: web designing 
+2026-02-25 13:56:39.890926: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary function of CSS in web design?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To add multimedia elements"},
+            {"text": "To control layout and design"},
+            {"text": "To create interactive elements"},
+            {"text": "To handle server-side logic"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following scripting languages is commonly used for client-side scripting?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "PHP"},
+            {"text": "JavaScript"},
+            {"text": "Ruby"},
+            {"text": "Python"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the purpose of HTML semantic elements?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To add visual effects"},
+            {"text": "To improve accessibility"},
+            {"text": "To enhance user experience"},
+            {"text": "To increase page loading speed"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the term for the process of making a website usable by people with disabilities?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Responsive web design"},
+            {"text": "Progressive web design"},
+            {"text": "Accessible web design"},
+            {"text": "Interactive web design"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which of the following file formats is commonly used for storing images on the web?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "JPEG"},
+            {"text": "PNG"},
+            {"text": "GIF"},
+            {"text": "All of the above"}
+         ],
+         "correctOptionIndex": 3
+      }
+   ]
+}
+2026-02-25 19:48:41.858327: Generating single easy mcq question for topic: web designing 
+2026-02-25 19:48:42.811153: Generating single easy mcq question for topic: web designing 
+2026-02-25 19:51:20.002176: Generating single medium mcq question for topic: AI Testing Course
+2026-02-25 19:51:20.727372: Generating single easy mcq question for topic: AI Testing Course
+2026-02-25 19:51:20.983998: Generating single easy mcq question for topic: AI Testing Course
+2026-02-25 19:55:12.315311: Generating single medium mcq question for topic: AI Testing Course
+2026-02-25 19:55:17.681148: Generating single easy mcq question for topic: AI Testing Course
+2026-02-25 19:55:55.451261: Generating single easy mcq question for topic: web designing 
+2026-02-25 19:55:57.739235: Generating single easy mcq question for topic: web designing 
+2026-02-25 19:56:00.538279: Generating single easy mcq question for topic: web designing 
+2026-02-25 19:56:04.270925: Generating single easy mcq question for topic: web designing 
+2026-02-25 19:57:48.408308: Generating 10 mcq questions for topic: science
+2026-02-25 19:57:49.541105: AI Response Content: {
+  "questions": [
+       {
+           "questionText": "What is the process by which plants convert sunlight into energy?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Respiration"},
+               {"text": "Photosynthesis"},
+               {"text": "Decomposition"},
+               {"text": "Fermentation"}
+           ],
+           "correctOptionIndex": 1
+       },
+       {
+           "questionText": "What is the largest planet in our solar system?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Earth"},
+               {"text": "Saturn"},
+               {"text": "Jupiter"},
+               {"text": "Uranus"}
+           ],
+           "correctOptionIndex": 2
+       },
+       {
+           "questionText": "What is the scientific term for the 'building blocks of life'?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Cells"},
+               {"text": "Molecules"},
+               {"text": "Atoms"},
+               {"text": "Tissues"}
+           ],
+           "correctOptionIndex": 0
+       },
+       {
+           "questionText": "What is the largest living structure on Earth?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "The Amazon Rainforest"},
+               {"text": "The Great Barrier Reef"},
+               {"text": "The Grand Canyon"},
+               {"text": "The Great Wall of China"}
+           ],
+           "correctOptionIndex": 1
+       },
+       {
+           "questionText": "What is the term for the movement of tectonic plates?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Erosion"},
+               {"text": "Weathering"},
+               {"text": "Plate Tectonics"},
+               {"text": "Glaciation"}
+           ],
+           "correctOptionIndex": 2
+       },
+       {
+           "questionText": "What is the scientific term for the 'study of the structure of the universe'?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Astronomy"},
+               {"text": "Cosmology"},
+               {"text": "Astrophysics"},
+               {"text": "Geophysics"}
+           ],
+           "correctOptionIndex": 1
+       },
+       {
+           "questionText": "What is the term for the 'study of the behavior of matter'?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Biology"},
+               {"text": "Chemistry"},
+               {"text": "Physics"},
+               {"text": "Earth Science"}
+           ],
+           "correctOptionIndex": 1
+       },
+       {
+           "questionText": "What is the largest mammal on Earth?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Blue Whale"},
+               {"text": "Fin Whale"},
+               {"text": "Humpback Whale"},
+               {"text": "Sperm Whale"}
+           ],
+           "correctOptionIndex": 0
+       },
+       {
+           "questionText": "What is the term for the 'study of the Earth's physical structure'?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Geology"},
+               {"text": "Meteorology"},
+               {"text": "Oceanography"},
+               {"text": "Atmospheric Science"}
+           ],
+           "correctOptionIndex": 0
+       },
+       {
+           "questionText": "What is the term for the 'process of forming new continents'?",
+           "questionType": "mcq",
+           "options": [
+               {"text": "Continental Drift"},
+               {"text": "Plate Tectonics"},
+               {"text": "Continental Collision"},
+               {"text": "Sea Floor Spreading"}
+           ],
+           "correctOptionIndex": 0
+       }
+   ]
+}
+2026-02-25 19:58:26.629650: Generating 5 mcq questions for topic: science
+2026-02-25 19:58:27.377594: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the process by which plants convert sunlight into energy?",
+         "questionType": "mcq",
+         "options": [
+            {"text": " Photosynthesis"},
+            {"text": "Respiration"},
+            {"text": "Decomposition"},
+            {"text": "Fermentation"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following planets in our solar system has the highest average temperature?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mercury"},
+            {"text": "Venus"},
+            {"text": "Mars"},
+            {"text": "Jupiter"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the scientific term for the 'building blocks of life'?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Cells"},
+            {"text": "Molecules"},
+            {"text": "Tissues"},
+            {"text": "Organs"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following elements is a noble gas?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Oxygen"},
+            {"text": "Nitrogen"},
+            {"text": "Helium"},
+            {"text": "Carbon"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for the force that opposes motion between two surfaces that are in contact?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Friction"},
+            {"text": "Gravity"},
+            {"text": "Magnetism"},
+            {"text": "Electricity"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-25 20:00:45.107956: Generating single hard mcq question for topic: science
+2026-02-25 20:01:59.091664: Generating single hard mcq question for topic: science
+2026-02-25 20:02:12.415802: Generating single hard mcq question for topic: science
+2026-02-25 20:02:28.708337: Generating single easy mcq question for topic: science
+2026-02-25 20:02:44.396591: Generating single easy mcq question for topic: science
+2026-02-25 20:14:30.473555: Generating single easy mcq question for topic: web designing 

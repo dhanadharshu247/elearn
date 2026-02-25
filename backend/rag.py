@@ -151,14 +151,14 @@ Explain clearly and simply.
         log_debug(f"AI ERROR: {str(e)}")
         raise e
 
-def generate_questions(topic, question_type, count=10):
+def generate_questions(topic, question_type, count=10, difficulty="medium"):
     if not client:
         return []
 
     try:
         if question_type == "mcq":
             prompt = f"""
-Generate {count} multiple choice questions about '{topic}'. 
+Generate {count} {difficulty} difficulty multiple choice questions about '{topic}'. 
 Return a JSON object with a key "questions" containing a list of objects.
 Each object MUST follow this structure exactly:
 {{
@@ -175,7 +175,7 @@ Each object MUST follow this structure exactly:
 """
         else: # descriptive
             prompt = f"""
-Generate {count} descriptive questions about '{topic}'. 
+Generate {count} {difficulty} difficulty descriptive questions about '{topic}'. 
 Return a JSON object with a key "questions" containing a list of objects.
 Each object MUST follow this structure exactly:
 {{
@@ -217,6 +217,66 @@ Each object MUST follow this structure exactly:
         print("AI ERROR (Generation):", str(e))
         log_debug(f"Generation Error: {str(e)}")
         raise e
+
+def generate_single_adaptive_question(topic, difficulty, question_type="mcq", context=""):
+    """
+    Specifically generates ONE question for adaptive assessment.
+    """
+    if not client:
+        return None
+
+    try:
+        difficulty_desc = {
+            "easy": "very basic, foundational concepts",
+            "medium": "intermediate level, requiring some analysis",
+            "hard": "advanced, complex, requiring deep critical thinking or multi-step logic"
+        }.get(difficulty, "intermediate")
+
+        prompt = f"""
+Generate exactly ONE {difficulty.upper()} difficulty {question_type} question about '{topic}'.
+Difficulty Level: {difficulty} ({difficulty_desc})
+
+Context for topic:
+{context}
+
+Return a JSON object following this structure exactly:
+{{
+    "questionText": "The question string",
+    "questionType": "{question_type}",
+    "difficulty": "{difficulty}",
+    "options": [
+        {{"text": "Option 1"}},
+        {{"text": "Option 2"}},
+        {{"text": "Option 3"}},
+        {{"text": "Option 4"}}
+    ],
+    "correctOptionIndex": 0,
+    "correctAnswerText": "Sample answer if descriptive"
+}}
+"""
+        log_debug(f"Generating single {difficulty} {question_type} question for topic: {topic}")
+
+        result = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": "You are a professional educational assessment designer."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.8,
+            response_format={ "type": "json_object" },
+            timeout=30
+        )
+
+        if result and result.choices:
+            content = result.choices[0].message.content
+            parsed = json.loads(content)
+            return parsed
+
+        return None
+
+    except Exception as e:
+        log_debug(f"Adaptive Generation Error: {str(e)}")
+        return None
 
 def clean_speech(text):
     if not client:

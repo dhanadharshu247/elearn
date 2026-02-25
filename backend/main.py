@@ -1042,11 +1042,36 @@ def start_adaptive_quiz(course_id: int, current_user: dict = Depends(auth.get_cu
     ).first()
 
     if not question:
-        # Fallback to any question
+        # Try fallback to any question in DB
         question = db.query(models.Question).filter(models.Question.course_id == course_id).first()
 
+    # If STILL no question, generate one via AI
     if not question:
-        raise HTTPException(status_code=404, detail="No questions found for this course.")
+        course = db.query(models.Course).get(course_id)
+        if course:
+            ai_q_data = rag.generate_single_adaptive_question(course.title, "medium", "mcq", course.description)
+            if ai_q_data:
+                new_q = models.Question(
+                    questionText=ai_q_data.get("questionText"),
+                    questionType=ai_q_data.get("questionType", "mcq"),
+                    difficulty="medium",
+                    course_id=course_id,
+                    correctOptionIndex=ai_q_data.get("correctOptionIndex"),
+                    correctAnswerText=ai_q_data.get("correctAnswerText")
+                )
+                db.add(new_q)
+                db.flush()
+                
+                if ai_q_data.get("options"):
+                    for opt in ai_q_data["options"]:
+                        db.add(models.QuestionOption(text=opt["text"], question_id=new_q.id))
+                
+                db.commit()
+                question = new_q
+                print(f"AI Generated First Medium Question: {question.id}")
+
+    if not question:
+        raise HTTPException(status_code=404, detail="No questions found and AI generation failed.")
 
     return {
         "question": {
@@ -1091,15 +1116,46 @@ def next_adaptive_question(course_id: int, request: schemas.AdaptiveNextRequest,
     
     target_diff = rev_diff_map[next_level]
     
-    # Find next question
+    # 4. Find next question in database with target difficulty
     question = db.query(models.Question).filter(
         models.Question.course_id == course_id,
         models.Question.difficulty == target_diff,
         ~models.Question.id.in_(request.answered_ids)
     ).first()
     
+    # 5. If not in DB, try AI Generation for this specific difficulty
     if not question:
-        # Try any other difficulty if target not found
+        course = db.query(models.Course).get(course_id)
+        if course:
+            topic = course.title
+            context = course.description
+            q_type = last_q.questionType if last_q else "mcq"
+            
+            ai_q_data = rag.generate_single_adaptive_question(topic, target_diff, q_type, context)
+            
+            if ai_q_data:
+                # Save AI generated question
+                new_q = models.Question(
+                    questionText=ai_q_data.get("questionText"),
+                    questionType=ai_q_data.get("questionType", "mcq"),
+                    difficulty=target_diff,
+                    course_id=course_id,
+                    correctOptionIndex=ai_q_data.get("correctOptionIndex"),
+                    correctAnswerText=ai_q_data.get("correctAnswerText")
+                )
+                db.add(new_q)
+                db.flush()
+                
+                if ai_q_data.get("options"):
+                    for opt in ai_q_data["options"]:
+                        db.add(models.QuestionOption(text=opt["text"], question_id=new_q.id))
+                
+                db.commit()
+                question = new_q
+                print(f"AI Generated New {target_diff.upper()} Question: {question.id}")
+
+    # 6. Final fallback: Any remaining question in DB
+    if not question:
         question = db.query(models.Question).filter(
             models.Question.course_id == course_id,
             ~models.Question.id.in_(request.answered_ids)
