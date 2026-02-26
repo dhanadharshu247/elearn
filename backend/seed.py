@@ -8,21 +8,8 @@ def seed():
         models.Base.metadata.create_all(bind=database.engine)
         db = next(database.get_db())
         
-        # 1. Prepare demo users
-        demo_users = [
-            {
-                "name": "Dr. Jane Smith",
-                "email": "instructor@edweb.com",
-                "password": "password123",
-                "role": "instructor"
-            },
-            {
-                "name": "Miru Learner",
-                "email": "miru@gmail.com",
-                "password": "password123",
-                "role": "learner"
-            }
-        ]
+        # 1. Prepare demo users (Cleaned up)
+        demo_users = []
 
         print("--- Starting Seeding ---")
         for user_data in demo_users:

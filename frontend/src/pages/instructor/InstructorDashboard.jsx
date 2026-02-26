@@ -82,7 +82,15 @@ const InstructorDashboard = () => {
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <div className="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">Total Students</div>
                     <div className="text-3xl font-bold text-slate-900">
-                        {courses.reduce((acc, c) => acc + (c.enrolledStudents?.length || 0), 0)}
+                        {(() => {
+                            const uniqueStudents = new Set();
+                            courses.forEach(c => {
+                                if (c.enrolledStudents) {
+                                    c.enrolledStudents.forEach(sId => uniqueStudents.add(sId));
+                                }
+                            });
+                            return uniqueStudents.size;
+                        })()}
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">

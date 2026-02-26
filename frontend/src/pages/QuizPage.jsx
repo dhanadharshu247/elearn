@@ -18,7 +18,7 @@ const QuizPage = () => {
     const [answeredIds, setAnsweredIds] = useState([]);
     const [performanceData, setPerformanceData] = useState([]); // {id, correct}
     const [currentStep, setCurrentStep] = useState(0);
-    const [totalSteps] = useState(10); // Target 10 questions
+    const [totalSteps, setTotalSteps] = useState(10); // Default to 10
     const [selectedAnswer, setSelectedAnswer] = useState(null);
 
     // Accessibility state
@@ -49,6 +49,9 @@ const QuizPage = () => {
                         setResult(res.data);
                         setShowReview(true);
                     } else {
+                        if (res.data.totalQuestions) {
+                            setTotalSteps(res.data.totalQuestions);
+                        }
                         setCurrentQuestion(res.data.question);
                     }
                 } catch (err) {

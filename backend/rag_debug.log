@@ -2436,3 +2436,211 @@ This sentence preserves the original intent and meaning of the impaired speech, 
 2026-02-25 20:02:28.708337: Generating single easy mcq question for topic: science
 2026-02-25 20:02:44.396591: Generating single easy mcq question for topic: science
 2026-02-25 20:14:30.473555: Generating single easy mcq question for topic: web designing 
+2026-02-26 09:45:38.089278: Generating 2 mcq questions for topic: Module 1
+2026-02-26 09:45:38.879149: AI Response Content: {
+  "questions": [
+    {
+        "questionText": "What is the primary function of Module 1 in a software development context?",
+        "questionType": "mcq",
+        "options": [
+            {"text": "It provides a framework for database management"},
+            {"text": "It offers a set of tools for data analysis"},
+            {"text": "It serves as a fundamental building block for software architecture"},
+            {"text": "It is used for testing and debugging software"}
+        ],
+        "correctOptionIndex": 2
+    },
+    {
+        "questionText": "Which of the following is a key benefit of learning Module 1?",
+        "questionType": "mcq",
+        "options": [
+            {"text": "Improved graphic design skills"},
+            {"text": "Enhanced understanding of software security"},
+            {"text": "Better understanding of object-oriented programming concepts"},
+            {"text": "Increased proficiency in web development"}
+        ],
+        "correctOptionIndex": 2
+    }
+]
+}
+2026-02-26 09:46:02.067439: Generating 2 mcq questions for topic: algebra
+2026-02-26 09:46:03.397713: AI Response Content: {
+  "questions": [
+       {
+           "questionText": "Solve for x in the equation 2x + 5 = 11",
+           "questionType": "mcq",
+           "options": [
+               {"text": "x = 3"},
+               {"text": "x = 2"},
+               {"text": "x = 1"},
+               {"text": "x = 4"}
+           ],
+           "correctOptionIndex": 0
+       },
+       {
+           "questionText": "Find the value of y in the equation y - 3 = 7",
+           "questionType": "mcq",
+           "options": [
+               {"text": "y = 8"},
+               {"text": "y = 3"},
+               {"text": "y = 10"},
+               {"text": "y = 4"}
+           ],
+           "correctOptionIndex": 0
+       }
+   ]
+}
+2026-02-26 09:46:10.339089: Generating 5 mcq questions for topic: Maths
+2026-02-26 09:46:10.943439: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the value of x in the equation 2x + 5 = 11?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "2"},
+            {"text": "3"},
+            {"text": "4"},
+            {"text": "6"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "In a right-angled triangle, what is the length of the hypotenuse if the other two sides are 3cm and 4cm long?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "5cm"},
+            {"text": "7cm"},
+            {"text": "sqrt(25)cm"},
+            {"text": "5.8cm"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the sum of the interior angles of a pentagon?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "540 degrees"},
+            {"text": "720 degrees"},
+            {"text": "1080 degrees"},
+            {"text": "900 degrees"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "A bakery sells 250 loaves of bread per day. If they make a profit of $0.50 per loaf, what is their daily profit?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "$50"},
+            {"text": "$75"},
+            {"text": "$125"},
+            {"text": "$250"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the value of x in the equation x/4 = 6?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "8"},
+            {"text": "12"},
+            {"text": "24"},
+            {"text": "48"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}
+2026-02-26 09:47:24.062377: Generating single hard mcq question for topic: Maths
+2026-02-26 09:48:07.207035: Generating single easy mcq question for topic: Maths
+2026-02-26 09:48:22.959342: Generating single easy mcq question for topic: Maths
+2026-02-26 09:48:35.571158: Generating single easy mcq question for topic: Maths
+2026-02-26 09:48:55.049020: Generating single easy mcq question for topic: Maths
+2026-02-26 09:48:58.852025: Generating single easy mcq question for topic: Maths
+2026-02-26 09:49:03.636676: Generating single easy mcq question for topic: Maths
+2026-02-26 12:07:53.453303: Generating 2 mcq questions for topic: respiration in plants
+2026-02-26 12:07:54.203292: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary function of stomata in plant leaves?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To release oxygen into the atmosphere"},
+            {"text": "To absorb water and minerals from the soil"},
+            {"text": "To regulate gas exchange, allowing plants to take in carbon dioxide and release oxygen"},
+            {"text": "To produce food for the plant through photosynthesis"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which of the following is NOT a byproduct of photosynthesis in plants?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Glucose"},
+            {"text": "Oxygen"},
+            {"text": "Carbon dioxide"},
+            {"text": "Water"}
+         ],
+         "correctOptionIndex": 3
+      }
+   ]
+}
+2026-02-26 12:08:03.247298: Generating 5 mcq questions for topic: Respiration in plants
+2026-02-26 12:08:03.896594: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary function of stomata in plant leaves?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To control temperature inside the leaf"},
+            {"text": "To allow gas exchange between the plant and the atmosphere"},
+            {"text": "To synthesize chlorophyll"},
+            {"text": "To store water"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the process by which plants release oxygen as a byproduct of photosynthesis?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Respiration"},
+            {"text": "Photosynthesis"},
+            {"text": "Transpiration"},
+            {"text": "Photorespiration"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for the movement of water from the roots to the leaves through the xylem?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Transpiration stream"},
+            {"text": "Xylem sap"},
+            {"text": "Transpiration"},
+            {"text": "Uptake"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the role of stomata in regulating the rate of transpiration?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "To increase the rate of transpiration"},
+            {"text": "To decrease the rate of transpiration"},
+            {"text": "To have no effect on transpiration"},
+            {"text": "To regulate stomatal aperture"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the process by which plants release carbon dioxide as a byproduct of photosynthesis?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Respiration"},
+            {"text": "Photosynthesis"},
+            {"text": "Transpiration"},
+            {"text": "Photorespiration"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}

@@ -311,7 +311,7 @@ def get_my_courses(
             "price": c.price,
             "status": c.status,
             "instructor_id": c.instructor_id,
-            "enrolledStudents": [e.user_id for e in c.enrolments],
+            "enrolledStudents": [e.user_id for e in c.enrolments if e.user],
             "progress": progress,
             "instructor": schemas.UserResponse.from_orm(c.instructor) if c.instructor else None
         })
@@ -679,7 +679,7 @@ def get_course(course_id: int, current_user_opt: Optional[dict] = Depends(auth.g
             "price": course.price,
             "status": course.status,
             "instructor_id": course.instructor_id,
-            "enrolledStudents": [e.user_id for e in course.enrolments],
+            "enrolledStudents": [e.user_id for e in course.enrolments if e.user],
             "instructor": {
                 "id": course.instructor.id if course.instructor else None,
                 "name": course.instructor.name if course.instructor else "Unknown",
@@ -933,42 +933,49 @@ def submit_quiz_result(module_id: int, result: schemas.QuizResultCreate, current
 
 @app.get("/quizzes/{course_id}")
 def get_quiz_questions(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # Check if already completed
-    existing_result = db.query(models.QuizResult).filter(
+    # Fetch all results for this course/user
+    existing_results = db.query(models.QuizResult).filter(
         models.QuizResult.user_id == current_user["id"],
         models.QuizResult.course_id == course_id
-    ).first()
+    ).order_by(models.QuizResult.completed_at.asc()).all()
     
-    if existing_result:
-        # Fetch questions based on stored IDs if available, otherwise course questions
-        if existing_result.question_ids:
-            questions = db.query(models.Question).filter(models.Question.id.in_(existing_result.question_ids)).all()
-            q_map = {q.id: q for q in questions}
-            sorted_review_questions = [q_map[qid] for qid in existing_result.question_ids if qid in q_map]
-        else:
-            sorted_review_questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
+    if existing_results:
+        # Check if we should allow a retake (only if first attempt was a failure and no second attempt yet)
+        first_attempt = existing_results[0]
+        first_percentage = (first_attempt.score / first_attempt.total_questions * 100) if first_attempt.total_questions > 0 else 0
         
-        # Return result and detailed review
-        return {
-            "completed": True,
-            "score": existing_result.score,
-            "totalQuestions": existing_result.total_questions,
-            "percentage": int((existing_result.score / existing_result.total_questions * 100) if existing_result.total_questions and existing_result.total_questions > 0 else 0),
-            "userAnswers": existing_result.answers,
-            "completed_at": existing_result.completed_at,
-            "certificate": db.query(models.Certificate).filter(models.Certificate.user_id == current_user["id"], models.Certificate.course_id == course_id).first() is not None,
-            "review": [
-                {
-                    "id": q.id,
-                    "questionText": q.questionText,
-                    "questionType": q.questionType,
-                    "options": [{"text": o.text} for o in q.options],
-                    "correctOptionIndex": q.correctOptionIndex,
-                    "correctAnswerText": q.correctAnswerText
-                } for q in sorted_review_questions
-            ]
-        }
+        # If they passed first time, or if they already used their one retake
+        if first_percentage >= 50 or len(existing_results) >= 2:
+            latest_result = existing_results[-1]
+            # Fetch questions based on stored IDs if available
+            if latest_result.question_ids:
+                questions = db.query(models.Question).filter(models.Question.id.in_(latest_result.question_ids)).all()
+                q_map = {q.id: q for q in questions}
+                sorted_review_questions = [q_map[qid] for qid in latest_result.question_ids if qid in q_map]
+            else:
+                sorted_review_questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
+            
+            return {
+                "completed": True,
+                "score": latest_result.score,
+                "totalQuestions": latest_result.total_questions,
+                "percentage": int((latest_result.score / latest_result.total_questions * 100) if latest_result.total_questions > 0 else 0),
+                "userAnswers": latest_result.answers,
+                "completed_at": latest_result.completed_at,
+                "certificate": db.query(models.Certificate).filter(models.Certificate.user_id == current_user["id"], models.Certificate.course_id == course_id).first() is not None,
+                "review": [
+                    {
+                        "id": q.id,
+                        "questionText": q.questionText,
+                        "questionType": q.questionType,
+                        "options": [{"text": o.text} for o in q.options],
+                        "correctOptionIndex": q.correctOptionIndex,
+                        "correctAnswerText": q.correctAnswerText
+                    } for q in sorted_review_questions
+                ]
+            }
 
+    # If first time or retake allowed
     # Check enrollment
     enrollment = db.query(models.Enrolment).filter(
         models.Enrolment.course_id == course_id,
@@ -977,6 +984,7 @@ def get_quiz_questions(course_id: int, current_user: dict = Depends(auth.get_cur
     if not enrollment:
         raise HTTPException(status_code=403, detail="You must be enrolled in the course to access the assessment.")
     
+    # Use only instructor created questions
     questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
     
     return {
@@ -986,46 +994,51 @@ def get_quiz_questions(course_id: int, current_user: dict = Depends(auth.get_cur
                 "questionText": q.questionText,
                 "questionType": q.questionType,
                 "options": [{"text": o.text} for o in q.options],
-                # Do not return correct answers to the student!
             } for q in questions
         ]
     }
 
 @app.post("/quizzes/{course_id}/adaptive/start")
 def start_adaptive_quiz(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # Check if already completed
-    existing_result = db.query(models.QuizResult).filter(
+    # Fetch all results for this course/user
+    existing_results = db.query(models.QuizResult).filter(
         models.QuizResult.user_id == current_user["id"],
         models.QuizResult.course_id == course_id
-    ).first()
+    ).order_by(models.QuizResult.completed_at.asc()).all()
     
-    if existing_result:
-        # Fetch questions based on stored IDs if available
-        if existing_result.question_ids:
-            questions = db.query(models.Question).filter(models.Question.id.in_(existing_result.question_ids)).all()
-            q_map = {q.id: q for q in questions}
-            sorted_review_questions = [q_map[qid] for qid in existing_result.question_ids if qid in q_map]
-        else:
-            sorted_review_questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
+    if existing_results:
+        # Check if we should allow a retake
+        first_attempt = existing_results[0]
+        first_percentage = (first_attempt.score / first_attempt.total_questions * 100) if first_attempt.total_questions > 0 else 0
+        
+        # If they passed first time, or if they already used their one retake
+        if first_percentage >= 50 or len(existing_results) >= 2:
+            latest_result = existing_results[-1]
+            if latest_result.question_ids:
+                questions = db.query(models.Question).filter(models.Question.id.in_(latest_result.question_ids)).all()
+                q_map = {q.id: q for q in questions}
+                sorted_review_questions = [q_map[qid] for qid in latest_result.question_ids if qid in q_map]
+            else:
+                sorted_review_questions = db.query(models.Question).filter(models.Question.course_id == course_id).all()
 
-        return {
-            "completed": True,
-            "score": existing_result.score,
-            "totalQuestions": existing_result.total_questions,
-            "percentage": int((existing_result.score / existing_result.total_questions * 100) if existing_result.total_questions > 0 else 0),
-            "userAnswers": existing_result.answers,
-            "certificate": db.query(models.Certificate).filter(models.Certificate.user_id == current_user["id"], models.Certificate.course_id == course_id).first() is not None,
-            "review": [
-                {
-                    "id": q.id,
-                    "questionText": q.questionText,
-                    "questionType": q.questionType,
-                    "options": [{"text": o.text} for o in q.options],
-                    "correctOptionIndex": q.correctOptionIndex,
-                    "correctAnswerText": q.correctAnswerText
-                } for q in sorted_review_questions
-            ]
-        }
+            return {
+                "completed": True,
+                "score": latest_result.score,
+                "totalQuestions": latest_result.total_questions,
+                "percentage": int((latest_result.score / latest_result.total_questions * 100) if latest_result.total_questions > 0 else 0),
+                "userAnswers": latest_result.answers,
+                "certificate": db.query(models.Certificate).filter(models.Certificate.user_id == current_user["id"], models.Certificate.course_id == course_id).first() is not None,
+                "review": [
+                    {
+                        "id": q.id,
+                        "questionText": q.questionText,
+                        "questionType": q.questionType,
+                        "options": [{"text": o.text} for o in q.options],
+                        "correctOptionIndex": q.correctOptionIndex,
+                        "correctAnswerText": q.correctAnswerText
+                    } for q in sorted_review_questions
+                ]
+            }
 
     # Check enrollment
     enrollment = db.query(models.Enrolment).filter(
@@ -1035,7 +1048,7 @@ def start_adaptive_quiz(course_id: int, current_user: dict = Depends(auth.get_cu
     if not enrollment:
          raise HTTPException(status_code=403, detail="Not enrolled")
 
-    # Start with a medium question
+    # Start with a medium question (Instructor created ONLY)
     question = db.query(models.Question).filter(
         models.Question.course_id == course_id,
         models.Question.difficulty == "medium"
@@ -1045,33 +1058,11 @@ def start_adaptive_quiz(course_id: int, current_user: dict = Depends(auth.get_cu
         # Try fallback to any question in DB
         question = db.query(models.Question).filter(models.Question.course_id == course_id).first()
 
-    # If STILL no question, generate one via AI
     if not question:
-        course = db.query(models.Course).get(course_id)
-        if course:
-            ai_q_data = rag.generate_single_adaptive_question(course.title, "medium", "mcq", course.description)
-            if ai_q_data:
-                new_q = models.Question(
-                    questionText=ai_q_data.get("questionText"),
-                    questionType=ai_q_data.get("questionType", "mcq"),
-                    difficulty="medium",
-                    course_id=course_id,
-                    correctOptionIndex=ai_q_data.get("correctOptionIndex"),
-                    correctAnswerText=ai_q_data.get("correctAnswerText")
-                )
-                db.add(new_q)
-                db.flush()
-                
-                if ai_q_data.get("options"):
-                    for opt in ai_q_data["options"]:
-                        db.add(models.QuestionOption(text=opt["text"], question_id=new_q.id))
-                
-                db.commit()
-                question = new_q
-                print(f"AI Generated First Medium Question: {question.id}")
+        raise HTTPException(status_code=404, detail="No questions found for this course.")
 
-    if not question:
-        raise HTTPException(status_code=404, detail="No questions found and AI generation failed.")
+    # Count total available questions for this course
+    total_qs = db.query(models.Question).filter(models.Question.course_id == course_id).count()
 
     return {
         "question": {
@@ -1080,7 +1071,8 @@ def start_adaptive_quiz(course_id: int, current_user: dict = Depends(auth.get_cu
             "questionType": question.questionType,
             "difficulty": question.difficulty,
             "options": [{"text": o.text} for o in question.options]
-        }
+        },
+        "totalQuestions": total_qs
     }
 
 @app.post("/quizzes/{course_id}/adaptive/next")
@@ -1116,45 +1108,14 @@ def next_adaptive_question(course_id: int, request: schemas.AdaptiveNextRequest,
     
     target_diff = rev_diff_map[next_level]
     
-    # 4. Find next question in database with target difficulty
+    # 4. Find next question in database with target difficulty (Instructor created ONLY)
     question = db.query(models.Question).filter(
         models.Question.course_id == course_id,
         models.Question.difficulty == target_diff,
         ~models.Question.id.in_(request.answered_ids)
     ).first()
     
-    # 5. If not in DB, try AI Generation for this specific difficulty
-    if not question:
-        course = db.query(models.Course).get(course_id)
-        if course:
-            topic = course.title
-            context = course.description
-            q_type = last_q.questionType if last_q else "mcq"
-            
-            ai_q_data = rag.generate_single_adaptive_question(topic, target_diff, q_type, context)
-            
-            if ai_q_data:
-                # Save AI generated question
-                new_q = models.Question(
-                    questionText=ai_q_data.get("questionText"),
-                    questionType=ai_q_data.get("questionType", "mcq"),
-                    difficulty=target_diff,
-                    course_id=course_id,
-                    correctOptionIndex=ai_q_data.get("correctOptionIndex"),
-                    correctAnswerText=ai_q_data.get("correctAnswerText")
-                )
-                db.add(new_q)
-                db.flush()
-                
-                if ai_q_data.get("options"):
-                    for opt in ai_q_data["options"]:
-                        db.add(models.QuestionOption(text=opt["text"], question_id=new_q.id))
-                
-                db.commit()
-                question = new_q
-                print(f"AI Generated New {target_diff.upper()} Question: {question.id}")
-
-    # 6. Final fallback: Any remaining question in DB
+    # 5. Fallback: Any remaining question in DB
     if not question:
         question = db.query(models.Question).filter(
             models.Question.course_id == course_id,
@@ -1208,17 +1169,26 @@ def submit_course_quiz(course_id: int, request: schemas.QuizSubmitRequest, curre
     # it doesn't say nullable=False, so let's hope it works.
     
     # Check if already submitted
-    existing_result = db.query(models.QuizResult).filter(
+    existing_results = db.query(models.QuizResult).filter(
         models.QuizResult.user_id == current_user["id"],
         models.QuizResult.course_id == course_id
-    ).first()
-    if existing_result:
-        raise HTTPException(status_code=400, detail="You have already completed the final assessment for this course.")
+    ).order_by(models.QuizResult.completed_at.asc()).all()
+    
+    if existing_results:
+        # Check if they passed first time, or if they already used their one retake
+        first_attempt = existing_results[0]
+        first_percentage = (first_attempt.score / first_attempt.total_questions * 100) if first_attempt.total_questions > 0 else 0
+        
+        if first_percentage >= 50:
+            raise HTTPException(status_code=400, detail="You have already passed the final assessment for this course.")
+        
+        if len(existing_results) >= 2:
+            raise HTTPException(status_code=400, detail="You have already exhausted your assessment retake limit.")
 
     res = models.QuizResult(
         user_id = current_user["id"],
         course_id = course_id,
-        score = score, # score is already raw count here
+        score = score,
         total_questions = total,
         answers = request.answers,
         question_ids = request.question_ids if request.is_adaptive else [q.id for q in sorted_questions]

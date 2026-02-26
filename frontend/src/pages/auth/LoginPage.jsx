@@ -168,33 +168,7 @@ const LoginPage = () => {
                                 Sign in <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </Button>
 
-                            <div className="mt-8 pt-8 border-t border-slate-100">
-                                <div className="bg-slate-50 rounded-2xl p-6">
-                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 italic">Demo Accounts</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <div className="text-sm font-bold text-slate-700">Instructor</div>
-                                            <div className="text-xs text-slate-500 font-mono">instructor@edweb.com</div>
-                                            <button
-                                                onClick={() => { setEmail('instructor@edweb.com'); setPassword('password123'); }}
-                                                className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider"
-                                            >
-                                                Auto-fill
-                                            </button>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <div className="text-sm font-bold text-slate-700">Learner</div>
-                                            <div className="text-xs text-slate-500 font-mono">miru@gmail.com</div>
-                                            <button
-                                                onClick={() => { setEmail('miru@gmail.com'); setPassword('password123'); }}
-                                                className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider"
-                                            >
-                                                Auto-fill
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>        </form>
+                        </form>
 
                         <div className="mt-8 pt-6 border-t border-gray-100 text-center">
                             <p className="text-sm text-gray-500">
