@@ -354,3 +354,55 @@ Corrected sentence:"""
         log_debug(f"Clean Speech Error: {str(e)}")
         # If parsing or API fails, log error and return original text safely per requirements
         return text
+
+def generate_personalized_feedback(student_name, course_title, performance_summary):
+    """
+    Generates a personalized feedback report based on student performance.
+    performance_summary: list of dicts with {title, score, total, difficulty_stats}
+    """
+    if not client:
+        return "AI Feedback unavailable: Client not initialized."
+
+    try:
+        formatted_data = json.dumps(performance_summary, indent=2)
+        prompt = f"""
+You are an expert academic counselor and learning coach. 
+Generate a supportive, insightful, and professional personalized feedback report for a student.
+
+Student Name: {student_name}
+Course: {course_title}
+
+Performance Data (JSON):
+{formatted_data}
+
+Instructions:
+1. Start with a warm professional greeting.
+2. Analyze the data to identify "Strengths" (modules with high scores or mastery of hard questions).
+3. Identify "Areas for Improvement" (modules with low scores or where they struggled with consistent topics).
+4. Provide 3 specific, actionable "Study Recommendations" based on the results.
+5. Keep the tone encouraging and academic.
+6. Use Markdown formatting (headers, bullets).
+7. Do not mention specific question IDs or raw JSON data.
+
+Output the report in clear Markdown.
+"""
+        log_debug(f"Generating personalized feedback for {student_name} in {course_title}")
+        
+        result = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": "You are a professional educational consultant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            timeout=60
+        )
+
+        if result and result.choices:
+            return result.choices[0].message.content
+        
+        return "AI Error: Could not generate feedback content."
+
+    except Exception as e:
+        log_debug(f"Feedback Generation Error: {str(e)}")
+        return f"AI Error: {str(e)}"

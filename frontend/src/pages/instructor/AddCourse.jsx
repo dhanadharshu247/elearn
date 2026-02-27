@@ -64,6 +64,7 @@ const AddCourse = () => {
             updatedAssessment.push({
                 questionText: '',
                 questionType: 'mcq',
+                difficulty: 'medium',
                 options: [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
                 correctOptionIndex: 0,
                 correctAnswerText: ''
@@ -75,6 +76,7 @@ const AddCourse = () => {
         updatedModules[moduleIndex].quiz.push({
             questionText: '',
             questionType: 'mcq',
+            difficulty: 'medium',
             options: [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
             correctOptionIndex: 0,
             correctAnswerText: ''
@@ -143,6 +145,7 @@ const AddCourse = () => {
                 const formattedQuestions = newQuestions.map(q => ({
                     questionText: q.questionText,
                     questionType: q.questionType || type,
+                    difficulty: q.difficulty || 'medium',
                     options: q.options || [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
                     correctOptionIndex: q.correctOptionIndex !== undefined ? q.correctOptionIndex : 0,
                     correctAnswerText: q.correctAnswerText || ''

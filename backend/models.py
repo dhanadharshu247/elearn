@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Table, JSON
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Table, JSON, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
@@ -101,6 +101,7 @@ class Enrolment(Base):
     course_id = Column(Integer, ForeignKey("courses.id"))
     enrolled_at = Column(DateTime, default=datetime.utcnow)
     accessibility_enabled = Column(Boolean, default=False)
+    personalized_feedback = Column(Text, nullable=True)
 
     user = relationship("User", back_populates="enrolments")
     course = relationship("Course", back_populates="enrolments")

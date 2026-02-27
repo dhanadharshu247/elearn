@@ -14,6 +14,9 @@ const CoursePage = () => {
     const [activeQuizQuestionIndex, setActiveQuizQuestionIndex] = useState(0);
     const [quizAnswers, setQuizAnswers] = useState({});
     const [quizResult, setQuizResult] = useState(null);
+    const [personalizedFeedback, setPersonalizedFeedback] = useState(null);
+    const [loadingFeedback, setLoadingFeedback] = useState(false);
+    const [showFeedbackView, setShowFeedbackView] = useState(false);
 
     useEffect(() => {
         const fetchCourseData = async () => {
@@ -100,6 +103,18 @@ const CoursePage = () => {
         }
     };
 
+    const fetchFeedback = async () => {
+        setLoadingFeedback(true);
+        try {
+            const response = await api.get(`/api/courses/${id}/feedback`);
+            setPersonalizedFeedback(response.data.feedback);
+        } catch (err) {
+            console.error('Failed to fetch feedback:', err);
+        } finally {
+            setLoadingFeedback(false);
+        }
+    };
+
     if (loading) return <div className="p-8 text-center text-slate-500 font-bold">Loading Course...</div>;
     if (error) return <div className="p-8 text-red-500 text-center">{error}</div>;
     if (!course) return <div className="p-8 text-center">Course not found</div>;
@@ -149,6 +164,7 @@ const CoursePage = () => {
                                         setActiveQuizQuestionIndex(0);
                                         setQuizAnswers({});
                                         setQuizResult(null);
+                                        setShowFeedbackView(false);
                                     }}
                                     className={`w-full text-left p-4 rounded-2xl transition-all duration-200 ${activeModuleIndex === idx
                                         ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100'
@@ -198,6 +214,27 @@ const CoursePage = () => {
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                                         </Link>
                                     )}
+
+                                    {course.isAssessmentCompleted && (
+                                        <button
+                                            onClick={() => {
+                                                setShowFeedbackView(true);
+                                                if (!personalizedFeedback) fetchFeedback();
+                                            }}
+                                            className={`w-full flex items-center justify-between p-4 mt-2 rounded-2xl transition-all font-bold border-2 ${showFeedbackView
+                                                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-100'
+                                                : 'bg-white text-indigo-600 border-indigo-100 hover:bg-indigo-50'}`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xl">💡</span>
+                                                <div className="text-left">
+                                                    <div className="text-[10px] uppercase tracking-wider opacity-70">AI Insights</div>
+                                                    <div>Personalized Feedback</div>
+                                                </div>
+                                            </div>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -229,6 +266,32 @@ const CoursePage = () => {
                                 >
                                     Get Started Now
                                 </button>
+                            </div>
+                        </div>
+                    ) : showFeedbackView ? (
+                        <div className="max-w-4xl mx-auto p-6 md:p-12 space-y-12">
+                            <div className="space-y-2">
+                                <h1 className="text-4xl font-black text-slate-900 tracking-tight">AI Learning Insights 💡</h1>
+                                <p className="text-slate-500 font-medium">Personalized feedback based on your performance across all modules.</p>
+                            </div>
+
+                            <div className="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-slate-100">
+                                {loadingFeedback ? (
+                                    <div className="py-20 text-center space-y-4">
+                                        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                        <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Analyzing your performance...</p>
+                                    </div>
+                                ) : personalizedFeedback ? (
+                                    <div className="prose prose-slate max-w-none">
+                                        <div className="whitespace-pre-wrap text-slate-700 leading-relaxed font-medium">
+                                            {personalizedFeedback}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
+                                        No feedback available.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ) : (
@@ -399,10 +462,10 @@ const CoursePage = () => {
                                                                                 <div
                                                                                     key={oIdx}
                                                                                     className={`p-3 rounded-xl border text-sm font-medium transition-all ${isCorrect
-                                                                                            ? 'bg-green-50 border-green-200 text-green-700'
-                                                                                            : isUserSelected
-                                                                                                ? 'bg-red-50 border-red-200 text-red-700'
-                                                                                                : 'bg-white border-slate-100 text-slate-500'
+                                                                                        ? 'bg-green-50 border-green-200 text-green-700'
+                                                                                        : isUserSelected
+                                                                                            ? 'bg-red-50 border-red-200 text-red-700'
+                                                                                            : 'bg-white border-slate-100 text-slate-500'
                                                                                         }`}
                                                                                 >
                                                                                     <div className="flex items-center gap-2">

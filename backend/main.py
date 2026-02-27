@@ -1444,6 +1444,72 @@ def get_performance_report(course_id: int, current_user: dict = Depends(auth.get
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 
+@app.get("/api/courses/{course_id}/feedback")
+def get_personalized_feedback(course_id: int, current_user: dict = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # 1. Verify Enrollment
+    enrolment = db.query(models.Enrolment).filter(
+        models.Enrolment.course_id == course_id,
+        models.Enrolment.user_id == current_user["id"]
+    ).first()
+    
+    if not enrolment:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+
+    # 2. Check if feedback already generated
+    if enrolment.personalized_feedback:
+        return {"feedback": enrolment.personalized_feedback}
+
+    # 3. Collate Performance Data
+    course = db.query(models.Course).filter(models.Course.id == course_id).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    performance_summary = []
+    
+    # Module results
+    for module in course.modules:
+        result = db.query(models.QuizResult).filter(
+            models.QuizResult.user_id == current_user["id"],
+            models.QuizResult.module_id == module.id
+        ).first()
+        
+        if result:
+            performance_summary.append({
+                "type": "Module Quiz",
+                "title": module.title,
+                "score": result.score,
+                "total": result.total_questions,
+                "percentage": int((result.score / result.total_questions * 100) if result.total_questions > 0 else 0)
+            })
+
+    # Final Assessment result
+    final_result = db.query(models.QuizResult).filter(
+        models.QuizResult.user_id == current_user["id"],
+        models.QuizResult.course_id == course_id,
+        models.QuizResult.module_id == None
+    ).first()
+    
+    if final_result:
+        performance_summary.append({
+            "type": "Final Assessment",
+            "title": "Course Final Assessment",
+            "score": final_result.score,
+            "total": final_result.total_questions,
+            "percentage": int((final_result.score / final_result.total_questions * 100) if final_result.total_questions > 0 else 0)
+        })
+
+    if not performance_summary:
+        return {"feedback": "No performance data available yet. Complete some quizzes to get insights!"}
+
+    # 4. Generate Feedback using RAG
+    feedback = rag.generate_personalized_feedback(current_user["name"], course.title, performance_summary)
+    
+    # 5. Save and Return
+    enrolment.personalized_feedback = feedback
+    db.commit()
+    
+    return {"feedback": feedback}
+
 if __name__ == "__main__":
     import uvicorn
     print("Starting SQLAlchemy-based server on http://127.0.0.1:8000")

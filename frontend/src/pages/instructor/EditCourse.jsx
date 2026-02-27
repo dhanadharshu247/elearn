@@ -56,6 +56,7 @@ const EditCourse = () => {
                         id: q.id,
                         questionText: q.questionText,
                         questionType: q.questionType || 'mcq',
+                        difficulty: q.difficulty || 'medium',
                         options: q.options ? q.options.map(opt => ({ text: opt.text })) : [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
                         correctOptionIndex: q.correctOptionIndex,
                         correctAnswerText: q.correctAnswerText || ''
@@ -104,6 +105,7 @@ const EditCourse = () => {
             updatedAssessment.push({
                 questionText: '',
                 questionType: 'mcq',
+                difficulty: 'medium',
                 options: [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
                 correctOptionIndex: 0,
                 correctAnswerText: ''
@@ -115,6 +117,7 @@ const EditCourse = () => {
         updatedModules[moduleIndex].quiz.push({
             questionText: '',
             questionType: 'mcq',
+            difficulty: 'medium',
             options: [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
             correctOptionIndex: 0,
             correctAnswerText: ''
@@ -183,6 +186,7 @@ const EditCourse = () => {
                 const formattedQuestions = newQuestions.map(q => ({
                     questionText: q.questionText,
                     questionType: q.questionType || type,
+                    difficulty: q.difficulty || 'medium',
                     options: q.options || [{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
                     correctOptionIndex: q.correctOptionIndex !== undefined ? q.correctOptionIndex : 0,
                     correctAnswerText: q.correctAnswerText || ''
