@@ -151,19 +151,23 @@ Explain clearly and simply.
         log_debug(f"AI ERROR: {str(e)}")
         raise e
 
-def generate_questions(topic, question_type, count=10, difficulty="medium"):
+def generate_questions(topic, question_type, count=10, difficulty="mixed"):
     if not client:
         return []
 
     try:
+        difficulty_instruction = f"a balanced mix (approx 33% each) of easy, medium, and hard" if difficulty == "mixed" else f"{difficulty}"
+        
         if question_type == "mcq":
             prompt = f"""
-Generate {count} {difficulty} difficulty multiple choice questions about '{topic}'. 
+Generate {count} multiple choice questions about '{topic}'. 
+Difficulty Distribution: {difficulty_instruction}.
 Return a JSON object with a key "questions" containing a list of objects.
-Each object MUST follow this structure exactly:
+Each object MUST include a "difficulty" field ("easy", "medium", or "hard") and follow this structure exactly:
 {{
     "questionText": "The question string",
     "questionType": "mcq",
+    "difficulty": "easy",
     "options": [
         {{"text": "Option 1"}},
         {{"text": "Option 2"}},
@@ -175,12 +179,14 @@ Each object MUST follow this structure exactly:
 """
         else: # descriptive
             prompt = f"""
-Generate {count} {difficulty} difficulty descriptive questions about '{topic}'. 
+Generate {count} descriptive questions about '{topic}'. 
+Difficulty Distribution: {difficulty_instruction}.
 Return a JSON object with a key "questions" containing a list of objects.
-Each object MUST follow this structure exactly:
+Each object MUST include a "difficulty" field ("easy", "medium", or "hard") and follow this structure exactly:
 {{
     "questionText": "The descriptive question string",
     "questionType": "descriptive",
+    "difficulty": "medium",
     "correctAnswerText": "A sample correct answer or key points"
 }}
 """

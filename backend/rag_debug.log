@@ -2644,3 +2644,967 @@ This sentence preserves the original intent and meaning of the impaired speech, 
       }
    ]
 }
+2026-02-27 12:53:47.420608: Generating 2 mcq questions for topic: Module 1
+2026-02-27 12:53:49.086479: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the primary focus of Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Data Structures"},
+            {"text": "Algorithms"},
+            {"text": "Software Engineering"},
+            {"text": "Computer Networking"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following topics is commonly covered in Module 1?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Machine Learning"},
+            {"text": "Database Systems"},
+            {"text": "Data Analysis"},
+            {"text": "Graph Theory"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}
+2026-02-27 12:54:06.532324: Generating 10 mcq questions for topic: solar system
+2026-02-27 12:54:08.503460: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "Which planet in our solar system is known for being the largest?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Earth"},
+            {"text": "Saturn"},
+            {"text": "Jupiter"},
+            {"text": "Uranus"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the process by which plants convert sunlight into energy?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Photosynthesis"},
+            {"text": "Respiration"},
+            {"text": "Decomposition"},
+            {"text": " Fermentation"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which planet has the highest average temperature in the solar system?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mercury"},
+            {"text": "Venus"},
+            {"text": "Mars"},
+            {"text": "Neptune"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "How many moons does the planet Mars have?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "2"},
+            {"text": "4"},
+            {"text": "6"},
+            {"text": "8"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the farthest planet from the Sun in our solar system?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Uranus"},
+            {"text": "Neptune"},
+            {"text": "Pluto"},
+            {"text": "Saturn"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which planet has the strongest magnetic field in the solar system?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Earth"},
+            {"text": "Mars"},
+            {"text": "Jupiter"},
+            {"text": "Saturn"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the term for the path that the Earth takes around the Sun?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Orbit"},
+            {"text": "Rotation"},
+            {"text": "Revolution"},
+            {"text": "Eccentricity"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which planet is known for being the coldest planet in the solar system?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mercury"},
+            {"text": "Venus"},
+            {"text": "Mars"},
+            {"text": "Neptune"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the term for the Sun's energy that reaches the Earth as electromagnetic waves?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Solar Flare"},
+            {"text": "Solar Wind"},
+            {"text": "Radiation"},
+            {"text": "Insolation"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "Which planet has the most moons in our solar system?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Jupiter"},
+            {"text": "Saturn"},
+            {"text": "Uranus"},
+            {"text": "Neptune"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-27 12:54:25.303707: Generating 5 mcq questions for topic: Solar system
+2026-02-27 12:54:26.925155: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the largest planet in our solar system?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Earth"},
+            {"text": "Saturn"},
+            {"text": "Jupiter"},
+            {"text": "Uranus"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which planet is closest to the Sun?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mercury"},
+            {"text": "Venus"},
+            {"text": "Earth"},
+            {"text": "Mars"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "How many moons does the planet Mars have?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "1"},
+            {"text": "2"},
+            {"text": "4"},
+            {"text": "6"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which planet is known for being the hottest in the solar system?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Venus"},
+            {"text": "Mercury"},
+            {"text": "Mars"},
+            {"text": "Jupiter"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the farthest planet from the Sun?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Neptune"},
+            {"text": "Uranus"},
+            {"text": "Saturn"},
+            {"text": "Pluto"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-27 13:13:08.492252: Generating 3 mcq questions for topic: Solar system
+2026-02-27 13:13:52.582338: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "Which planet in our solar system is known for being the largest?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mercury"},
+            {"text": "Venus"},
+            {"text": "Earth"},
+            {"text": "Jupiter"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the process by which plants convert sunlight into energy?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Photosynthesis"},
+            {"text": "Respiration"},
+            {"text": "Decomposition"},
+            {"text": "Fermentation"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which planet in our solar system is closest to the Sun?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mercury"},
+            {"text": "Venus"},
+            {"text": "Mars"},
+            {"text": "Earth"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-27 13:14:11.354205: Generating 5 mcq questions for topic: Solar system
+2026-02-27 13:14:12.318388: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the largest planet in our solar system?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Earth"},
+            {"text": "Saturn"},
+            {"text": "Jupiter"},
+            {"text": "Uranus"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which planet is closest to the Sun?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Mercury"},
+            {"text": "Venus"},
+            {"text": "Mars"},
+            {"text": "Jupiter"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the farthest human-made object from Earth?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "The International Space Station"},
+            {"text": "A Voyager Spacecraft"},
+            {"text": "The Mars Curiosity Rover"},
+            {"text": "The Hubble Space Telescope"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following moons is not a natural satellite of Jupiter?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Io"},
+            {"text": "Europa"},
+            {"text": "Ganymede"},
+            {"text": "Titan"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the process by which the Sun generates its energy?",
+         "questionType": "mcq",
+         "options": [
+            {"text": "Photosynthesis"},
+            {"text": "Respiration"},
+            {"text": "Nuclear Fusion"},
+            {"text": "Radioactive Decay"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}
+2026-02-27 14:35:35.184190: Generating 10 mcq questions for topic: Python Programming Foundations
+2026-02-27 14:35:37.222036: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What does the print() function do in Python?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Adds a comment to the code"},
+            {"text": "Performs an arithmetic operation"},
+            {"text": "Displays the output of the code"},
+            {"text": "Creates a new variable"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the purpose of the if statement in Python?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "To perform a loop"},
+            {"text": "To make a decision in the code"},
+            {"text": "To declare a function"},
+            {"text": "To create an array"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "How do you create a comment in Python code?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Using a single quote ' "},
+            {"text": "Using a double quote \" "},
+            {"text": "Using the # symbol"},
+            {"text": "Using the // symbol"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the purpose of the for loop in Python?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "To make a decision in the code"},
+            {"text": "To repeat a block of code"},
+            {"text": "To declare a function"},
+            {"text": "To create an array"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "How do you declare a variable in Python?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Using the let keyword"},
+            {"text": "Using the var keyword"},
+            {"text": "Using the = operator"},
+            {"text": "Using the declare keyword"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the purpose of the while loop in Python?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "To make a decision in the code"},
+            {"text": "To repeat a block of code"},
+            {"text": "To declare a function"},
+            {"text": "To create an array"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "How do you get user input in Python?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Using the input() function"},
+            {"text": "Using the scanf() function"},
+            {"text": "Using the readline() function"},
+            {"text": "Using the read() function"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the purpose of the list data type in Python?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "To store a single value"},
+            {"text": "To store multiple values"},
+            {"text": "To store a string"},
+            {"text": "To store a boolean"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "How do you create an empty list in Python?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Using the append() method"},
+            {"text": "Using the extend() method"},
+            {"text": "Using the [] syntax"},
+            {"text": "Using the list() function"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the purpose of the dictionary data type in Python?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "To store a single value"},
+            {"text": "To store multiple values with keys"},
+            {"text": "To store a string"},
+            {"text": "To store a boolean"}
+         ],
+         "correctOptionIndex": 1
+      }
+   ]
+}
+2026-02-27 14:45:56.905196: Generating 2 mcq questions for topic: Animal
+2026-02-27 14:45:58.199342: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the typical sound of a cow?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Meow"},
+            {"text": "Woof"},
+            {"text": "Moo"},
+            {"text": "Oink"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the fastest land animal?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "Giraffe"},
+            {"text": "Lion"},
+            {"text": "Cheetah"},
+            {"text": "Elephant"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "Which of the following animals has a built-in umbrella?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Tortoise"},
+            {"text": "Dolphin"},
+            {"text": "Octopus"},
+            {"text": "Penguin"}
+         ],
+         "correctOptionIndex": 2
+      }
+   ]
+}
+2026-02-27 14:46:23.026520: Generating 2 mcq questions for topic: Animal
+2026-02-27 14:46:23.598808: AI Response Content: {
+  "questions": [
+    {
+        "questionText": "What is the common name of Cervidae?",
+        "questionType": "mcq",
+        "difficulty": "easy",
+        "options": [
+            {"text": "Feline"},
+            {"text": "Canine"},
+            {"text": "Ursidae"},
+            {"text": "Deer"}
+        ],
+        "correctOptionIndex": 3
+    },
+    {
+        "questionText": "Which of the following animals is known for its unique ability to change its body temperature to suit its environment?",
+        "questionType": "mcq",
+        "difficulty": "hard",
+        "options": [
+            {"text": "Lion"},
+            {"text": "Polar bear"},
+            {"text": "Hedgehog"},
+            {"text": "Chameleon"}
+        ],
+        "correctOptionIndex": 3
+    },
+    {
+        "questionText": "What is the typical gestation period of a Giraffe?",
+        "questionType": "mcq",
+        "difficulty": "medium",
+        "options": [
+            {"text": "12 months"},
+            {"text": "14 months"},
+            {"text": "15 months"},
+            {"text": "16 months"}
+        ],
+        "correctOptionIndex": 2
+    }
+   ]
+}
+2026-02-27 14:46:31.787179: Generating 5 mcq questions for topic: Animal Kingdom
+2026-02-27 14:46:32.779055: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the largest mammal on Earth?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Blue whale"},
+            {"text": "Fin whale"},
+            {"text": "Humpback whale"},
+            {"text": "Sperm whale"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following birds is known for its distinctive call that sounds like laughter?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Kookaburra"},
+            {"text": "Parrot"},
+            {"text": "Owl"},
+            {"text": "Eagle"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the scientific classification of the platypus?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "Mammalia, Monotremata"},
+            {"text": "Aves, Monotremata"},
+            {"text": "Reptilia, Monotremata"},
+            {"text": "Amphibia, Monotremata"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following animals is known for its ability to live in both freshwater and saltwater?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Fish"},
+            {"text": "Crab"},
+            {"text": "Shrimp"},
+            {"text": "Turtle"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the name of the largest species of lizard?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "Komodo dragon"},
+            {"text": "Saltwater crocodile"},
+            {"text": "Black mamba"},
+            {"text": "Green anaconda"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-27 14:54:14.156943: Generating 10 mcq questions for topic: General Science
+2026-02-27 14:54:16.100508: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the largest planet in our solar system?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Earth"},
+            {"text": "Saturn"},
+            {"text": "Jupiter"},
+            {"text": "Uranus"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the process by which plants convert sunlight into energy?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Respiration"},
+            {"text": "Photosynthesis"},
+            {"text": "Decomposition"},
+            {"text": "Fermentation"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following elements is a noble gas?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Carbon"},
+            {"text": "Nitrogen"},
+            {"text": "Argon"},
+            {"text": "Oxygen"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the scientific term for the 'building blocks of life'?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "Cells"},
+            {"text": "Molecules"},
+            {"text": "Atoms"},
+            {"text": "Tissues"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following planets is known as the 'Red Planet'?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Earth"},
+            {"text": "Mars"},
+            {"text": "Jupiter"},
+            {"text": "Saturn"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "What is the largest living structure on Earth?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "The Great Barrier Reef"},
+            {"text": "The Amazon Rainforest"},
+            {"text": "The Grand Canyon"},
+            {"text": "The Great Wall of China"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following scientists developed the theory of evolution?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Galileo Galilei"},
+            {"text": "Isaac Newton"},
+            {"text": "Charles Darwin"},
+            {"text": "Albert Einstein"}
+         ],
+         "correctOptionIndex": 2
+      },
+      {
+         "questionText": "What is the process by which water moves through a plant, from the roots to the leaves?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Transpiration"},
+            {"text": "Respiration"},
+            {"text": "Photosynthesis"},
+            {"text": "Osmosis"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Which of the following types of rocks is formed from the cooling and solidification of magma?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "Igneous"},
+            {"text": "Sedimentary"},
+            {"text": "Metamorphic"},
+            {"text": "Fossil"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "What is the scientific term for the 'study of the Earth's physical structure, composition, and processes'?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "Geology"},
+            {"text": "Meteorology"},
+            {"text": "Oceanography"},
+            {"text": "Astronomy"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-27 14:55:25.977961: Generating 5 mcq questions for topic: Solar system
+2026-02-27 14:55:28.379031: AI Response Content: {
+  "questions": [
+    {
+        "questionText": "What is the largest planet in our solar system?",
+        "questionType": "mcq",
+        "difficulty": "easy",
+        "options": [
+            {"text": "Saturn"},
+            {"text": "Jupiter"},
+            {"text": "Earth"},
+            {"text": "Mars"}
+        ],
+        "correctOptionIndex": 1
+    },
+    {
+        "questionText": "Which planet is closest to the Sun?",
+        "questionType": "mcq",
+        "difficulty": "medium",
+        "options": [
+            {"text": "Mercury"},
+            {"text": "Venus"},
+            {"text": "Earth"},
+            {"text": "Mars"}
+        ],
+        "correctOptionIndex": 0
+    },
+    {
+        "questionText": "What is the term for a star that has exploded and become incredibly bright?",
+        "questionType": "mcq",
+        "difficulty": "hard",
+        "options": [
+            {"text": "Black Hole"},
+            {"text": "Dark Matter"},
+            {"text": "Supernova"},
+            {"text": "Nebula"}
+        ],
+        "correctOptionIndex": 2
+    },
+    {
+        "questionText": "Which of the following moons of Jupiter is the largest?",
+        "questionType": "mcq",
+        "difficulty": "medium",
+        "options": [
+            {"text": "Io"},
+            {"text": "Europa"},
+            {"text": "Ganymede"},
+            {"text": "Callisto"}
+        ],
+        "correctOptionIndex": 2
+    },
+    {
+        "questionText": "What is the process by which plants convert sunlight into energy?",
+        "questionType": "mcq",
+        "difficulty": "easy",
+        "options": [
+            {"text": "Respiration"},
+            {"text": "Photosynthesis"},
+            {"text": "Decomposition"},
+            {"text": "Fermentation"}
+        ],
+        "correctOptionIndex": 1
+    }
+  ]
+}
+2026-02-27 15:12:16.986536: Generating 6 mcq questions for topic: Module 1
+2026-02-27 15:12:18.908645: AI Response Content: {
+  "questions": [
+      {
+         "questionText": "What is the main topic of Module 1?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Programming Fundamentals"},
+            {"text": "Data Structures"},
+            {"text": "Algorithms"},
+            {"text": "Web Development"}
+         ],
+         "correctOptionIndex": 0
+      },
+      {
+         "questionText": "Module 1 covers the basics of which programming paradigm?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Object-Oriented"},
+            {"text": "Functional"},
+            {"text": "Imperative"},
+            {"text": "Declarative"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is NOT a key concept covered in Module 1?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "Variables and Data Types"},
+            {"text": "Control Structures"},
+            {"text": "Object-Oriented Programming"},
+            {"text": "Machine Learning"}
+         ],
+         "correctOptionIndex": 3
+      },
+      {
+         "questionText": "What is the primary focus of Module 1's lesson on variables?",
+         "questionType": "mcq",
+         "difficulty": "easy",
+         "options": [
+            {"text": "Memory Management"},
+            {"text": "Data Types and Assignments"},
+            {"text": "Variable Scope"},
+            {"text": "Function Arguments"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Module 1 covers the implementation of which type of control structures?",
+         "questionType": "mcq",
+         "difficulty": "medium",
+         "options": [
+            {"text": "Conditional Statements"},
+            {"text": "Loops"},
+            {"text": "Switch Statements"},
+            {"text": "Exception Handling"}
+         ],
+         "correctOptionIndex": 1
+      },
+      {
+         "questionText": "Which of the following is an advanced concept that is NOT covered in Module 1?",
+         "questionType": "mcq",
+         "difficulty": "hard",
+         "options": [
+            {"text": "Multithreading"},
+            {"text": "Regular Expressions"},
+            {"text": "Dynamic Memory Allocation"},
+            {"text": "Database Connections"}
+         ],
+         "correctOptionIndex": 0
+      }
+   ]
+}
+2026-02-27 15:12:29.462936: Generating 10 mcq questions for topic: English
+2026-02-27 15:12:31.927570: AI Response Content: {
+  "questions":[
+      {
+         "questionText":"What is the correct form of the possessive adjective?",
+         "questionType":"mcq",
+         "difficulty":"easy",
+         "options":[
+            {"text":"me"},
+            {"text":"my"},
+            {"text":"mine"},
+            {"text":"mys"}
+         ],
+         "correctOptionIndex":1
+      },
+      {
+         "questionText":"Which of the following words is a synonym of 'large'?",
+         "questionType":"mcq",
+         "difficulty":"easy",
+         "options":[
+            {"text":"small"},
+            {"text":"big"},
+            {"text":"large"},
+            {"text":"tiny"}
+         ],
+         "correctOptionIndex":1
+      },
+      {
+         "questionText":"Identify the correct form of the verb in the sentence: 'The dog __ the ball.'",
+         "questionType":"mcq",
+         "difficulty":"easy",
+         "options":[
+            {"text":"run"},
+            {"text":"runs"},
+            {"text":"ran"},
+            {"text":"runing"}
+         ],
+         "correctOptionIndex":1
+      },
+      {
+         "questionText":"Which of the following sentences is in the present perfect tense?",
+         "questionType":"mcq",
+         "difficulty":"medium",
+         "options":[
+            {"text":"I go to school."},
+            {"text":"I have gone to school."},
+            {"text":"I went to school."},
+            {"text":"I will go to school."}
+         ],
+         "correctOptionIndex":1
+      },
+      {
+         "questionText":"What is the correct form of the contraction for 'do not'?",
+         "questionType":"mcq",
+         "difficulty":"medium",
+         "options":[
+            {"text":"dont"},
+            {"text":"don't"},
+            {"text":"do not"},
+            {"text":"doesnt"}
+         ],
+         "correctOptionIndex":1
+      },
+      {
+         "questionText":"Which of the following words is a noun?",
+         "questionType":"mcq",
+         "difficulty":"medium",
+         "options":[
+            {"text":"run"},
+            {"text":"dog"},
+            {"text":"to"},
+            {"text":"is"}
+         ],
+         "correctOptionIndex":1
+      },
+      {
+         "questionText":"Identify the correct form of the adjective in the sentence: 'The __ city in the world is Tokyo.'",
+         "questionType":"mcq",
+         "difficulty":"medium",
+         "options":[
+            {"text":"biggest"},
+            {"text":"big"},
+            {"text":"big"},
+            {"text":"largest"}
+         ],
+         "correctOptionIndex":2
+      },
+      {
+         "questionText":"What is the correct form of the verb in the sentence: 'By the time I __ home, it was already dark.'",
+         "questionType":"mcq",
+         "difficulty":"hard",
+         "options":[
+            {"text":"arrived"},
+            {"text":"arriving"},
+            {"text":"had arrived"},
+            {"text":"will arrive"}
+         ],
+         "correctOptionIndex":2
+      },
+      {
+         "questionText":"Which of the following sentences is in the passive voice?",
+         "questionType":"mcq",
+         "difficulty":"hard",
+         "options":[
+            {"text":"The dog bites the man."},
+            {"text":"The man is bitten by the dog."},
+            {"text":"The dog is bitten by the man."},
+            {"text":"The man bites the dog."}
+         ],
+         "correctOptionIndex":2
+      },
+      {
+         "questionText":"What is the correct form of the relative pronoun in the sentence: 'The book, __ I read yesterday, is interesting.'",
+         "questionType":"mcq",
+         "difficulty":"hard",
+         "options":[
+            {"text":"that"},
+            {"text":"which"},
+            {"text":"who"},
+            {"text":"what"}
+         ],
+         "correctOptionIndex":1
+      }
+   ]
+}

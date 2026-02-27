@@ -97,7 +97,7 @@ async def ai_generate_questions(request: schemas.AIGenerateRequest, current_user
     if current_user["role"] != "instructor":
         raise HTTPException(status_code=403, detail="Only instructors can generate questions")
     
-    questions = rag.generate_questions(request.topic, request.questionType, request.count)
+    questions = rag.generate_questions(request.topic, request.questionType, request.count, difficulty="mixed")
     return {"questions": questions}
 
 
@@ -1097,16 +1097,10 @@ def next_adaptive_question(course_id: int, request: schemas.AdaptiveNextRequest,
         is_correct = str(request.last_answer).strip().lower() == (last_q.correctAnswerText or "").strip().lower()
 
     # 3. Determine next difficulty
-    diff_map = {"easy": 1, "medium": 2, "hard": 3}
-    rev_diff_map = {1: "easy", 2: "medium", 3: "hard"}
-    
-    curr_level = diff_map.get(request.last_difficulty, 2)
     if is_correct:
-        next_level = min(curr_level + 1, 3)
+        target_diff = "hard"
     else:
-        next_level = max(curr_level - 1, 1)
-    
-    target_diff = rev_diff_map[next_level]
+        target_diff = "easy"
     
     # 4. Find next question in database with target difficulty (Instructor created ONLY)
     question = db.query(models.Question).filter(
